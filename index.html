@@ -441,7 +441,7 @@
       <span class="social s-x is-soon" aria-disabled="true">𝕏 <span>X / Twitter</span></span>
       <span class="social s-ig is-soon" aria-disabled="true">📷 <span>Instagram</span></span>
       <span class="social s-tt is-soon" aria-disabled="true">🎵 <span>TikTok</span></span>
-      <a class="social s-note js-extlink" href="https://note.com/falce" rel="noopener">📝 <span>note</span></a>
+      <a class="social s-note" href="https://note.com/falce">📝 <span>note</span></a>
     </div>
   </section>
 
@@ -466,15 +466,6 @@
       box.appendChild(s);
     }
   })();
-
-  // external links: always navigate in the same view
-  // (avoids in-app browsers / WebViews silently ignoring target="_blank")
-  document.querySelectorAll(".js-extlink").forEach((a) => {
-    a.addEventListener("click", function (ev) {
-      ev.preventDefault();
-      window.location.href = a.href;
-    });
-  });
 
   // click-to-play YouTube facade (loads iframe only on click)
   document.querySelectorAll(".lite-yt").forEach((el) => {
