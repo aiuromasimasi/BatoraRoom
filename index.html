@@ -111,10 +111,12 @@
   @keyframes shimmer { to { background-position: 300% center; } }
 
   .tagline {
-    font-weight: 800; font-size: 1.05rem;
+    font-weight: 800; font-size: clamp(.9rem, 4vw, 1.05rem);
     color: var(--purple);
     margin-bottom: 16px;
+    line-height: 1.7;
   }
+  .tagline .nb { white-space: nowrap; }
 
   .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
   .badge {
@@ -213,6 +215,46 @@
   .fv5{ background: linear-gradient(135deg,#9b5cff,#ff5ea8);}
   .fv6{ background: linear-gradient(135deg,#ff8a3d,#ffd23f);}
 
+  /* video / stream */
+  .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+  .video { margin: 0; }
+  .video-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 3px solid #fff;
+    box-shadow: 0 10px 24px rgba(155,92,255,.3);
+    background: #000;
+  }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  /* click-to-play facade */
+  .lite-yt { cursor: pointer; }
+  .lite-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .lite-play {
+    position: absolute; top: 50%; left: 50%;
+    width: 76px; height: 54px; transform: translate(-50%, -50%);
+    background: rgba(255,30,90,.92); border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.4);
+    transition: transform .2s ease, background .2s ease;
+  }
+  .lite-play::after {
+    content: ""; position: absolute; top: 50%; left: 52%;
+    transform: translate(-50%, -50%);
+    border-style: solid; border-width: 12px 0 12px 20px;
+    border-color: transparent transparent transparent #fff;
+  }
+  .lite-yt:hover .lite-play, .lite-yt:focus-visible .lite-play {
+    transform: translate(-50%, -50%) scale(1.12); background: #ff1e5a;
+  }
+  .lite-yt:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+  .video figcaption {
+    margin-top: 10px; text-align: center;
+    font-weight: 800; font-size: .98rem; color: var(--purple);
+  }
+
   /* social */
   .socials { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
   .social {
@@ -229,6 +271,26 @@
   .s-tt { background: linear-gradient(45deg,#25f4ee,#000,#fe2c55); }
   .s-note { background: #41c9b4; }
 
+  /* not-yet-set socials */
+  .social.is-soon {
+    position: relative;
+    background: #c7c0d8;
+    color: #fff;
+    cursor: not-allowed;
+    opacity: .85;
+    filter: grayscale(.2);
+  }
+  .social.is-soon:hover { transform: none; box-shadow: 0 8px 18px rgba(0,0,0,.12); }
+  .social.is-soon::after {
+    content: "準備中";
+    position: absolute; top: -10px; right: -8px;
+    font-size: .68rem; font-weight: 800;
+    color: #fff; background: var(--orange);
+    padding: 2px 9px; border-radius: 999px;
+    box-shadow: 0 3px 8px rgba(0,0,0,.2);
+    transform: rotate(6deg);
+  }
+
   footer {
     text-align: center; margin-top: 50px;
     font-weight: 700; color: var(--purple); font-size: .9rem;
@@ -239,6 +301,25 @@
   /* reveal on scroll */
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.show { opacity: 1; transform: none; }
+
+  /* keep Japanese words from breaking mid-phrase */
+  .about-text, .sec-title em, .badge, .chip, .fav .lbl,
+  .skill-head span, .social span, .video figcaption {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    line-break: strict;
+  }
+
+  /* small screens */
+  @media (max-width: 480px) {
+    .wrap { padding: 16px 12px 64px; }
+    .hero { padding: 40px 16px 30px; border-radius: 28px; }
+    .avatar { width: 116px; height: 116px; font-size: 3.6rem; }
+    .card { padding: 22px 16px; border-radius: 24px; }
+    .about-text { font-size: 1rem; }
+    .badge { font-size: .85rem; padding: 6px 13px; }
+    .sec-title { font-size: 1.4rem; }
+  }
 </style>
 </head>
 <body>
@@ -251,7 +332,7 @@
   <header class="hero reveal show">
     <div class="avatar"><span>🎮</span></div>
     <h1 class="name">バトラ</h1>
-    <p class="tagline">🍶 ゲーマー × シンパパ × エンジニア 🛠️</p>
+    <p class="tagline"><span class="nb">🍶 ゲーマー</span> × <span class="nb">シンパパ</span> × <span class="nb">エンジニア 🛠️</span></p>
     <div class="badges">
       <span class="badge b1">44歳</span>
       <span class="badge b2">東京在住</span>
@@ -278,10 +359,10 @@
   <section class="reveal">
     <div class="sec-title"><em>🛠️ Skills</em></div>
     <div class="card">
-      <div class="skill"><div class="skill-head"><span>☁️ Azure</span><span>90%</span></div><div class="bar"><i class="f1" data-w="90%"></i></div></div>
-      <div class="skill"><div class="skill-head"><span>💻 Software Engineering</span><span>88%</span></div><div class="bar"><i class="f2" data-w="88%"></i></div></div>
-      <div class="skill"><div class="skill-head"><span>🏢 B2C ビジネス</span><span>82%</span></div><div class="bar"><i class="f3" data-w="82%"></i></div></div>
-      <div class="skill"><div class="skill-head"><span>🍳 自炊スキル</span><span>95%</span></div><div class="bar"><i class="f4" data-w="95%"></i></div></div>
+      <div class="skill"><div class="skill-head"><span>🎮 ゲーム</span><span>92%</span></div><div class="bar"><i class="f1" data-w="92%"></i></div></div>
+      <div class="skill"><div class="skill-head"><span>🤓 オタク</span><span>95%</span></div><div class="bar"><i class="f2" data-w="95%"></i></div></div>
+      <div class="skill"><div class="skill-head"><span>💻 Software Engineering</span><span>88%</span></div><div class="bar"><i class="f3" data-w="88%"></i></div></div>
+      <div class="skill"><div class="skill-head"><span>🍳 自炊スキル</span><span>78%</span></div><div class="bar"><i class="f4" data-w="78%"></i></div></div>
     </div>
   </section>
 
@@ -315,8 +396,6 @@
         <span class="chip">フルーツバスケット</span>
         <span class="chip">嘘喰い</span>
         <span class="chip">化物語</span>
-        <span class="chip">銀魂</span>
-        <span class="chip">金色のガッシュ</span>
         <span class="chip">シグルイ</span>
         <span class="chip">寄生獣</span>
         <span class="chip">ハチワンダイバー</span>
@@ -339,14 +418,30 @@
     </div>
   </section>
 
+  <!-- STREAM -->
+  <section class="reveal">
+    <div class="sec-title"><em>📺 最近配信したゲーム</em></div>
+    <div class="card">
+      <div class="video-grid">
+        <figure class="video">
+          <div class="video-frame lite-yt" data-id="a2MvcGILvn8" role="button" tabindex="0" aria-label="動画を再生: 酔っ払いがゼルダの伝説 ティアキン 配信">
+            <img class="lite-thumb" src="https://i.ytimg.com/vi/a2MvcGILvn8/hqdefault.jpg" alt="酔っ払いがゼルダの伝説 ティアキン 配信" loading="lazy" />
+            <span class="lite-play" aria-hidden="true"></span>
+          </div>
+          <figcaption>🎮 酔っ払いがゼルダの伝説 ティアキン 配信 🍶</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- SOCIAL -->
   <section class="reveal">
     <div class="sec-title"><em>🔗 Connect With Me</em></div>
     <div class="socials">
-      <a class="social s-x" href="#" target="_blank" rel="noopener">𝕏 <span>X / Twitter</span></a>
-      <a class="social s-ig" href="#" target="_blank" rel="noopener">📷 <span>Instagram</span></a>
-      <a class="social s-tt" href="#" target="_blank" rel="noopener">🎵 <span>TikTok</span></a>
-      <a class="social s-note" href="#" target="_blank" rel="noopener">📝 <span>note</span></a>
+      <span class="social s-x is-soon" aria-disabled="true">𝕏 <span>X / Twitter</span></span>
+      <span class="social s-ig is-soon" aria-disabled="true">📷 <span>Instagram</span></span>
+      <span class="social s-tt is-soon" aria-disabled="true">🎵 <span>TikTok</span></span>
+      <a class="social s-note" href="https://note.com/falce" target="_blank" rel="noopener">📝 <span>note</span></a>
     </div>
   </section>
 
@@ -371,6 +466,24 @@
       box.appendChild(s);
     }
   })();
+
+  // click-to-play YouTube facade (loads iframe only on click)
+  document.querySelectorAll(".lite-yt").forEach((el) => {
+    function play() {
+      const id = el.dataset.id;
+      const iframe = document.createElement("iframe");
+      iframe.src = "https://www.youtube.com/embed/" + id + "?autoplay=1&rel=0";
+      iframe.title = "YouTube video";
+      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      iframe.allowFullscreen = true;
+      el.innerHTML = "";
+      el.appendChild(iframe);
+    }
+    el.addEventListener("click", play);
+    el.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); play(); }
+    });
+  });
 
   // reveal on scroll + skill bars
   const io = new IntersectionObserver((entries) => {
