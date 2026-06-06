@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>バトラ ✦ Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pink: #ff5ea8;
+    --purple: #9b5cff;
+    --blue: #36c5ff;
+    --yellow: #ffd23f;
+    --mint: #3ff2c2;
+    --orange: #ff8a3d;
+    --ink: #2a1a4a;
+    --card: rgba(255, 255, 255, 0.85);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Baloo 2", sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, #ffd6ec 0%, #d6e4ff 25%, #d9fff4 50%, #fff3c4 75%, #ffd6ec 100%);
+    background-size: 400% 400%;
+    animation: bgshift 18s ease infinite;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  @keyframes bgshift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* floating emoji background */
+  .floaties { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .floaties span {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.5;
+    animation: float-up linear infinite;
+    bottom: -60px;
+  }
+  @keyframes float-up {
+    to { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 24px 18px 80px; }
+
+  /* ===== HERO ===== */
+  .hero {
+    text-align: center;
+    padding: 54px 24px 40px;
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    border-radius: 36px;
+    border: 4px solid #fff;
+    box-shadow: 0 18px 48px rgba(155, 92, 255, 0.28);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% 10%, rgba(255,94,168,.25), transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(54,197,255,.25), transparent 45%),
+                radial-gradient(circle at 60% 95%, rgba(63,242,194,.22), transparent 45%);
+    z-index: -1;
+  }
+
+  .avatar {
+    width: 140px; height: 140px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 4.4rem;
+    background: conic-gradient(from 0deg, var(--pink), var(--yellow), var(--mint), var(--blue), var(--purple), var(--pink));
+    box-shadow: 0 10px 30px rgba(155,92,255,.4);
+    animation: bob 3s ease-in-out infinite, spin-ring 12s linear infinite;
+    position: relative;
+  }
+  .avatar::after {
+    content: "";
+    position: absolute; inset: 7px;
+    border-radius: 50%;
+    background: #fff;
+    z-index: 0;
+  }
+  .avatar span { position: relative; z-index: 1; animation: bob 3s ease-in-out infinite reverse; }
+  @keyframes spin-ring { to { filter: hue-rotate(360deg); } }
+  @keyframes bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-10px);} }
+
+  .name {
+    font-family: "Mochiy Pop One", sans-serif;
+    font-size: clamp(2.6rem, 9vw, 4.2rem);
+    line-height: 1.05;
+    background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue), var(--mint), var(--orange));
+    background-size: 300% auto;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s linear infinite;
+    margin-bottom: 6px;
+  }
+  @keyframes shimmer { to { background-position: 300% center; } }
+
+  .tagline {
+    font-weight: 800; font-size: 1.05rem;
+    color: var(--purple);
+    margin-bottom: 16px;
+  }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .badge {
+    font-weight: 700; font-size: .92rem;
+    padding: 7px 16px; border-radius: 999px;
+    color: #fff;
+    box-shadow: 0 5px 14px rgba(0,0,0,.12);
+    transition: transform .18s ease;
+  }
+  .badge:hover { transform: translateY(-3px) scale(1.06) rotate(-2deg); }
+  .b1 { background: var(--pink); }
+  .b2 { background: var(--blue); }
+  .b3 { background: var(--orange); }
+  .b4 { background: var(--mint); color: var(--ink); }
+  .b5 { background: var(--purple); }
+
+  /* ===== SECTIONS ===== */
+  section { margin-top: 36px; }
+  .sec-title {
+    font-family: "Mochiy Pop One", sans-serif;
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--ink);
+    position: relative;
+    display: inline-block;
+    left: 50%; transform: translateX(-50%);
+  }
+  .sec-title em {
+    font-style: normal;
+    background: var(--yellow);
+    padding: 2px 10px; border-radius: 10px;
+    box-shadow: 3px 3px 0 var(--orange);
+    display: inline-block;
+  }
+
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(6px);
+    border: 3px solid #fff;
+    border-radius: 28px;
+    padding: 26px 24px;
+    box-shadow: 0 12px 32px rgba(54,197,255,.2);
+  }
+  .about-text { font-size: 1.08rem; line-height: 1.9; font-weight: 500; text-align: center; }
+  .about-text strong { color: var(--pink); }
+
+  /* skills bars */
+  .skill { margin-bottom: 16px; }
+  .skill:last-child { margin-bottom: 0; }
+  .skill-head { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 6px; }
+  .bar { height: 16px; border-radius: 999px; background: #eee5ff; overflow: hidden; }
+  .bar > i {
+    display: block; height: 100%; width: 0;
+    border-radius: 999px;
+    transition: width 1.4s cubic-bezier(.2,.9,.2,1);
+  }
+  .f1 { background: linear-gradient(90deg, var(--pink), var(--purple)); }
+  .f2 { background: linear-gradient(90deg, var(--blue), var(--mint)); }
+  .f3 { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+  .f4 { background: linear-gradient(90deg, var(--purple), var(--blue)); }
+
+  /* chips grid */
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .chip {
+    font-weight: 700; font-size: .95rem;
+    padding: 9px 16px; border-radius: 16px;
+    background: #fff;
+    border: 2px solid transparent;
+    box-shadow: 0 5px 12px rgba(0,0,0,.08);
+    cursor: default;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .chip:hover { transform: translateY(-4px) rotate(-3deg); box-shadow: 0 10px 18px rgba(0,0,0,.16); }
+  .chip:nth-child(5n+1){ border-color: var(--pink); color: var(--pink); }
+  .chip:nth-child(5n+2){ border-color: var(--blue); color: var(--blue); }
+  .chip:nth-child(5n+3){ border-color: var(--orange); color: var(--orange); }
+  .chip:nth-child(5n+4){ border-color: var(--purple); color: var(--purple); }
+  .chip:nth-child(5n+5){ border-color: #1bbf9a; color: #1bbf9a; }
+
+  /* fav cards */
+  .fav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; }
+  .fav {
+    border-radius: 22px; padding: 20px 14px; text-align: center;
+    color: #fff; font-weight: 800;
+    box-shadow: 0 8px 20px rgba(0,0,0,.14);
+    transition: transform .2s ease;
+  }
+  .fav:hover { transform: translateY(-6px) scale(1.04); }
+  .fav .ico { font-size: 2.4rem; display: block; margin-bottom: 8px; }
+  .fav .lbl { font-size: .82rem; opacity: .92; font-weight: 700; }
+  .fv1{ background: linear-gradient(135deg,#ff5ea8,#ff8a3d);}
+  .fv2{ background: linear-gradient(135deg,#36c5ff,#9b5cff);}
+  .fv3{ background: linear-gradient(135deg,#3ff2c2,#36c5ff);}
+  .fv4{ background: linear-gradient(135deg,#ffd23f,#ff8a3d);}
+  .fv5{ background: linear-gradient(135deg,#9b5cff,#ff5ea8);}
+  .fv6{ background: linear-gradient(135deg,#ff8a3d,#ffd23f);}
+
+  /* social */
+  .socials { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+  .social {
+    text-decoration: none;
+    font-weight: 800; font-size: 1rem;
+    padding: 14px 26px; border-radius: 18px;
+    color: #fff; display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.18);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .social:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 14px 26px rgba(0,0,0,.26); }
+  .s-x { background: #111; }
+  .s-ig { background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+  .s-tt { background: linear-gradient(45deg,#25f4ee,#000,#fe2c55); }
+  .s-note { background: #41c9b4; }
+
+  footer {
+    text-align: center; margin-top: 50px;
+    font-weight: 700; color: var(--purple); font-size: .9rem;
+  }
+  footer .heart { animation: pulse 1.2s ease-in-out infinite; display: inline-block; }
+  @keyframes pulse { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.3);} }
+
+  /* reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.show { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<div class="floaties" id="floaties"></div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero reveal show">
+    <div class="avatar"><span>🎮</span></div>
+    <h1 class="name">バトラ</h1>
+    <p class="tagline">🍶 ゲーマー × シンパパ × エンジニア 🛠️</p>
+    <div class="badges">
+      <span class="badge b1">44歳</span>
+      <span class="badge b2">東京在住</span>
+      <span class="badge b3">SE / Azure</span>
+      <span class="badge b4">B2C</span>
+      <span class="badge b5">シングルファーザー</span>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section class="reveal">
+    <div class="sec-title"><em>✨ About Me ✨</em></div>
+    <div class="card">
+      <p class="about-text">
+        44歳<strong>シンパパ</strong>で大学生の娘がいます👨‍👧<br>
+        娘も定期的に<strong>音声ルーム</strong>に登場するよ🎙️<br>
+        <strong>ゲーム</strong>と<strong>マンガ</strong>をこよなく愛する、<br>
+        お酒・自炊・ジムが趣味のエンジニアです🍻🍳💪
+      </p>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="reveal">
+    <div class="sec-title"><em>🛠️ Skills</em></div>
+    <div class="card">
+      <div class="skill"><div class="skill-head"><span>☁️ Azure</span><span>90%</span></div><div class="bar"><i class="f1" data-w="90%"></i></div></div>
+      <div class="skill"><div class="skill-head"><span>💻 Software Engineering</span><span>88%</span></div><div class="bar"><i class="f2" data-w="88%"></i></div></div>
+      <div class="skill"><div class="skill-head"><span>🏢 B2C ビジネス</span><span>82%</span></div><div class="bar"><i class="f3" data-w="82%"></i></div></div>
+      <div class="skill"><div class="skill-head"><span>🍳 自炊スキル</span><span>95%</span></div><div class="bar"><i class="f4" data-w="95%"></i></div></div>
+    </div>
+  </section>
+
+  <!-- GAMES -->
+  <section class="reveal">
+    <div class="sec-title"><em>🎮 Favorite Games</em></div>
+    <div class="card">
+      <div class="chips">
+        <span class="chip">ブレワイ</span>
+        <span class="chip">ドラクエ</span>
+        <span class="chip">FF</span>
+        <span class="chip">ダンガンロンパ</span>
+        <span class="chip">シュタインズ・ゲート</span>
+        <span class="chip">90s FPS&amp;STG</span>
+        <span class="chip">うみねこ</span>
+        <span class="chip">AIR</span>
+        <span class="chip">テトリス</span>
+        <span class="chip">ミステリーゲーム</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANGA -->
+  <section class="reveal">
+    <div class="sec-title"><em>📚 Favorite Manga</em></div>
+    <div class="card">
+      <div class="chips">
+        <span class="chip">HUNTER×HUNTER</span>
+        <span class="chip">ジョジョ</span>
+        <span class="chip">バキ</span>
+        <span class="chip">フルーツバスケット</span>
+        <span class="chip">嘘喰い</span>
+        <span class="chip">化物語</span>
+        <span class="chip">銀魂</span>
+        <span class="chip">金色のガッシュ</span>
+        <span class="chip">シグルイ</span>
+        <span class="chip">寄生獣</span>
+        <span class="chip">ハチワンダイバー</span>
+        <span class="chip">めだかボックス</span>
+        <span class="chip">エリア88</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAVS -->
+  <section class="reveal">
+    <div class="sec-title"><em>💖 Things I Love</em></div>
+    <div class="fav-grid">
+      <div class="fav fv1"><span class="ico">🍶</span><span class="lbl">お酒</span></div>
+      <div class="fav fv2"><span class="ico">🍳</span><span class="lbl">自炊</span></div>
+      <div class="fav fv3"><span class="ico">💪</span><span class="lbl">ジム</span></div>
+      <div class="fav fv4"><span class="ico">🔍</span><span class="lbl">ミステリー小説</span></div>
+      <div class="fav fv5"><span class="ico">🎀</span><span class="lbl">サンリオ</span></div>
+      <div class="fav fv6"><span class="ico">📺</span><span class="lbl">アニメ</span></div>
+    </div>
+  </section>
+
+  <!-- SOCIAL -->
+  <section class="reveal">
+    <div class="sec-title"><em>🔗 Connect With Me</em></div>
+    <div class="socials">
+      <a class="social s-x" href="#" target="_blank" rel="noopener">𝕏 <span>X / Twitter</span></a>
+      <a class="social s-ig" href="#" target="_blank" rel="noopener">📷 <span>Instagram</span></a>
+      <a class="social s-tt" href="#" target="_blank" rel="noopener">🎵 <span>TikTok</span></a>
+      <a class="social s-note" href="#" target="_blank" rel="noopener">📝 <span>note</span></a>
+    </div>
+  </section>
+
+  <footer>
+    Made with <span class="heart">💜</span> by バトラ ・ Thanks for visiting!
+  </footer>
+
+</div>
+
+<script>
+  // floating emoji
+  (function () {
+    const emojis = ["🎮","📚","🍶","🎀","🍳","💪","✨","🔍","🕹️","🍻","⭐","🎲","📺","💜","🩵"];
+    const box = document.getElementById("floaties");
+    for (let i = 0; i < 26; i++) {
+      const s = document.createElement("span");
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = Math.random() * 100 + "vw";
+      s.style.fontSize = (1.2 + Math.random() * 2.4) + "rem";
+      s.style.animationDuration = (10 + Math.random() * 16) + "s";
+      s.style.animationDelay = (-Math.random() * 20) + "s";
+      box.appendChild(s);
+    }
+  })();
+
+  // reveal on scroll + skill bars
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("show");
+        e.target.querySelectorAll(".bar > i").forEach((bar) => {
+          bar.style.width = bar.dataset.w;
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  // tiny confetti burst on avatar tap
+  document.querySelector(".avatar").addEventListener("click", function () {
+    const parts = ["🎉","✨","💖","⭐","🎊"];
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement("span");
+      p.textContent = parts[Math.floor(Math.random() * parts.length)];
+      p.style.cssText = "position:fixed;z-index:99;pointer-events:none;font-size:1.6rem;left:50%;top:22%;transition:all 1s ease;";
+      document.body.appendChild(p);
+      requestAnimationFrame(() => {
+        p.style.transform = "translate(" + (Math.random()*400-200) + "px," + (Math.random()*300-60) + "px) rotate(" + (Math.random()*360) + "deg)";
+        p.style.opacity = "0";
+      });
+      setTimeout(() => p.remove(), 1100);
+    }
+  });
+</script>
+
+</body>
+</html>
