@@ -77,6 +77,46 @@
     </div>
   </header>
 
+  <style>
+    .vh{max-width:780px;margin:6px auto 0;padding:0 16px}
+    .vh details{background:var(--card);border:3px solid #fff;border-radius:24px;
+      box-shadow:0 12px 26px rgba(155,92,255,.18);overflow:hidden}
+    .vh summary{list-style:none;cursor:pointer;padding:14px 20px;display:flex;align-items:center;gap:10px;
+      font-family:"Mochiy Pop One",sans-serif;font-size:16px;color:var(--ink)}
+    .vh summary::-webkit-details-marker{display:none}
+    .vh summary .chev{margin-left:auto;transition:transform .2s;color:var(--purple);font-weight:800}
+    .vh details[open] summary .chev{transform:rotate(180deg)}
+    .vh .body{padding:4px 18px 18px}
+    .vh .lead{font-weight:700;color:#6a4d8a;margin:2px 4px 12px;line-height:1.6}
+    .vh ul{list-style:none;display:grid;gap:8px}
+    .vh li{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;
+      padding:8px 12px;box-shadow:0 3px 8px rgba(58,36,86,.1);flex-wrap:wrap}
+    .vh .cmd{font-family:"Baloo 2",monospace;font-weight:800;color:#fff;border-radius:999px;
+      padding:4px 12px;background:linear-gradient(135deg,var(--pink),var(--purple));white-space:nowrap}
+    .vh .desc{font-weight:700;color:var(--ink);font-size:14px}
+    .vh .ex{margin-left:auto;font-family:"Baloo 2",monospace;font-weight:700;font-size:13px;
+      color:#6a4d8a;background:#f1ebff;border-radius:999px;padding:3px 10px;white-space:nowrap}
+    .vh .note{margin-top:12px;background:#fff7da;border:2px dashed var(--yellow);border-radius:14px;
+      padding:10px 14px;font-weight:700;color:#8a6a00;line-height:1.6;font-size:14px}
+  </style>
+  <section class="vh">
+    <details open>
+      <summary>🎙️ 声を変えるには？ <span style="color:var(--pink)">/vc コマンド</span> の使い方<span class="chev">▾</span></summary>
+      <div class="body">
+        <p class="lead">▶ で試聴 → 気に入った声の <b>番号（ID）</b> を GRAVITY のチャットで <code>/vc</code> に渡せば、自分の声が変わるよ ♪（設定はあなたに紐づいて保存されます）</p>
+        <ul>
+          <li><span class="cmd">/vc 声ID</span><span class="desc">声を変更</span><span class="ex">例) /vc 20</span></li>
+          <li><span class="cmd">/vc 声ID 速度</span><span class="desc">声＋速度をまとめて変更（速度 0.5〜2.0）</span><span class="ex">例) /vc 20 1.4</span></li>
+          <li><span class="cmd">/vs 速度</span><span class="desc">速度だけ変更</span><span class="ex">例) /vs 1.5</span></li>
+          <li><span class="cmd">/vr</span><span class="desc">声を自動わりあてに戻す</span><span class="ex">例) /vr</span></li>
+          <li><span class="cmd">/vq</span><span class="desc">自分の読み上げを停止／再開</span><span class="ex">例) /vq</span></li>
+          <li><span class="cmd">/v</span><span class="desc">このヘルプを表示</span><span class="ex">/vchelp はこの一覧URL</span></li>
+        </ul>
+        <p class="note">⚠️ <code>/vc</code> で指定できる声IDは <b>0〜100</b> の整数です。101以上のスタイルは現状 <code>/vc</code> では設定できません（試聴のみ）。</p>
+      </div>
+    </details>
+  </section>
+
   <div class="toolbar">
     <input id="q" type="search" placeholder="🔍 キャラ名・スタイル・ID で検索…" autocomplete="off">
   </div>
