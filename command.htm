@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>コマンドずかん ✦ アイラの使い方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --pink:#ff5ea8;--purple:#9b5cff;--blue:#36c5ff;--yellow:#ffd23f;
+    --mint:#3ff2c2;--orange:#ff8a3d;--ink:#3a2456;--card:rgba(255,255,255,.9);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"M PLUS Rounded 1c","Baloo 2",sans-serif;color:var(--ink);
+    background:linear-gradient(135deg,#ffd6ec 0%,#d6e4ff 25%,#d9fff4 50%,#fff3c4 75%,#ffd6ec 100%);
+    background-size:400% 400%;animation:bg 18s ease infinite;min-height:100vh;
+    overflow-x:hidden;padding-bottom:70px;
+  }
+  @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-16px) rotate(var(--r,0deg))}}
+  @keyframes wob{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+  @keyframes shine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+
+  /* floating emoji decorations */
+  .deco{position:fixed;font-size:34px;opacity:.5;pointer-events:none;z-index:0;animation:floaty 7s ease-in-out infinite}
+
+  header{position:relative;text-align:center;padding:54px 16px 10px;z-index:1}
+  .title{
+    font-family:"Mochiy Pop One",sans-serif;font-size:clamp(30px,7vw,60px);line-height:1.12;
+    background:linear-gradient(90deg,var(--pink),var(--orange),var(--yellow),var(--mint),var(--blue),var(--purple),var(--pink));
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 3px 0 rgba(255,255,255,.8));animation:shine 6s linear infinite;
+  }
+  .title .em{-webkit-text-fill-color:initial;animation:wob 2.5s ease-in-out infinite;display:inline-block}
+  .sub{margin-top:12px;font-weight:800;color:#6a4d8a;font-size:clamp(14px,3.6vw,17px)}
+  .hello{margin:14px auto 0;max-width:620px;background:var(--card);border:3px solid #fff;border-radius:22px;
+    padding:14px 18px;font-weight:700;color:var(--ink);line-height:1.7;box-shadow:0 12px 26px rgba(155,92,255,.18)}
+  .hello b{color:var(--pink)}
+
+  /* sticky category nav */
+  nav{position:sticky;top:0;z-index:30;padding:12px 10px;backdrop-filter:blur(7px);
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  nav a{text-decoration:none;font-weight:800;font-size:14px;color:var(--ink);background:var(--card);
+    border:2px solid #fff;border-radius:999px;padding:7px 15px;box-shadow:0 6px 14px rgba(58,36,86,.16);
+    transition:transform .14s}
+  nav a:hover{transform:translateY(-3px) scale(1.05)}
+
+  main{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:8px 16px}
+  section{margin-top:30px}
+  .cat{display:flex;align-items:center;gap:12px;margin:0 6px 14px}
+  .cat .ic{font-size:30px;animation:floaty 5s ease-in-out infinite}
+  .cat h2{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(20px,5vw,28px);color:#fff;
+    text-shadow:0 2px 0 rgba(0,0,0,.12)}
+  .cat .tag{font-weight:800;color:#6a4d8a;font-size:13px;background:var(--card);padding:4px 12px;border-radius:999px}
+
+  .cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .cmd{background:var(--card);border-radius:24px;padding:18px;border:3px solid #fff;
+    box-shadow:0 12px 26px rgba(58,36,86,.16);animation:pop .4s backwards;
+    transition:transform .16s,box-shadow .16s;position:relative;overflow:hidden}
+  .cmd::before{content:"";position:absolute;inset:0 0 auto 0;height:7px;
+    background:linear-gradient(90deg,var(--c1),var(--c2))}
+  .cmd:hover{transform:translateY(-6px) rotate(-.5deg);box-shadow:0 22px 40px rgba(58,36,86,.26)}
+  .name{display:inline-block;font-family:"Baloo 2",monospace;font-weight:800;font-size:19px;color:#fff;
+    padding:6px 16px;border-radius:999px;background:linear-gradient(135deg,var(--c1),var(--c2));
+    box-shadow:0 4px 10px rgba(58,36,86,.2);margin-bottom:10px;word-break:break-all}
+  .what{font-weight:800;font-size:15px;color:var(--ink);margin-bottom:8px;line-height:1.55}
+  .detail{font-weight:600;font-size:13.5px;color:#5b4778;line-height:1.7}
+  .detail .k{color:var(--purple);font-weight:800}
+  .meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .chip{font-weight:800;font-size:12px;border-radius:999px;padding:4px 11px;background:#f1ebff;color:#6a4d8a}
+  .chip.rng{background:#fff0f7;color:var(--pink)}
+  .ex{display:flex;align-items:center;gap:8px;margin-top:12px;background:#fff;border-radius:14px;
+    padding:8px 10px;box-shadow:0 3px 8px rgba(58,36,86,.1)}
+  .ex .lab{font-size:11px;font-weight:800;color:#b39ccf}
+  .ex code{font-family:"Baloo 2",monospace;font-weight:800;color:var(--ink);font-size:14px;flex:1}
+  .copy{border:none;cursor:pointer;border-radius:999px;padding:5px 12px;font-family:inherit;font-weight:800;
+    font-size:12px;color:#fff;background:linear-gradient(135deg,var(--pink),var(--purple));transition:transform .12s}
+  .copy:hover{transform:scale(1.08)}.copy:active{transform:scale(.92)}
+  .copy.done{background:linear-gradient(135deg,var(--mint),var(--blue))}
+  .tip{margin-top:10px;background:#fff7da;border:2px dashed var(--yellow);border-radius:12px;
+    padding:8px 12px;font-weight:700;font-size:12.5px;color:#8a6a00;line-height:1.6}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(40px);background:var(--ink);
+    color:#fff;padding:12px 22px;border-radius:999px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.3);
+    opacity:0;transition:.25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer{position:relative;z-index:1;text-align:center;margin-top:40px;color:#6a4d8a;font-weight:700;
+    font-size:13px;padding:0 16px;line-height:1.9}
+  footer a{color:var(--purple);font-weight:800}
+  code.inl{background:rgba(255,255,255,.7);padding:2px 7px;border-radius:8px;font-size:.92em}
+</style>
+</head>
+<body>
+  <div class="deco" style="left:4%;top:12%;--r:-12deg">🎀</div>
+  <div class="deco" style="right:6%;top:18%;--r:10deg;animation-delay:1.2s">⭐</div>
+  <div class="deco" style="left:8%;top:52%;--r:8deg;animation-delay:.6s">🎈</div>
+  <div class="deco" style="right:5%;top:60%;--r:-8deg;animation-delay:1.8s">💜</div>
+  <div class="deco" style="left:3%;top:82%;--r:14deg;animation-delay:.9s">✨</div>
+  <div class="deco" style="right:9%;top:88%;--r:-14deg;animation-delay:2.1s">🌈</div>
+
+  <header>
+    <h1 class="title"><span class="em">🎮</span> コマンドずかん <span class="em">🎀</span></h1>
+    <p class="sub">音声ルームBot「アイラ」をもっと楽しむ ✦ チャットに打つだけ！</p>
+    <p class="hello">使い方はかんたん♪ チャット欄に <b>/（スラッシュ）</b> から始まる呪文を打って送るだけ。
+    声を変えたり、効果音を鳴らしたり、話題をもらったり…いろいろできるよ！下のカードの <b>コピー</b> を押して、そのまま貼り付けてもOK ✨</p>
+  </header>
+
+  <nav>
+    <a href="#voice">🎙️ 声をかえる</a>
+    <a href="#fun">🎲 あそぶ</a>
+    <a href="#info">💬 話題・情報</a>
+    <a href="#help">❓ ヘルプ</a>
+  </nav>
+
+  <main>
+    <!-- ========== 声をかえる ========== -->
+    <section id="voice">
+      <div class="cat"><span class="ic">🎙️</span><h2>声をかえる</h2><span class="tag">あなた専用に保存されるよ</span></div>
+      <div class="cards">
+
+        <article class="cmd" style="--c1:#ff8fc7;--c2:#9b5cff">
+          <span class="name">/vc 声ID</span>
+          <p class="what">読み上げの声を、VOICEVOX の番号で変えるよ。</p>
+          <p class="detail">気に入った声の <span class="k">番号（ID）</span> を打つだけ。設定は<span class="k">あなたに紐づいて保存</span>され、次に入室しても続くよ。</p>
+          <div class="meta"><span class="chip rng">声ID = 0〜100 の整数</span></div>
+          <div class="ex"><span class="lab">れい</span><code>/vc 20</code><button class="copy" data-c="/vc 20">コピー</button></div>
+          <p class="tip">🔎 どの番号がどの声か分からない時は <a href="voicevox.html">声の一覧・試聴ページ</a> で ▶ を押して選んでね！</p>
+        </article>
+
+        <article class="cmd" style="--c1:#9b5cff;--c2:#36c5ff">
+          <span class="name">/vc 声ID 速度</span>
+          <p class="what">声と話す速さを、いっぺんに変えるよ。</p>
+          <p class="detail">スペースで区切って2つ書くだけ。<span class="k">速度</span>は数字が大きいほど早口になるよ。</p>
+          <div class="meta"><span class="chip rng">声ID = 0〜100</span><span class="chip rng">速度 = 0.5〜2.0</span></div>
+          <div class="ex"><span class="lab">れい</span><code>/vc 20 1.4</code><button class="copy" data-c="/vc 20 1.4">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#36c5ff;--c2:#3ff2c2">
+          <span class="name">/vs 速度</span>
+          <p class="what">話す速さだけを変えるよ（声はそのまま）。</p>
+          <p class="detail">いまの声を変えずに、テンポだけ調整したい時に。<span class="k">1.0 がふつう</span>、ゆっくりは 0.8、早口は 1.5 くらい。</p>
+          <div class="meta"><span class="chip rng">速度 = 0.5〜2.0</span></div>
+          <div class="ex"><span class="lab">れい</span><code>/vs 1.5</code><button class="copy" data-c="/vs 1.5">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#3ff2c2;--c2:#ffd23f">
+          <span class="name">/vr</span>
+          <p class="what">声と速度を、最初の「おまかせ」に戻すよ。</p>
+          <p class="detail">名前から自動で決まる声にリセット。<span class="k">訪問回数や名前の読みかたは消えない</span>から安心してね。</p>
+          <div class="ex"><span class="lab">れい</span><code>/vr</code><button class="copy" data-c="/vr">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ffd23f;--c2:#ff8a3d">
+          <span class="name">/vq</span>
+          <p class="what">自分の発言を「読み上げる / 読み上げない」を切りかえ。</p>
+          <p class="detail">押すたびに ON ⇄ OFF が切りかわる<span class="k">トグル式</span>。静かにしたい時は OFF、戻したい時はもう一度。設定は保存されるよ。</p>
+          <div class="ex"><span class="lab">れい</span><code>/vq</code><button class="copy" data-c="/vq">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ff8a3d;--c2:#ff5ea8">
+          <span class="name">/v &nbsp;/&nbsp; /vchelp</span>
+          <p class="what">声まわりのヘルプ＆声一覧ページを呼び出すよ。</p>
+          <p class="detail"><span class="k">/v</span> … 声チェンジの使い方をチャットに表示。<br><span class="k">/vchelp</span> … 声の一覧・試聴ページの URL を投稿。</p>
+          <div class="ex"><span class="lab">れい</span><code>/v</code><button class="copy" data-c="/v">コピー</button></div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ========== あそぶ ========== -->
+    <section id="fun">
+      <div class="cat"><span class="ic">🎲</span><h2>あそぶ</h2><span class="tag">ちょっと一息♪</span></div>
+      <div class="cards">
+
+        <article class="cmd" style="--c1:#36c5ff;--c2:#9b5cff">
+          <span class="name">/2ch</span>
+          <p class="what">2ちゃん風の小さなアスキーアート（顔文字）をランダムに1個投稿。</p>
+          <p class="detail">打つたびに<span class="k">前と違うネタ</span>が出るよ。読み上げや記録はされない、見て楽しむ用♪</p>
+          <div class="ex"><span class="lab">れい</span><code>/2ch</code><button class="copy" data-c="/2ch">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#3ff2c2;--c2:#36c5ff">
+          <span class="name">/zelda</span>
+          <p class="what">あの「謎解き正解！」の効果音を鳴らすよ 🔊</p>
+          <p class="detail">チャットには何も投稿せず、<span class="k">音だけ</span>鳴る。盛り上がった時のリアクションにどうぞ。読み上げの ON/OFF に関係なく鳴るよ。</p>
+          <div class="ex"><span class="lab">れい</span><code>/zelda</code><button class="copy" data-c="/zelda">コピー</button></div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ========== 話題・情報 ========== -->
+    <section id="info">
+      <div class="cat"><span class="ic">💬</span><h2>話題・情報</h2><span class="tag">会話のタネに</span></div>
+      <div class="cards">
+
+        <article class="cmd" style="--c1:#9b5cff;--c2:#ff5ea8">
+          <span class="name">/time</span>
+          <p class="what">今の日時＋あしたの天気をまとめて教えてくれるよ。</p>
+          <p class="detail">1行目に現在の日時、つづけて <span class="k">🌤️明日の天気</span> を約100文字で要約。対象は<span class="k">東京・関東・東北・関西・九州</span>の5エリア。</p>
+          <div class="ex"><span class="lab">れい</span><code>/time</code><button class="copy" data-c="/time">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ff5ea8;--c2:#ffd23f">
+          <span class="name">/log</span>
+          <p class="what">最近この部屋で出た話題を2つ紹介するよ。</p>
+          <p class="detail"><span class="k">【最近の話題】</span>として、最近のものほど当たりやすい抽選で2件を投稿。「さっき何の話してたっけ？」の時に。</p>
+          <div class="ex"><span class="lab">れい</span><code>/log</code><button class="copy" data-c="/log">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ffd23f;--c2:#3ff2c2">
+          <span class="name">/wadai</span>
+          <p class="what">話題に困ったら、おすすめのお題をくれるよ。</p>
+          <p class="detail"><span class="k">【話題提案】</span>として「直接・間接・雑談」を各1件ずつ提案。沈黙しちゃった時の救世主♪</p>
+          <div class="ex"><span class="lab">れい</span><code>/wadai</code><button class="copy" data-c="/wadai">コピー</button></div>
+          <p class="tip">💡 出てこない時は、管理者さんに <code class="inl">/admin:wadai</code> でお題ストックを作ってもらってね。</p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ========== ヘルプ ========== -->
+    <section id="help">
+      <div class="cat"><span class="ic">❓</span><h2>ヘルプ</h2><span class="tag">迷ったらコレ</span></div>
+      <div class="cards">
+
+        <article class="cmd" style="--c1:#9b5cff;--c2:#36c5ff">
+          <span class="name">/h &nbsp;(/help)</span>
+          <p class="what">使えるコマンドの一覧を、チャットに出すよ。</p>
+          <p class="detail">このページの内容をサッと確認したい時に。<br>※「help」は GRAVITY で使えない言葉なので、短い <span class="k">/h</span> が本命の呼び方だよ。</p>
+          <div class="ex"><span class="lab">れい</span><code>/h</code><button class="copy" data-c="/h">コピー</button></div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <footer>
+    打ちかたは <code class="inl">/コマンド</code> をチャットに送るだけ ✦ 大文字小文字・全角の <code class="inl">／</code> でもOK<br>
+    声の一覧・試聴は <a href="voicevox.html">🎙️ VOICEVOX 話者ID 図鑑</a> へ ✦ たのしんでね！ 💖
+  </footer>
+
+<script>
+  const toast=document.getElementById('toast');let tt;
+  function showToast(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),1100);}
+  document.querySelectorAll('.copy').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const c=b.dataset.c;
+      navigator.clipboard&&navigator.clipboard.writeText(c);
+      b.classList.add('done');const o=b.textContent;b.textContent='コピー済み！';
+      setTimeout(()=>{b.classList.remove('done');b.textContent=o;},900);
+      showToast('「'+c+'」をコピー！');
+    });
+  });
+  document.querySelectorAll('.cmd').forEach((c,i)=>{c.style.animationDelay=(i*40)+'ms';});
+</script>
+</body>
+</html>
