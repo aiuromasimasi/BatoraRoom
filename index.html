@@ -197,6 +197,19 @@
   .chip:nth-child(5n+4){ border-color: var(--purple); color: var(--purple); }
   .chip:nth-child(5n+5){ border-color: #1bbf9a; color: #1bbf9a; }
 
+  /* ランキングへの導線ボタン */
+  .rank-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 16px; padding: 12px 24px; border-radius: 999px;
+    font-weight: 800; font-size: 1rem; color: #fff; text-decoration: none;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    box-shadow: 0 10px 22px rgba(155,92,255,.32);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .rank-link:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 16px 30px rgba(155,92,255,.42); }
+  .rank-link.is-manga { background: linear-gradient(135deg, var(--orange), var(--pink)); box-shadow: 0 10px 22px rgba(255,138,61,.32); }
+  .rank-link .arrow { font-size: 1.1em; }
+
   /* fav cards */
   .fav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; }
   .fav {
@@ -458,6 +471,7 @@
         <span class="chip">テトリス</span>
         <span class="chip">ミステリーゲーム</span>
       </div>
+      <div style="text-align:center"><a class="rank-link" href="game.html">🎮 思い入れのあるゲーム TOP100 を見る <span class="arrow">→</span></a></div>
     </div>
   </section>
 
@@ -478,6 +492,7 @@
         <span class="chip">めだかボックス</span>
         <span class="chip">エリア88</span>
       </div>
+      <div style="text-align:center"><a class="rank-link is-manga" href="manga.html">📚 好きなマンガ ランキング100 を見る <span class="arrow">→</span></a></div>
     </div>
   </section>
 
