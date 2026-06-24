@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>バトラ ✦ Profile</title>
+<title>戦人（バトラ） ✦ Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet" />
@@ -252,6 +252,56 @@
   }
   .game-card:hover .game-arrow { transform: translateX(5px); }
 
+  /* ===== WHAT'S NEW / アイラのあゆみ（タイムライン）===== */
+  .tl-lead {
+    text-align: center; font-weight: 700; font-size: .98rem;
+    color: var(--purple); margin: -6px auto 22px; line-height: 1.7;
+  }
+  .tl { position: relative; max-width: 660px; margin: 0 auto; padding-left: 46px; }
+  .tl::before {
+    content: ""; position: absolute; left: 17px; top: 8px; bottom: 8px; width: 4px;
+    border-radius: 999px;
+    background: linear-gradient(var(--pink), var(--purple), var(--blue), var(--mint));
+  }
+  .ti { position: relative; margin-bottom: 18px; }
+  .ti:last-child { margin-bottom: 0; }
+  .node {
+    position: absolute; left: -46px; top: 0;
+    width: 40px; height: 40px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 1.25rem;
+    background: var(--card); backdrop-filter: blur(6px);
+    border: 3px solid #fff;
+    box-shadow: 0 6px 14px rgba(155, 92, 255, .3);
+  }
+  .bubble {
+    background: var(--card); backdrop-filter: blur(6px);
+    border: 3px solid #fff; border-radius: 10px 24px 24px 24px;
+    padding: 16px 20px;
+    box-shadow: 0 12px 28px rgba(155, 92, 255, .22);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .bubble:hover { transform: translateY(-4px); box-shadow: 0 18px 34px rgba(155, 92, 255, .34); }
+  .tl-date {
+    display: block; margin-bottom: 4px;
+    font-family: "Baloo 2", monospace; font-weight: 800; font-size: .8rem; color: var(--pink);
+  }
+  .bubble h3 { font-size: 1.12rem; font-weight: 800; margin-bottom: 6px; color: var(--ink); }
+  .bubble p { font-weight: 600; font-size: .94rem; line-height: 1.7; color: #5b4778; }
+  .bubble b, .bubble strong { color: var(--purple); }
+  .tl-btn {
+    display: inline-block; margin-top: 12px;
+    text-decoration: none; font-weight: 800; font-size: .85rem; color: #fff;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    padding: 7px 16px; border-radius: 999px;
+    box-shadow: 0 5px 14px rgba(155, 92, 255, .35);
+    transition: transform .15s ease;
+  }
+  .tl-btn:hover { transform: translateY(-2px) scale(1.04); }
+  .tl-foot {
+    text-align: center; margin-top: 20px;
+    font-weight: 700; font-size: .9rem; color: var(--purple); line-height: 1.8;
+  }
+
   /* video / stream */
   .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
   .video { margin: 0; }
@@ -368,7 +418,7 @@
   <!-- HERO -->
   <header class="hero reveal show">
     <div class="avatar"><span>🎮</span></div>
-    <h1 class="name">バトラ</h1>
+    <h1 class="name">戦人（バトラ）</h1>
     <p class="tagline"><span class="nb">🍶 ゲーマー</span> × <span class="nb">シンパパ</span> × <span class="nb">エンジニア 🛠️</span></p>
     <div class="badges">
       <span class="badge b1">44歳</span>
@@ -379,9 +429,69 @@
     </div>
   </header>
 
-  <!-- GAMES MADE -->
+  <!-- WHAT'S NEW / アイラのあゆみ -->
   <section class="reveal">
-    <div class="sec-title"><em>🕹️ バトラが作ったゲーム in Gravity</em></div>
+    <div class="sec-title"><em>🌈 戦人（バトラ）・アイラのあゆみ</em></div>
+    <p class="tl-lead">音声ルームBot「アイラ」と この部屋の、最近2週間のおしらせ ♪</p>
+    <div class="tl">
+
+      <div class="ti">
+        <span class="node">🎮</span>
+        <div class="bubble">
+          <span class="tl-date">2026.06.23</span>
+          <h3>遊び・進行コマンドを大幅追加！</h3>
+          <p>おみくじ・ガチャ・ランク・多数決など<b>一般ユーザー向け9種</b>と、大喜利・クイズ・レイドなど<b>上級者向け16種</b>が使えるようになったよ。コマンドずかんでチェックしてみてね ✨</p>
+          <a class="tl-btn" href="command.htm">ずかんを見る →</a>
+        </div>
+      </div>
+
+      <div class="ti">
+        <span class="node">📋</span>
+        <div class="bubble">
+          <span class="tl-date">2026.06.21</span>
+          <h3>コマンドずかん、オープン！</h3>
+          <p>アイラのコマンドをカテゴリ別にまとめた早見表ページができたよ。コピーボタンでそのまま使える ✨</p>
+          <a class="tl-btn" href="command.htm">ずかんを見る →</a>
+        </div>
+      </div>
+
+      <div class="ti">
+        <span class="node">📚</span>
+        <div class="bubble">
+          <span class="tl-date">2026.06.21</span>
+          <h3>マンガランキング100、登場！</h3>
+          <p>おすすめマンガ100選ページが新登場。表紙画像もぜんぶ高画質にパワーアップしました 💪</p>
+          <a class="tl-btn" href="manga.html">ランキングを見る →</a>
+        </div>
+      </div>
+
+      <div class="ti">
+        <span class="node">🎙️</span>
+        <div class="bubble">
+          <span class="tl-date">2026.06.20</span>
+          <h3>VOICEVOX 声図鑑＆声チェンジ</h3>
+          <p>127種類の声を試聴できる図鑑が登場。気に入った番号を <b>/vc</b> で打てば、自分だけの読み上げ声に変えられるよ。</p>
+          <a class="tl-btn" href="voicevox.html">声図鑑を見る →</a>
+        </div>
+      </div>
+
+      <div class="ti">
+        <span class="node">🎮</span>
+        <div class="bubble">
+          <span class="tl-date">2026.06.17</span>
+          <h3>戦人（バトラ）のゲーム in Gravity</h3>
+          <p>トップに戦人（バトラ）お手製ゲームのコーナーを新設。新作もいろいろ追加したよ、あそびにきてね！</p>
+          <a class="tl-btn" href="#games">ゲームを見る →</a>
+        </div>
+      </div>
+
+    </div>
+    <p class="tl-foot">ほかにも、サンプル音声の試聴 ▶ を追加したり、声IDを 0〜126 に整理したり…<br>こまかいところもちょこちょこ良くしてるよ 💖</p>
+  </section>
+
+  <!-- GAMES MADE -->
+  <section class="reveal" id="games">
+    <div class="sec-title"><em>🕹️ 戦人（バトラ）が作ったゲーム in Gravity</em></div>
     <div class="game-grid">
       <a class="game-card" href="https://www.gravity.place/share/ugcGame?id=41899">
         <span class="game-ico"><img src="https://cdn.gravity.place/aiugc/game/publish/thumbnail/2026-06-07/8316c345-a078-49ca-bb92-c9076dda6092.jpeg" alt="素因数分解だよ" loading="lazy" /></span>
@@ -524,7 +634,7 @@
   </section>
 
   <footer>
-    Made with <span class="heart">💜</span> by バトラ ・ Thanks for visiting!
+    Made with <span class="heart">💜</span> by 戦人（バトラ） ・ Thanks for visiting!
   </footer>
 
 </div>
