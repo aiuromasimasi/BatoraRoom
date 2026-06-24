@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GIF変換 | バトラルーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pink: #ff5ea8;
+    --purple: #9b5cff;
+    --blue: #36c5ff;
+    --yellow: #ffd23f;
+    --mint: #3ff2c2;
+    --orange: #ff8a3d;
+    --ink: #2a1a4a;
+    --card: rgba(255, 255, 255, 0.88);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Baloo 2", sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, #ffd6ec 0%, #d6e4ff 25%, #d9fff4 50%, #fff3c4 75%, #ffd6ec 100%);
+    background-size: 400% 400%;
+    animation: bgshift 18s ease infinite;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  @keyframes bgshift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .floaties { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .floaties span {
+    position: absolute; font-size: 2rem; opacity: 0.4;
+    animation: float-up linear infinite; bottom: -60px;
+  }
+  @keyframes float-up { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+
+  .wrap { position: relative; z-index: 1; max-width: 740px; margin: 0 auto; padding: 24px 18px 80px; }
+
+  /* back link */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 700; font-size: .92rem; color: var(--purple);
+    text-decoration: none; margin-bottom: 20px;
+    background: var(--card); border-radius: 999px;
+    padding: 7px 18px; border: 2px solid rgba(155,92,255,.3);
+    box-shadow: 0 4px 12px rgba(155,92,255,.15);
+    transition: transform .15s ease;
+  }
+  .back-link:hover { transform: translateX(-4px); }
+
+  /* hero */
+  .hero {
+    text-align: center; padding: 36px 24px 28px;
+    background: var(--card); backdrop-filter: blur(8px);
+    border-radius: 32px; border: 4px solid #fff;
+    box-shadow: 0 18px 48px rgba(155,92,255,.22);
+    margin-bottom: 24px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% 10%, rgba(255,94,168,.2), transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(54,197,255,.2), transparent 45%);
+    z-index: -1;
+  }
+  .hero-icon { font-size: 3.2rem; margin-bottom: 10px; display: block; }
+  .hero h1 {
+    font-family: "Mochiy Pop One", sans-serif;
+    font-size: clamp(1.8rem, 7vw, 2.8rem); line-height: 1.1;
+    background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+    background-size: 300% auto;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s linear infinite; margin-bottom: 8px;
+  }
+  @keyframes shimmer { to { background-position: 300% center; } }
+  .hero p { font-size: .98rem; color: #666; font-weight: 500; }
+
+  /* card */
+  .card {
+    background: var(--card); backdrop-filter: blur(6px);
+    border: 3px solid #fff; border-radius: 28px;
+    padding: 24px 22px;
+    box-shadow: 0 12px 32px rgba(54,197,255,.15);
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: "Mochiy Pop One", sans-serif;
+    font-size: 1.1rem; color: var(--purple); margin-bottom: 16px;
+  }
+
+  /* settings grid */
+  .settings-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 480px) { .settings-grid { grid-template-columns: 1fr; } }
+
+  .setting-item { display: flex; flex-direction: column; gap: 5px; }
+  .setting-item label { font-weight: 700; font-size: .88rem; color: var(--ink); }
+  .setting-item input[type="number"], .setting-item select {
+    padding: 8px 12px; border-radius: 12px;
+    border: 2px solid #e0d0ff; font-size: .95rem;
+    font-family: inherit; font-weight: 700;
+    background: #faf8ff; color: var(--ink);
+    transition: border-color .15s;
+    width: 100%;
+  }
+  .setting-item input[type="number"]:focus,
+  .setting-item select:focus { outline: none; border-color: var(--purple); }
+
+  .setting-item input[type="range"] {
+    -webkit-appearance: none; height: 6px;
+    border-radius: 999px; background: #e0d0ff;
+    margin-top: 8px;
+  }
+  .setting-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--purple);
+    cursor: pointer; box-shadow: 0 2px 8px rgba(155,92,255,.4);
+  }
+  .quality-label { font-size: .82rem; color: #888; margin-top: 2px; }
+
+  /* drop zone */
+  .dropzone {
+    border: 3px dashed rgba(155,92,255,.45);
+    border-radius: 22px; padding: 48px 24px;
+    text-align: center; cursor: pointer;
+    transition: all .2s ease;
+    background: rgba(155,92,255,.04);
+    position: relative;
+  }
+  .dropzone.drag-over {
+    border-color: var(--purple); border-style: solid;
+    background: rgba(155,92,255,.1);
+    transform: scale(1.02);
+  }
+  .dropzone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .drop-icon { font-size: 3.2rem; margin-bottom: 12px; display: block; }
+  .drop-text { font-weight: 800; font-size: 1.1rem; color: var(--purple); margin-bottom: 6px; }
+  .drop-sub { font-size: .87rem; color: #888; }
+
+  /* progress */
+  .progress-wrap { margin-top: 4px; }
+  .progress-bar {
+    height: 18px; border-radius: 999px;
+    background: #eee5ff; overflow: hidden; margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%; width: 0%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+    background-size: 300% auto;
+    animation: shimmer 2s linear infinite;
+    transition: width .3s ease;
+  }
+  .progress-text { font-weight: 700; font-size: .92rem; color: var(--purple); text-align: center; }
+  .progress-stage { font-size: .82rem; color: #999; text-align: center; margin-top: 4px; }
+
+  /* preview */
+  .preview-img {
+    display: block; max-width: 100%; border-radius: 16px;
+    border: 3px solid #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    margin: 0 auto 20px;
+  }
+  .preview-meta {
+    text-align: center; font-size: .88rem;
+    color: #888; margin-bottom: 20px; font-weight: 600;
+  }
+
+  /* buttons */
+  .btn-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: inherit; font-weight: 800; font-size: .98rem;
+    padding: 12px 24px; border-radius: 999px; border: 3px solid transparent;
+    cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
+    text-decoration: none;
+  }
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.18); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-primary { background: linear-gradient(90deg, var(--pink), var(--purple)); color: #fff; }
+  .btn-share   { background: linear-gradient(90deg, var(--blue), var(--mint)); color: var(--ink); }
+  .btn-reset   { background: #fff; color: var(--purple); border-color: rgba(155,92,255,.3); }
+
+  /* hidden util */
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center; font-weight: 700;
+    font-size: .88rem; color: rgba(42,26,74,.5);
+    margin-top: 32px;
+  }
+  .heart { color: var(--purple); }
+</style>
+</head>
+<body>
+
+<div class="floaties" id="floaties"></div>
+
+<div class="wrap">
+  <a href="index.html" class="back-link">← 戦人のプロフィールに戻る</a>
+
+  <div class="hero">
+    <span class="hero-icon">🎞️</span>
+    <h1>MP4 / MOV → GIF 変換</h1>
+    <p>動画をドロップするだけ！ブラウザ完結で変換できるよ ✨</p>
+  </div>
+
+  <!-- Settings -->
+  <div class="card" id="settings-card">
+    <div class="card-title">⚙️ 変換設定</div>
+    <div class="settings-grid">
+      <div class="setting-item">
+        <label for="set-width">横幅 (px)</label>
+        <input type="number" id="set-width" value="480" min="64" max="1280" step="16" />
+      </div>
+      <div class="setting-item">
+        <label for="set-fps">フレームレート (fps)</label>
+        <input type="number" id="set-fps" value="10" min="1" max="30" />
+      </div>
+      <div class="setting-item">
+        <label for="set-maxsec">最大秒数 (sec)</label>
+        <input type="number" id="set-maxsec" value="15" min="1" max="60" />
+      </div>
+      <div class="setting-item">
+        <label for="set-quality">品質 (低い数字 = 高画質・重い)</label>
+        <input type="range" id="set-quality" value="8" min="1" max="20" />
+        <span class="quality-label" id="quality-display">品質: 8（バランス）</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drop Zone -->
+  <div class="card" id="drop-card">
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="file-input" accept=".mp4,.mov,video/mp4,video/quicktime" />
+      <span class="drop-icon">🎬</span>
+      <div class="drop-text">MP4 / MOV をここにドロップ</div>
+      <div class="drop-sub">またはクリックしてファイルを選択</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="card hidden" id="progress-card">
+    <div class="card-title">⏳ 変換中...</div>
+    <div class="progress-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0%</div>
+      <div class="progress-stage" id="progress-stage">フレームを抽出しています</div>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="card hidden" id="preview-card">
+    <div class="card-title">✅ 変換完了！</div>
+    <img class="preview-img" id="preview-img" src="" alt="変換されたGIF" />
+    <div class="preview-meta" id="preview-meta"></div>
+    <div class="btn-row">
+      <a class="btn btn-primary" id="download-btn" href="#" download="batora.gif">⬇️ ダウンロード</a>
+      <button class="btn btn-share" id="share-btn">📤 シェアする</button>
+      <button class="btn btn-reset" id="reset-btn">🔄 別の動画を変換</button>
+    </div>
+  </div>
+
+  <footer>Made with <span class="heart">💜</span> by 戦人（バトラ）</footer>
+</div>
+
+<script>
+(function () {
+  // ── floaties ──────────────────────────────────────────────
+  const emojis = ["🎮","📚","🍶","🎀","🍳","💪","✨","🔍","🕹️","🍻","⭐","🎲","📺","💜","🩵","🎞️","🎬"];
+  const box = document.getElementById("floaties");
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement("span");
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.fontSize = (1.0 + Math.random() * 2.0) + "rem";
+    s.style.animationDuration = (12 + Math.random() * 16) + "s";
+    s.style.animationDelay = (-Math.random() * 22) + "s";
+    box.appendChild(s);
+  }
+
+  // ── quality label ─────────────────────────────────────────
+  const qualityInput = document.getElementById("set-quality");
+  const qualityDisplay = document.getElementById("quality-display");
+  function updateQualityLabel() {
+    const v = parseInt(qualityInput.value);
+    const label = v <= 3 ? "最高画質（重い）" : v <= 7 ? "高画質" : v <= 12 ? "バランス" : "軽量優先";
+    qualityDisplay.textContent = "品質: " + v + "（" + label + "）";
+  }
+  qualityInput.addEventListener("input", updateQualityLabel);
+
+  // ── drag & drop ───────────────────────────────────────────
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById("file-input");
+
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.classList.add("drag-over");
+  });
+  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("drag-over"));
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("drag-over");
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+  });
+
+  // ── UI helpers ────────────────────────────────────────────
+  const progressCard  = document.getElementById("progress-card");
+  const progressFill  = document.getElementById("progress-fill");
+  const progressText  = document.getElementById("progress-text");
+  const progressStage = document.getElementById("progress-stage");
+  const previewCard   = document.getElementById("preview-card");
+  const previewImg    = document.getElementById("preview-img");
+  const previewMeta   = document.getElementById("preview-meta");
+  const downloadBtn   = document.getElementById("download-btn");
+  const shareBtn      = document.getElementById("share-btn");
+  const resetBtn      = document.getElementById("reset-btn");
+  const dropCard      = document.getElementById("drop-card");
+  const settingsCard  = document.getElementById("settings-card");
+
+  function setProgress(pct, stage) {
+    progressFill.style.width = pct + "%";
+    progressText.textContent = Math.round(pct) + "%";
+    if (stage) progressStage.textContent = stage;
+  }
+
+  function showProgress() {
+    dropCard.classList.add("hidden");
+    settingsCard.classList.add("hidden");
+    previewCard.classList.add("hidden");
+    progressCard.classList.remove("hidden");
+    setProgress(0, "準備中...");
+  }
+
+  function showPreview(url, meta) {
+    progressCard.classList.add("hidden");
+    previewImg.src = url;
+    previewMeta.textContent = meta;
+    downloadBtn.href = url;
+    previewCard.classList.remove("hidden");
+  }
+
+  resetBtn.addEventListener("click", () => {
+    previewCard.classList.add("hidden");
+    progressCard.classList.add("hidden");
+    dropCard.classList.remove("hidden");
+    settingsCard.classList.remove("hidden");
+    fileInput.value = "";
+    if (previewImg.src) {
+      URL.revokeObjectURL(previewImg.src);
+      previewImg.src = "";
+    }
+  });
+
+  // ── share ─────────────────────────────────────────────────
+  shareBtn.addEventListener("click", async () => {
+    if (navigator.share) {
+      try {
+        const resp = await fetch(downloadBtn.href);
+        const blob = await resp.blob();
+        const file = new File([blob], "batora.gif", { type: "image/gif" });
+        await navigator.share({ files: [file], title: "バトラのGIF", text: "変換したGIFだよ！" });
+      } catch (e) {
+        if (e.name !== "AbortError") alert("シェアに失敗しました。ダウンロードしてから投稿してね！");
+      }
+    } else {
+      alert("このブラウザはWeb Shareに非対応です。\nダウンロードしてからSNSに投稿してね！");
+    }
+  });
+
+  // ── main conversion ───────────────────────────────────────
+  async function handleFile(file) {
+    const accepted = ["video/mp4", "video/quicktime", "video/mov"];
+    const extOk = /\.(mp4|mov)$/i.test(file.name);
+    if (!accepted.includes(file.type) && !extOk) {
+      alert("MP4 または MOV ファイルを選択してください。");
+      return;
+    }
+
+    const width   = Math.max(64, Math.min(1280, parseInt(document.getElementById("set-width").value) || 480));
+    const fps     = Math.max(1,  Math.min(30,   parseInt(document.getElementById("set-fps").value)    || 10));
+    const maxSec  = Math.max(1,  Math.min(60,   parseInt(document.getElementById("set-maxsec").value) || 15));
+    const quality = Math.max(1,  Math.min(20,   parseInt(qualityInput.value)                          || 8));
+
+    showProgress();
+
+    try {
+      const gifBlob = await convertToGif(file, { width, fps, maxSec, quality });
+      const url = URL.createObjectURL(gifBlob);
+
+      // measure dimensions from an image element
+      const tmpImg = new Image();
+      tmpImg.src = url;
+      await new Promise(r => { tmpImg.onload = r; tmpImg.onerror = r; });
+
+      const kb = (gifBlob.size / 1024).toFixed(0);
+      const mb = (gifBlob.size / 1024 / 1024).toFixed(2);
+      const sizeStr = gifBlob.size > 1024 * 1024 ? mb + " MB" : kb + " KB";
+      const meta = `${tmpImg.naturalWidth}×${tmpImg.naturalHeight}px ・ ${sizeStr}`;
+
+      showPreview(url, meta);
+    } catch (err) {
+      console.error(err);
+      progressCard.classList.add("hidden");
+      dropCard.classList.remove("hidden");
+      settingsCard.classList.remove("hidden");
+      alert("変換中にエラーが発生しました。\n" + (err.message || err));
+    }
+  }
+
+  async function convertToGif(file, { width, fps, maxSec, quality }) {
+    // 1. Load video metadata
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    video.src = URL.createObjectURL(file);
+
+    await new Promise((resolve, reject) => {
+      video.addEventListener("loadedmetadata", resolve, { once: true });
+      video.addEventListener("error", () => reject(new Error("動画の読み込みに失敗しました")), { once: true });
+    });
+
+    const duration   = Math.min(video.duration, maxSec);
+    const frameCount = Math.max(1, Math.floor(duration * fps));
+    const scale      = width / video.videoWidth;
+    const height     = Math.floor(video.videoHeight * scale);
+    const delay      = Math.round(1000 / fps);
+
+    // 2. Load gif.js worker from CDN via blob (avoids cross-origin worker restriction)
+    setProgress(2, "gif.js を読み込み中...");
+    const [gifJsText, workerText] = await Promise.all([
+      fetch("https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js").then(r => {
+        if (!r.ok) throw new Error("gif.js の取得に失敗しました");
+        return r.text();
+      }),
+      fetch("https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js").then(r => {
+        if (!r.ok) throw new Error("gif.worker.js の取得に失敗しました");
+        return r.text();
+      }),
+    ]);
+
+    // Inject gif.js into page scope
+    const scriptEl = document.createElement("script");
+    scriptEl.textContent = gifJsText;
+    document.head.appendChild(scriptEl);
+
+    const workerBlob = new Blob([workerText], { type: "text/javascript" });
+    const workerUrl  = URL.createObjectURL(workerBlob);
+
+    // 3. Set up GIF encoder
+    const gif = new GIF({ // eslint-disable-line no-undef
+      workers: 2,
+      quality,
+      width,
+      height,
+      workerScript: workerUrl,
+    });
+
+    // 4. Extract frames
+    const canvas = document.createElement("canvas");
+    canvas.width  = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+
+    for (let i = 0; i < frameCount; i++) {
+      const t = (i / Math.max(frameCount - 1, 1)) * duration;
+      video.currentTime = t;
+      await new Promise((resolve) => {
+        video.addEventListener("seeked", resolve, { once: true });
+      });
+      ctx.drawImage(video, 0, 0, width, height);
+      gif.addFrame(ctx, { delay, copy: true });
+      setProgress(5 + (i / frameCount) * 55, `フレームを抽出中... (${i + 1}/${frameCount})`);
+    }
+
+    URL.revokeObjectURL(video.src);
+
+    // 5. Encode
+    setProgress(60, "GIFにエンコード中...");
+    return new Promise((resolve, reject) => {
+      gif.on("progress", (p) => {
+        setProgress(60 + p * 38, `エンコード中... ${Math.round(p * 100)}%`);
+      });
+      gif.on("finished", (blob) => {
+        setProgress(100, "完成！");
+        URL.revokeObjectURL(workerUrl);
+        resolve(blob);
+      });
+      gif.on("error", (e) => {
+        URL.revokeObjectURL(workerUrl);
+        reject(e);
+      });
+      gif.render();
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
