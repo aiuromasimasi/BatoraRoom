@@ -5,7 +5,7 @@
 - 画像はカラータイル上に contain 表示（横長ロゴでも綺麗）。読み込めたらプレースホルダーを隠す
 使い方: python3 build_game_html.py
 """
-import re, html
+import re, html, csv, json, os
 
 src = open("game_ranking_draft.md", encoding="utf-8").read()
 lines = src.split("\n")
@@ -42,12 +42,34 @@ for l in lines:
         rank[int(m.group(1))] = m.group(2).strip()
 assert len(rank) == 100 and set(rank) == set(range(1, 101)), "ranking not 1..100"
 
+# games_data.csv から各ゲームの紹介・評価値を読み込む（cidをキーに。順位が変わっても不変）
+gdata = {}
+if os.path.exists("games_data.csv"):
+    with open("games_data.csv", encoding="utf-8-sig") as _f:
+        for row in csv.DictReader(_f):
+            mm = re.search(r'c(\d+)\.jpg', row.get("画像", ""))
+            if not mm:
+                continue
+            def _n(x):
+                x = (x or "").strip()
+                return int(x) if x.isdigit() else None
+            gdata[int(mm.group(1))] = {
+                "t": row.get("タイトル", "").strip(),
+                "intro": row.get("ゲーム紹介", "").strip(),
+                "genre": row.get("ジャンル", "").strip(),
+                "year": row.get("発売年", "").strip(),
+                "played": row.get("主に遊んだ年", "").strip(),
+                "m": _n(row.get("思い入れ度")), "i": _n(row.get("衝撃度")), "f": _n(row.get("面白さ")),
+                "r": _n(row.get("ストーリー")), "mu": _n(row.get("音楽・サウンド")),
+            }
+GD_JSON = json.dumps(gdata, ensure_ascii=False)
+
 def hue(r):
     return (r * 37) % 360
 
 def fig(r, tier):
     t = rank[r]; e = genre.get(t, "🎮"); th = html.escape(t); c = title2cid[t]
-    return (f'<figure class="m {tier}" style="--i:{r};--h:{hue(r)}">'
+    return (f'<figure class="m {tier}" data-cid="{c}" style="--i:{r};--h:{hue(r)}">'
             f'<span class="rk">{r}</span>'
             f'<span class="cv"><span class="ph"><span class="pe">{e}</span><span class="pt">{th}</span></span>'
             f'<img loading="lazy" alt="{th}" src="game_covers/c{c}.jpg" onerror="this.remove()"></span>'
@@ -72,7 +94,7 @@ spark = ''.join(f'<span style="--n:{n}">✨</span>' for n in range(14))
 hero = f'''<section class="tier t1" id="no1">
   <div class="spark">{spark}</div>
   <div class="crownwrap"><div class="crown">👑</div><div class="no1label">第 1 位</div></div>
-  <figure class="herocard">
+  <figure class="herocard" data-cid="{title2cid[t1]}">
     <div class="heroglow"></div>
     <span class="cv" style="--h:{hue(1)}"><span class="ph"><span class="pe">{e1}</span><span class="pt">{t1h}</span></span><img alt="{t1h}" src="game_covers/c{title2cid[t1]}.jpg" onerror="this.remove()"></span>
     <figcaption>
@@ -193,7 +215,45 @@ CSS = '''  :root{--pink:#ff5ea8;--purple:#9b5cff;--blue:#36c5ff;--yellow:#ffd23f
     left:calc((var(--n)*67%)%100%);top:calc((var(--n)*43%)%96%);animation-delay:calc(var(--n)*.16s)}
 
   footer{text-align:center;margin-top:30px;color:#6a4d8a;font-weight:700;font-size:13px;padding:0 16px;line-height:1.9}
-  footer a{color:var(--purple);font-weight:800}'''
+  footer a{color:var(--purple);font-weight:800}
+
+  /* ===== 詳細モーダル（画像タップで表示） ===== */
+  .m .cv,.herocard .cv{cursor:pointer}
+  .ov{position:fixed;inset:0;z-index:200;background:rgba(42,26,74,.72);display:none;align-items:center;justify-content:center;
+    padding:18px;opacity:0;transition:opacity .25s}
+  .ov.show{display:flex;opacity:1}
+  .mod{position:relative;width:100%;max-width:720px;max-height:92vh;overflow:auto;border-radius:28px;border:4px solid #fff;
+    background:linear-gradient(160deg,#ffffff,#fff5fb);box-shadow:0 30px 80px rgba(58,36,86,.55);padding:22px 18px 26px;
+    animation:mpop .45s cubic-bezier(.2,1.25,.3,1)}
+  @keyframes mpop{from{transform:scale(.82) translateY(18px);opacity:0}to{transform:none;opacity:1}}
+  .mx{position:absolute;top:10px;right:12px;width:34px;height:34px;border:0;border-radius:50%;cursor:pointer;font-weight:800;
+    font-size:16px;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));box-shadow:0 4px 10px rgba(155,92,255,.5);z-index:3}
+  .mhead{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+  .mcv{width:130px;flex:none;aspect-ratio:3/4;border-radius:14px;overflow:hidden;
+    background:linear-gradient(150deg,#c9d6ff,#a18bbf);box-shadow:0 10px 24px rgba(58,36,86,.3)}
+  .mcv img{width:100%;height:100%;object-fit:cover}
+  .mhd{flex:1;min-width:190px}
+  .mrk{display:inline-block;font-family:"Baloo 2","Mochiy Pop One";font-weight:800;color:#fff;font-size:13px;padding:3px 12px;
+    border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--purple))}
+  .mti{font-family:"Mochiy Pop One";font-size:clamp(18px,4.6vw,24px);margin:8px 0;line-height:1.3;color:var(--ink)}
+  .mmeta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+  .mmeta b{font-weight:800;font-size:11px;padding:3px 10px;border-radius:999px;background:#f0e8ff;color:#6a4d8a}
+  .mintro{font-weight:700;color:var(--ink);font-size:13.5px;line-height:1.75}
+  .vrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:18px}
+  .vbox{background:rgba(255,255,255,.78);border:2px solid #fff;border-radius:20px;padding:10px 8px 8px;text-align:center;
+    box-shadow:0 8px 18px rgba(58,36,86,.12);overflow:hidden}
+  .vbox h4{font-family:"Mochiy Pop One";font-size:12px;color:var(--purple);margin-bottom:6px}
+  .leg2{margin-top:12px;font-weight:800;color:var(--ink);font-size:12.5px;text-align:center;
+    background:rgba(255,255,255,.7);border-radius:14px;padding:8px}
+  .nodata{margin-top:16px;text-align:center;font-weight:800;color:#a18bbf;background:rgba(255,255,255,.7);border-radius:16px;padding:16px}
+  @keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+  @keyframes popin{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes trace{to{stroke-dashoffset:0}}
+  @keyframes grow{from{transform:scale(0)}to{transform:scale(1)}}
+  .sweep{transform-origin:0 0;animation:spin 3.2s linear infinite}
+  .confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6;border-radius:28px}
+  .confetti span{position:absolute;top:-16px;width:8px;height:13px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(560px) rotate(600deg);opacity:.15}}'''
 
 JS = '''  // reveal stagger within each grid row
   document.querySelectorAll('.grid').forEach(g=>{
@@ -207,7 +267,77 @@ JS = '''  // reveal stagger within each grid row
       if(card && img.naturalWidth && img.naturalHeight && img.naturalWidth/img.naturalHeight <= 1.1) card.classList.add('has-cover');};
     if(img.complete && img.naturalWidth>0) reveal();
     else img.addEventListener('load',reveal);
-  });'''
+  });
+
+  // ===== 詳細モーダル（画像タップ／クリックで表示） =====
+  const ov=document.getElementById('ov'), mb=document.getElementById('mbody');
+  const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const AX=[{k:'m',a:-90,c:'#ff5ea8',l:'思い入れ'},{k:'i',a:-18,c:'#ff8a3d',l:'衝撃'},{k:'f',a:54,c:'#36c5ff',l:'面白さ'},{k:'r',a:126,c:'#1bbf9a',l:'物語'},{k:'mu',a:198,c:'#9b5cff',l:'音楽'}];
+  function radar(d){
+    const R=70, rad=a=>a*Math.PI/180, P=(v,a)=>[((v||0)/10*R*Math.cos(rad(a))).toFixed(1),((v||0)/10*R*Math.sin(rad(a))).toFixed(1)];
+    const ringPts=s=>AX.map(x=>[(R*s*Math.cos(rad(x.a))).toFixed(1),(R*s*Math.sin(rad(x.a))).toFixed(1)].join(',')).join(' ');
+    const grid=[1,.66,.33].map(s=>`<polygon points="${ringPts(s)}" fill="none" stroke="#e6dbf8" stroke-width="1"/>`).join('');
+    const axes=AX.map(x=>`<line x1="0" y1="0" x2="${(R*Math.cos(rad(x.a))).toFixed(1)}" y2="${(R*Math.sin(rad(x.a))).toFixed(1)}" stroke="#ece3fb" stroke-width="1"/>`).join('');
+    const V=AX.map(x=>P(d[x.k],x.a));
+    const poly=V.map(p=>p.join(',')).join(' ');
+    const dots=V.map((p,k)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${AX[k].c}"/>`).join('');
+    const labels=AX.map(x=>{const lr=R+16,X=(lr*Math.cos(rad(x.a))).toFixed(1),Y=(lr*Math.sin(rad(x.a))+4).toFixed(1),val=(d[x.k]==null?'－':d[x.k]);
+      return `<text x="${X}" y="${Y}" text-anchor="middle" font-size="13" font-weight="800" fill="${x.c}">${x.l[0]}${val}</text>`;}).join('');
+    return `<svg viewBox="-108 -100 216 210" width="100%" style="max-width:212px"><defs><radialGradient id="sw"><stop offset="0" stop-color="#9b5cff" stop-opacity=".5"/><stop offset="1" stop-color="#9b5cff" stop-opacity="0"/></radialGradient></defs>
+      ${grid}${axes}
+      <g class="sweep"><path d="M0,0 L0,-${R} A${R},${R} 0 0 1 ${(R*Math.sin(rad(44))).toFixed(1)},-${(R*Math.cos(rad(44))).toFixed(1)} Z" fill="url(#sw)"/></g>
+      <g style="transform-origin:0px 0px;animation:grow .9s cubic-bezier(.2,1,.3,1) backwards">
+        <polygon points="${poly}" fill="rgba(155,92,255,.30)" stroke="#9b5cff" stroke-width="2.5" style="filter:drop-shadow(0 0 7px rgba(155,92,255,.8))"/>
+        ${dots}</g>${labels}</svg>`;
+  }
+  function aura(m,i,f,rk){
+    const ring=(rad,col,v,dir,dur)=>{const w=(3+v/10*8).toFixed(1);return `<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:${rad*2}px;height:${rad*2}px;border-radius:50%;border:${w}px solid ${col};box-shadow:0 0 ${(6+v).toFixed(0)}px ${col},inset 0 0 ${(4+v/2).toFixed(0)}px ${col};opacity:${(.5+v/24).toFixed(2)};animation:spin ${dur}s linear infinite ${dir}"></div>`;};
+    return `<div style="position:relative;width:176px;height:176px;margin:0 auto">${ring(84,'#36c5ff',f,'',9)}${ring(64,'#ff8a3d',i,'reverse',7)}${ring(46,'#ff5ea8',m,'',5)}
+      <div style="position:absolute;inset:0;display:grid;place-items:center;font-family:'Mochiy Pop One';font-size:30px;color:#9b5cff;animation:pulse 2.5s ease-in-out infinite">${rk}</div></div>`;
+  }
+  function donut(m,i,f){
+    const C=465, seg=v=>(v/10*140), avg=((m+i+f)/3).toFixed(1);
+    const arc=(v,col,rot)=>`<circle r="74" fill="none" stroke="${col}" stroke-width="15" stroke-linecap="round" stroke-dasharray="${seg(v).toFixed(1)} ${C}" transform="rotate(${rot})" style="--len:${seg(v).toFixed(1)};stroke-dashoffset:0;animation:draw 1.05s ease-out backwards;filter:drop-shadow(0 0 5px ${col})"/>`;
+    return `<svg viewBox="0 0 200 200" width="100%" style="max-width:190px"><g transform="translate(100,100)">
+      <circle r="74" fill="none" stroke="#eee5ff" stroke-width="15"/>${arc(m,'#ff5ea8',-90)}${arc(i,'#ff8a3d',30)}${arc(f,'#36c5ff',150)}
+      <text x="0" y="-3" text-anchor="middle" font-size="12" font-weight="800" fill="#6a4d8a">総合</text>
+      <text x="0" y="23" text-anchor="middle" font-family="'Mochiy Pop One'" font-size="24" fill="#9b5cff" class="cnt" data-to="${avg}" data-dec="1">0.0</text></g></svg>`;
+  }
+  function countUp(el,to,dur,dec){let st=null;function f(t){if(st==null)st=t;let p=Math.min(1,(t-st)/dur);p=1-Math.pow(1-p,3);el.textContent=(to*p).toFixed(dec);if(p<1)requestAnimationFrame(f);}requestAnimationFrame(f);}
+  function confetti(){const cols=['#ff5ea8','#9b5cff','#36c5ff','#ffd23f','#3ff2c2','#ff8a3d'];const w=document.createElement('div');w.className='confetti';
+    for(let i=0;i<42;i++){const s=document.createElement('span');s.style.left=(Math.random()*100).toFixed(1)+'%';s.style.background=cols[i%cols.length];
+      s.style.animationDelay=(Math.random()*.4).toFixed(2)+'s';s.style.animationDuration=(1.8+Math.random()*1.3).toFixed(2)+'s';w.appendChild(s);}
+    mb.appendChild(w);setTimeout(()=>{if(w.parentNode)w.remove();},3400);}
+  function openModal(fig){
+    const cid=fig.dataset.cid, d=GD[cid]; if(!d) return;
+    const rk=(fig.querySelector('.rk')?.textContent)||'1';
+    const cover='game_covers/c'+cid+'.jpg';
+    const meta=[d.genre,(d.year?'発売 '+d.year:''),(d.played?'主に遊んだ '+d.played:'')].filter(Boolean).map(x=>'<b>'+esc(x)+'</b>').join('');
+    const rated = d.m!=null&&d.i!=null&&d.f!=null;
+    let viz;
+    if(rated){
+      const leg=[['💖',d.m,'#ff5ea8'],['⚡',d.i,'#ff8a3d'],['🎉',d.f,'#36c5ff'],['📖',d.r,'#1bbf9a'],['🎵',d.mu,'#9b5cff']]
+        .map(p=>p[0]+' '+(p[1]==null?'<b style="color:#c3b8dc">－</b>':'<b class="cnt" data-to="'+p[1]+'" data-dec="0" style="color:'+p[2]+'">0</b>')).join('　');
+      viz='<div class="vrow"><div class="vbox"><h4>5軸レーダー</h4>'+radar(d)+'</div>'
+        +'<div class="vbox"><h4>オーラリング</h4>'+aura(d.m,d.i,d.f,rk)+'</div>'
+        +'<div class="vbox"><h4>三つ巴スコア</h4>'+donut(d.m,d.i,d.f)+'</div></div>'
+        +'<div class="leg2">'+leg+'</div>';
+    } else {
+      viz='<div class="nodata">評価データは準備中（思い入れ度・衝撃度・面白さ 未入力）</div>';
+    }
+    mb.innerHTML='<div class="mhead"><div class="mcv"><img src="'+cover+'" alt="" onerror="this.style.opacity=0"></div>'
+      +'<div class="mhd"><span class="mrk">第 '+rk+' 位</span><div class="mti">'+esc(d.t)+'</div>'
+      +'<div class="mmeta">'+meta+'</div><div class="mintro">'+esc(d.intro)+'</div></div></div>'+viz;
+    ov.classList.add('show');
+    if(rated){mb.querySelectorAll('.cnt').forEach(el=>countUp(el,+el.dataset.to,950,+el.dataset.dec||0)); confetti();}
+  }
+  function closeModal(){ov.classList.remove('show');}
+  document.querySelectorAll('figure[data-cid] .cv').forEach(cv=>{
+    cv.addEventListener('click',e=>{e.preventDefault();openModal(cv.closest('figure'));});
+  });
+  document.getElementById('mx').onclick=closeModal;
+  ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});'''
 
 doc = f'''<!DOCTYPE html>
 <html lang="ja">
@@ -241,6 +371,9 @@ doc = f'''<!DOCTYPE html>
     <a href="rank_edit.html">✏️ 順位を編集（ドラッグ&ドロップ）</a>
   </footer>
 
+  <div class="ov" id="ov"><div class="mod" id="mod"><button class="mx" id="mx" aria-label="閉じる">✕</button><div id="mbody"></div></div></div>
+
+<script>const GD = {GD_JSON};</script>
 <script>
 {JS}
 </script>
