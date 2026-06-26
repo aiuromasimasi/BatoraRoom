@@ -1,47 +1,70 @@
 #!/usr/bin/env python3
 """ドラッグ&ドロップで順位を調整する一時エディタ rank_edit.html + rank_edit.js を生成する。
-【グリッド版・固定ID方式】表紙画像だけのタイルを横並びグリッドで表示し、ワイド画面で100個同時に
-ドラッグ&ドロップ並べ替え。各タイルに順位バッジ。タイトルはホバーで表示。
+【グリッド版・固定ID方式・ランク外プール対応】表紙タイルを横並びグリッドで表示し、ワイド画面で
+全作品(TOP100＋ランク外)を同時にドラッグ&ドロップ並べ替え。
 - カバー/ID は固定ID(cid)。並べ替えてもファイル名・ID不変＝破綻しない
-- 並べ替えるたび「新順位CID: ...」を自動出力（コピー→貼り戻しで反映）
-- 保存はバージョン署名つき（順位確定で作り直すと古い保存は自動無視）
+- 上から100枠＝ランキング、その下に「ランク外（101位〜）」の区切り線。境界をまたいで入替できる
+- 表紙が無い作品（予備軍など）は「タイトル札」プレースホルダーで表示（昇格後に表紙取得）
+- 並べ替えるたび「新順位CID（上位100）」＋「ランク外CID（残り）」を自動出力（コピー→貼り戻しで反映）
+- 保存はバージョン署名つき（候補が増減すると古い保存は自動無視）
 - サイズ切替(小/中/大)つき
 使い方: python3 build_editor.py
 """
 import json, re
 
+RANKED = 100  # 上位この数までがランキング。それ以降はランク外プール
 lines = open("game_ranking_draft.md", encoding="utf-8").read().split("\n")
 title2cid = {}; cid = 0
 for l in lines:
     if l.startswith("---"): break
     if l.startswith("- "):
         cid += 1; title2cid[l[2:].strip()] = cid
-assert cid == 100, f"candidate={cid}"
+cid2title = {v: k for k, v in title2cid.items()}
+TOTAL = cid
+assert TOTAL >= RANKED, f"candidate={TOTAL} (< {RANKED})"
+
 order = []
 for l in lines:
     m = re.match(r'^(\d+)\.\s+(.*)$', l)
     if m: order.append((int(m.group(1)), m.group(2).strip()))
 order.sort()
-games = [{"id": title2cid[t], "title": t, "img": f"game_covers/c{title2cid[t]}.jpg"} for _, t in order]
-SIG = ",".join(str(g["id"]) for g in games)
+ranked_cids = [title2cid[t] for _, t in order]
+reserve_cids = [c for c in range(1, TOTAL + 1) if c not in set(ranked_cids)]  # cid昇順
+INIT = ranked_cids + reserve_cids
+assert len(INIT) == TOTAL, f"INIT={len(INIT)} TOTAL={TOTAL}"
+
+games = [{"id": c, "title": cid2title[c], "img": f"game_covers/c{c}.jpg"} for c in range(1, TOTAL + 1)]
+SIG = ",".join(str(x) for x in INIT)
 
 JS = '''const GAMES = __GAMES__;
+const INIT = __INIT__;
 const SIG = "__SIG__";
-const OKEY='game_edit_grid_v1';
+const RANKED = __RANKED__;
+const OKEY='game_edit_grid_v2';
 const $=id=>document.getElementById(id);
 let dragEl=null;
 function curOrder(){return [...document.querySelectorAll('#grid .cell')].map(r=>+r.dataset.id);}
-function renumber(){document.querySelectorAll('#grid .cell').forEach((c,i)=>{c.querySelector('.rk').textContent=(i+1);});}
-function output(){const ids=curOrder();$('out').value='新順位CID: '+ids.join(',');
+function placeDivider(){
+  const grid=$('grid'); const old=$('divider'); if(old) old.remove();
+  const cells=[...grid.querySelectorAll('.cell')];
+  if(cells.length>RANKED && cells[RANKED]){
+    const d=document.createElement('div'); d.id='divider'; d.className='divider';
+    d.innerHTML='▼ ここから下は <b>ランク外（'+(RANKED+1)+'位〜）</b>　／　上へドラッグで TOP'+RANKED+' 入り';
+    grid.insertBefore(d, cells[RANKED]);
+  }
+}
+function renumber(){document.querySelectorAll('#grid .cell').forEach((c,i)=>{c.querySelector('.rk').textContent=(i+1);c.classList.toggle('reserve',i>=RANKED);});placeDivider();}
+function output(){const ids=curOrder();const top=ids.slice(0,RANKED),res=ids.slice(RANKED);
+  $('out').value='新順位CID: '+top.join(',')+(res.length?'\\nランク外CID: '+res.join(','):'');
   localStorage.setItem(OKEY,JSON.stringify({sig:SIG,order:ids}));}
 function cellHTML(g){const t=g.title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-  return '<div class="cell" draggable="true" data-id="'+g.id+'" title="'+t+'">'
-    +'<span class="rk"></span>'
-    +'<img loading="lazy" src="'+g.img+'" alt="'+t+'" onerror="this.style.opacity=0">'
-    +'<span class="cap">'+t+'</span></div>';}
+  return `<div class="cell" draggable="true" data-id="${g.id}" title="${t}">`
+    +`<span class="rk"></span><div class="ph">${t}</div>`
+    +`<img loading="lazy" src="${g.img}" alt="${t}" onload="this.closest('.cell').classList.add('hascover')" onerror="this.style.display='none'">`
+    +`<span class="cap">${t}</span></div>`;}
 function build(orderIds){
   const byId=Object.fromEntries(GAMES.map(g=>[g.id,g]));
-  const ids=(orderIds&&orderIds.length===GAMES.length&&orderIds.every(i=>byId[i]))?orderIds:GAMES.map(g=>g.id);
+  const ids=(orderIds&&orderIds.length===GAMES.length&&orderIds.every(i=>byId[i]))?orderIds:INIT;
   $('grid').innerHTML=ids.map(id=>cellHTML(byId[id])).join('');
   renumber(); output();
 }
@@ -69,12 +92,15 @@ function init(){
 }
 if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded', init);
 '''
-JS = JS.replace("__GAMES__", json.dumps(games, ensure_ascii=False)).replace("__SIG__", SIG)
+JS = (JS.replace("__GAMES__", json.dumps(games, ensure_ascii=False))
+        .replace("__INIT__", json.dumps(INIT))
+        .replace("__RANKED__", str(RANKED))
+        .replace("__SIG__", SIG))
 open("rank_edit.js", "w", encoding="utf-8").write(JS)
 
 HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>順位を編集（グリッド・ドラッグ&ドロップ）</title>
+<title>順位を編集（TOP100＋ランク外・ドラッグ&ドロップ）</title>
 <style>
  :root{--pink:#ff5ea8;--purple:#9b5cff;--blue:#36c5ff;--ink:#2a1a4a}
  *{box-sizing:border-box}
@@ -90,20 +116,35 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
  .cell:hover{outline:3px solid var(--blue);z-index:2}
  .cell.dragging{opacity:.35;outline:3px solid var(--pink)}
  .cell img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+ /* 表紙なし＝タイトル札（プレースホルダー） */
+ .cell .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;
+   padding:5px;font-size:10px;font-weight:800;color:#fff;line-height:1.22;letter-spacing:.2px;
+   background:linear-gradient(150deg,#8a6bd6,#c45ea0);pointer-events:none;overflow:hidden}
+ .cell.hascover .ph{display:none}
+ .cell .cap{position:absolute;left:0;right:0;bottom:0;padding:2px 3px;font-size:9px;font-weight:700;color:#fff;line-height:1.15;
+   background:linear-gradient(transparent,rgba(0,0,0,.72));max-height:46%;overflow:hidden;pointer-events:none;display:none}
+ .cell.hascover .cap{display:block}
  .cell .rk{position:absolute;top:-5px;left:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;z-index:3;
    background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-weight:800;font-size:11px;font-family:Arial;
    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.3)}
- .cell .cap{position:absolute;left:0;right:0;bottom:0;padding:2px 3px;font-size:9px;font-weight:700;color:#fff;line-height:1.15;
-   background:linear-gradient(transparent,rgba(0,0,0,.72));max-height:46%;overflow:hidden;pointer-events:none}
+ /* ランク外ゾーンのタイル */
+ .cell.reserve{filter:grayscale(.5) brightness(.96);opacity:.92}
+ .cell.reserve .rk{background:linear-gradient(135deg,#9aa3b2,#c4b0d6);color:#34304a}
+ .cell.reserve .ph{background:linear-gradient(150deg,#8f8aa6,#a98aa0)}
+ /* TOP100 / ランク外 の区切り線 */
+ .divider{flex:0 0 100%;width:100%;text-align:center;color:#6a4d8a;font-weight:800;font-size:13px;
+   padding:12px 6px 4px;margin:6px 0 2px;border-top:3px dashed #b79be0}
+ .divider b{color:#d6346a}
  .bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);border-top:2px solid #eadcff;
    padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 -6px 18px rgba(58,36,86,.1);z-index:10}
- textarea{flex:1;min-width:240px;height:44px;border:2px solid #eadcff;border-radius:10px;padding:8px;font:inherit;font-size:13px}
+ textarea{flex:1;min-width:240px;height:54px;border:2px solid #eadcff;border-radius:10px;padding:8px;font:inherit;font-size:13px}
  .btn{font:inherit;font-weight:800;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink))}
  .btn.g{background:#eadcff;color:#6a4d8a}
 </style></head><body>
-<h1>✏️ 順位を編集（グリッド・ドラッグ&ドロップ）</h1>
-<p class="hint">表紙タイルを<b>ドラッグして好きな位置へ</b>。番号は自動で振り直し。左上＝1位、右下＝100位（読み順）。<br>
-ホバーでタイトル表示。並べ替えるたび下に<b>「新順位CID」</b>が出るので<b>「コピー」</b>して貼り付けてね。</p>
+<h1>✏️ 順位を編集（TOP100＋ランク外・ドラッグ&ドロップ）</h1>
+<p class="hint">表紙タイルを<b>ドラッグして好きな位置へ</b>。番号は自動で振り直し。上から1位、点線より下は<b>ランク外（101位〜）</b>。<br>
+ランク外から上へ運べば<b>TOP100入り</b>、下へ落とせば圏外。表紙が無い作品は<b>タイトル札</b>で表示（昇格後に表紙取得）。<br>
+並べ替えるたび下に<b>「新順位CID／ランク外CID」</b>が出るので<b>「コピー」</b>して貼り付けてね。</p>
 <div class="tools">表示サイズ：
   <button class="sz" data-w="60">小</button>
   <button class="sz" data-w="84">中</button>
@@ -118,4 +159,4 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
 <script src="rank_edit.js"></script>
 </body></html>'''
 open("rank_edit.html", "w", encoding="utf-8").write(HTML)
-print(f"rank_edit.html + rank_edit.js を生成（グリッド版・固定ID・{len(games)}作）")
+print(f"rank_edit.html + rank_edit.js を生成（グリッド版・固定ID・TOP{RANKED}＋ランク外={TOTAL-RANKED}・計{len(games)}作）")

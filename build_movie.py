@@ -27,18 +27,21 @@ if os.path.exists("games_data.csv"):
             def _n(x):
                 x = (x or "").strip(); return int(x) if x.isdigit() else None
             gd[int(mm.group(1))] = {"intro": row.get("ゲーム紹介","").strip(),"genre": row.get("ジャンル","").strip(),
-                "year": row.get("発売年","").strip(),"m":_n(row.get("思い入れ度")),"i":_n(row.get("衝撃度")),
+                "year": row.get("発売年","").strip(),"plat": row.get("プラットフォーム","").strip(),
+                "m":_n(row.get("思い入れ度")),"i":_n(row.get("衝撃度")),
                 "f":_n(row.get("面白さ")),"r":_n(row.get("ストーリー")),"mu":_n(row.get("音楽・サウンド"))}
 games = []
 for r in sorted(rank):
     cid = title2cid[rank[r]]; d = gd.get(cid, {})
     games.append({"rank": r, "title": rank[r], "img": f"game_covers/c{cid}.jpg",
-        "intro": d.get("intro",""), "genre": d.get("genre",""), "year": d.get("year",""),
+        "intro": d.get("intro",""), "genre": d.get("genre",""), "year": d.get("year",""), "plat": d.get("plat",""),
         "m": d.get("m"), "i": d.get("i"), "f": d.get("f"), "r": d.get("r"), "mu": d.get("mu")})
 GAMES_JSON = json.dumps(games, ensure_ascii=False)
 
 JS = '''const GAMES = __GAMES__;
 const byRank = {}; GAMES.forEach(g=>byRank[g.rank]=g);
+const COVERS=GAMES.map(g=>g.img);
+const MOSAIC=(()=>{const cols=['','','',''];COVERS.forEach((s,k)=>{cols[k%4]+=`<img src="${s}" alt="" loading="lazy">`;});return '<div class="bgrid">'+cols.map((c,k)=>`<div class="bcol ${k%2?'down':'up'}">${c}${c}</div>`).join('')+'</div>';})();
 const AX=[{k:'m',a:-90,c:'#ff5ea8',l:'思'},{k:'i',a:-18,c:'#ff8a3d',l:'衝'},{k:'f',a:54,c:'#36c5ff',l:'面'},{k:'r',a:126,c:'#1bbf9a',l:'物'},{k:'mu',a:198,c:'#9b5cff',l:'音'}];
 function radar(d){
   const R=80, rad=a=>a*Math.PI/180, P=(v,a)=>[((v||0)/10*R*Math.cos(rad(a))).toFixed(1),((v||0)/10*R*Math.sin(rad(a))).toFixed(1)];
@@ -55,31 +58,41 @@ function radar(d){
 function tierOf(r){return r<=1?'👑 第 1 位':r<=3?'BEST 3':r<=10?'TOP 10':r<=20?'BEST 20':r<=50?'BEST 50':'BEST 100';}
 const BANNERS={100:['BEST 100','100位 → 51位'],50:['BEST 50','50位 → 21位'],20:['BEST 20','20位 → 11位'],10:['TOP 10','10位 → 4位'],3:['BEST 3','表彰台'],1:['👑 No.1','頂点']};
 const steps=[];
-for(let r=100;r>=1;r--){ if(BANNERS[r]) steps.push({t:'b',r}); steps.push({t:'g',r}); }
 const TOTAL=180000;
-const WT=s=>{ if(s.t==='b') return 0.7; const r=s.r; return r===1?3.0:r<=3?2.0:r<=10?1.5:r<=20?1.1:1.0; };
-const sumW=steps.reduce((a,s)=>a+WT(s),0);
-steps.forEach(s=>s.base=WT(s)/sumW*TOTAL);
+const WT=s=>{ if(s.t==='b') return 0.85; const r=s.r;
+  if(s.t==='tame') return r===1?3.0:r<=3?2.4:2.0;
+  return r===1?3.6:r<=3?2.6:r<=10?2.0:r<=20?1.5:r<=50?1.15:0.78; };
+function buildSteps(){ steps.length=0;
+  for(let r=100;r>=1;r--){ if(BANNERS[r]) steps.push({t:'b',r}); if(TM && r<=10) steps.push({t:'tame',r}); steps.push({t:'g',r}); }
+  const sumW=steps.reduce((a,s)=>a+WT(s),0); steps.forEach(s=>s.base=WT(s)/sumW*TOTAL);
+}
 
 const stage=document.getElementById('stage');
-let si=0, playing=true, mult=1, LM=0, timer=null, feedRAF=null, feedStart=null;
+let si=0, playing=true, mult=1, AUTO=true, LM=0, mode=0, TS=1, BG=0, TM=2, timer=null, feedRAF=null, feedStart=null;
 const LMN=['標準','全面カバー','シネマ(案G)','フィード(案H)'];
+const TMN=['OFF','案A','案B','案C'];
+function isFeed(){return !AUTO && LM===3;}
+function curLM(r){return AUTO ? (r<=10?1:r<=50?2:0) : LM;} // オート昇格:51-100標準/11-50シネマ/1-10全面カバー
 function dur(s){return s.base*mult;}
+function setProgP(p){const f=document.getElementById('pfill');if(!f)return;f.style.width=(Math.max(0,Math.min(1,p))*100).toFixed(1)+'%';const h=200*(1-Math.max(0,Math.min(1,p)));f.style.background='linear-gradient(90deg,hsl('+h.toFixed(0)+',92%,58%),hsl('+(h-22).toFixed(0)+',95%,62%))';}
+function setProg(r){setProgP(r?(100-r)/99:0);}
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function confetti(n){const w=document.createElement('div');w.className='cf';const cols=['#ff5ea8','#9b5cff','#36c5ff','#ffd23f','#3ff2c2','#ff8a3d'];
   for(let i=0;i<n;i++){const s=document.createElement('span');s.style.left=(Math.random()*100).toFixed(1)+'%';s.style.background=cols[i%cols.length];
     s.style.animationDelay=(Math.random()*.5).toFixed(2)+'s';s.style.animationDuration=(2+Math.random()*1.6).toFixed(2)+'s';w.appendChild(s);}
   stage.appendChild(w);setTimeout(()=>w.remove(),4200);}
-function gameHTML(g,r,d){
+function gameHTML(g,r,d,lm){
   const rated=g.m!=null&&g.i!=null&&g.f!=null;
-  const meta=[g.genre,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
-  if(LM===1){ // 全面カバー(案F)
-    return `<div class="slide full ${r===1?'no1':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">
+  const meta=[g.genre,g.plat,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
+  const metaSp=`<span class="mg">${esc(g.genre)}</span>`+(g.plat?`<span class="mp">${esc(g.plat)}</span>`:'')+(g.year?`<span class="my">${esc(g.year)}年</span>`:'');
+  if(lm===1){ // 全面カバー(案F)
+    const rev=(TM&&r<=10)?(TM===3?'<div class="curt l"></div><div class="curt r"></div>':'<div class="revflash"></div>'):'';
+    return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=10?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">
       <div class="scrim"></div><div class="rkF">${r}<span>位</span></div><div class="tierF">${tierOf(r)}</div>
-      <div class="botF"><div class="tiF">${esc(g.title)}</div><div class="metaF">${esc(meta)}</div><div class="introF">${esc(g.intro)}</div></div>
-      ${rated?'<div class="radF">'+radar(g)+'</div>':''}</div>`;
+      <div class="botF ts${TS}"><div class="tiF">${esc(g.title)}</div><div class="metaF">${metaSp}</div><div class="introF">${esc(g.intro)}</div></div>
+      ${rated?'<div class="radF">'+radar(g)+'</div>':''}${rev}</div>`;
   }
-  if(LM===2){ // シネマ(案G)
+  if(lm===2){ // シネマ(案G)
     return `<div class="slide cine ${r===1?'no1':''}"><div class="lb t"></div><div class="lb b"></div><div class="flash"></div>
       <div class="cineWrap"><div class="cineRk">${r}<span>位</span></div>
         <div class="cineCv"><img src="${g.img}" alt="" onerror="this.style.opacity=0"></div>
@@ -91,15 +104,37 @@ function gameHTML(g,r,d){
     <div class="info"><div class="tier">${tierOf(r)}</div><div class="ti">${esc(g.title)}</div>
       <div class="meta">${esc(meta)}</div><div class="intro">${esc(g.intro)}</div>${rated?'<div class="rwrap">'+radar(g)+'</div>':''}</div></div>`;
 }
-function render(s){
-  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner"><div class="btxt">${a}</div><div class="bsub">${b}</div></div>`;return;}
-  const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s));
-  if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
+function tameHTML(g,r,d){
+  const rated=g.m!=null&&g.i!=null&&g.f!=null;
+  const sd=x=>'animation-delay:'+(d*x/1000).toFixed(2)+'s';
+  const cls=['','tmA','tmB','tmC'][TM];
+  const genre=esc(g.genre)||'？', year=g.year?esc(g.year)+'年':'？', intro=esc(g.intro)||'…';
+  const L = TM===2
+    ? {g:'GENRE / ',y:'YEAR / ',i:'FILE / ',lab:'ANALYZING…',rk:'RANK #'+r}
+    : {g:'ジャンル｜',y:'発売｜',i:'',lab:(TM===3?'？ ？ ？':'このゲームは…'),rk:(TM===3?'第 '+r+' 位':r+'位')};
+  return `<div class="slide tame ${cls}"><div class="tmbg"></div>
+    <div class="tmlabel" style="${sd(.02)}">${L.lab}</div>
+    <div class="tmrank" style="${sd(0)}">${L.rk}</div>
+    <div class="tmhints">
+      <div class="thint" style="${sd(.12)}"><span class="thk">${L.g}</span>${genre}</div>
+      <div class="thint" style="${sd(.30)}"><span class="thk">${L.y}</span>${year}</div>
+      <div class="thint ti3" style="${sd(.48)}">${L.i?'<span class="thk">'+L.i+'</span>':''}${intro}</div>
+    </div>
+    ${rated?'<div class="tmradar" style="'+sd(.66)+'">'+radar(g)+'</div>':''}
+    ${TM===1?'<div class="tmq" style="'+sd(.66)+'">?</div>':''}
+  </div>`;
 }
-function step(){ if(LM===3) return; render(steps[si]); clearTimeout(timer); if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(steps[si])); updateProg(); }
-function updateProg(){const s=steps[si];document.getElementById('prog').textContent=(LM===3?'フィード再生中':((s.t==='g'?s.r+'位':'—')+' / 残り'+Math.max(0,steps.length-1-si)));}
+function render(s){
+  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
+  if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
+  const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
+  if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
+  setProg(s.r);
+}
+function step(){ if(isFeed()) return; render(steps[si]); clearTimeout(timer); if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(steps[si])); updateProg(); }
+function updateProg(){const s=steps[si];document.getElementById('prog').textContent=(isFeed()?'フィード再生中':((s.t==='b'?'—':s.r+'位'+(s.t==='tame'?'(タメ)':''))+' / 残り'+Math.max(0,steps.length-1-si)));}
 function updateBtn(){document.getElementById('pp').textContent=playing?'⏸':'▶';}
-function play(){if(LM===3)return;playing=true;updateBtn();step();}
+function play(){if(isFeed())return;playing=true;updateBtn();step();}
 function pause(){playing=false;clearTimeout(timer);updateBtn();}
 // 案H フィード
 function buildFeed(){
@@ -109,22 +144,30 @@ function buildFeed(){
   const total=TOTAL*mult;
   function fa(t){ if(LM!==3) return; if(feedStart==null)feedStart=t; const p=Math.min(1,(t-feedStart)/total);
     const max=Math.max(1,feed.scrollHeight-stage.clientHeight); feed.style.transform='translateY('+(-max*p).toFixed(1)+'px)';
-    const fi=Math.round(p*(rows.length-1)); rows.forEach((r,k)=>r.classList.toggle('focus',k===fi));
+    const fi=Math.round(p*(rows.length-1)); rows.forEach((r,k)=>r.classList.toggle('focus',k===fi)); setProgP(p);
     if(p<1) feedRAF=requestAnimationFrame(fa); }
   feedRAF=requestAnimationFrame(fa);
 }
 document.getElementById('pp').onclick=()=>playing?pause():play();
-document.getElementById('rs').onclick=()=>{ if(LM===3){cancelAnimationFrame(feedRAF);buildFeed();return;} si=0;play();};
-document.getElementById('nx').onclick=()=>{if(LM===3)return;if(si<steps.length-1){si++;pause();render(steps[si]);updateProg();}};
-document.getElementById('pv').onclick=()=>{if(LM===3)return;if(si>0){si--;pause();render(steps[si]);updateProg();}};
+document.getElementById('rs').onclick=()=>{ if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();return;} si=0;play();};
+document.getElementById('nx').onclick=()=>{if(isFeed())return;if(si<steps.length-1){si++;pause();render(steps[si]);updateProg();}};
+document.getElementById('pv').onclick=()=>{if(isFeed())return;if(si>0){si--;pause();render(steps[si]);updateProg();}};
 document.getElementById('sp').onchange=e=>{mult=+e.target.value;};
-document.getElementById('lm').onclick=()=>{ LM=(LM+1)%4; document.getElementById('lm').textContent=LMN[LM]; cancelAnimationFrame(feedRAF);
-  if(LM===3){ pause(); buildFeed(); updateProg(); } else { render(steps[si]); updateProg(); } };
-document.getElementById('or').onclick=()=>{const f=document.getElementById('frame');f.classList.toggle('vert');document.getElementById('or').textContent=f.classList.contains('vert')?'縦 9:16':'横 16:9';if(LM===3){cancelAnimationFrame(feedRAF);buildFeed();}};
+document.getElementById('lm').onclick=()=>{ mode=(mode+1)%5; cancelAnimationFrame(feedRAF);
+  if(mode===0){AUTO=true;document.getElementById('lm').textContent='オート';}
+  else{AUTO=false;LM=mode-1;document.getElementById('lm').textContent=LMN[LM];}
+  if(isFeed()){ pause(); buildFeed(); updateProg(); } else { render(steps[si]); updateProg(); } };
+document.getElementById('ts').onclick=()=>{TS=(TS+1)%3;document.getElementById('ts').textContent='文字'+['A','B','C'][TS];if(!isFeed())render(steps[si]);};
+document.getElementById('bg').onclick=()=>{BG=(BG+1)%3;document.getElementById('bg').textContent='背景'+['A','B','C'][BG];cancelAnimationFrame(feedRAF);pause();si=steps.findIndex(s=>s.t==='b'&&s.r===20);render(steps[si]);updateProg();};
+document.getElementById('tame').onclick=()=>{ const cr=steps[si]?steps[si].r:100;
+  TM=(TM+1)%4; document.getElementById('tame').textContent='タメ'+TMN[TM]; buildSteps();
+  const tr=(TM&&cr>10)?7:cr; let i=steps.findIndex(s=>s.r===tr&&s.t==='tame'); if(i<0)i=steps.findIndex(s=>s.r===tr&&s.t==='g'); if(i<0)i=0;
+  si=i; cancelAnimationFrame(feedRAF); pause(); if(isFeed()){buildFeed();}else{render(steps[si]);} updateProg(); };
+document.getElementById('or').onclick=()=>{const f=document.getElementById('frame');f.classList.toggle('vert');document.getElementById('or').textContent=f.classList.contains('vert')?'縦 9:16':'横 16:9';if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();}};
 document.getElementById('fs').onclick=()=>{const f=document.getElementById('frame');(f.requestFullscreen||f.webkitRequestFullscreen||(()=>{})).call(f);};
 const bgm=document.getElementById('bgm');
 document.getElementById('mu').onclick=()=>{if(bgm.paused){bgm.play().catch(()=>{});document.getElementById('mu').textContent='🔊';}else{bgm.pause();document.getElementById('mu').textContent='🔇';}};
-updateBtn(); step();
+buildSteps(); updateBtn(); step();
 '''
 JS = JS.replace("__GAMES__", GAMES_JSON)
 open("movie.js", "w", encoding="utf-8").write(JS)
@@ -143,10 +186,35 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
   @keyframes spin{to{transform:rotate(360deg)}}
   @keyframes grow{from{transform:scale(0)}to{transform:scale(1)}}
-  .banner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 6%;animation:bpop .55s cubic-bezier(.2,1.4,.3,1)}
-  @keyframes bpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
-  .btxt{font-family:"Mochiy Pop One";font-size:clamp(30px,6.4vw,84px);line-height:1.05;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.18),0 0 30px rgba(255,255,255,.6);white-space:nowrap}
-  .bsub{font-weight:800;font-size:clamp(15px,2.6vw,28px);margin-top:8px;letter-spacing:2px}
+  /* 進行バー（青→赤の温度カラー） */
+  #pbar{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,.14);z-index:6;pointer-events:none}
+  #pfill{height:100%;width:0;background:hsl(200,92%,58%);box-shadow:0 0 12px rgba(255,255,255,.55);transition:width .45s linear,background .45s linear}
+  .banner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 6%;animation:shake .5s .33s both}
+  @keyframes shake{0%,100%{transform:translate(0,0)}12%{transform:translate(-8px,5px)}26%{transform:translate(7px,-5px)}40%{transform:translate(-6px,4px)}55%{transform:translate(5px,-3px)}72%{transform:translate(-3px,2px)}88%{transform:translate(2px,-1px)}}
+  .btxt{font-family:"Mochiy Pop One";font-size:clamp(30px,6.4vw,84px);line-height:1.05;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.2),0 0 34px rgba(255,255,255,.7);white-space:nowrap;animation:impact .55s cubic-bezier(.16,.9,.3,1.05) backwards}
+  @keyframes impact{0%{transform:scale(3.1);opacity:0;filter:blur(14px)}55%{opacity:1}80%{transform:scale(.92)}100%{transform:scale(1);filter:none}}
+  .bsub{font-weight:800;font-size:clamp(15px,2.6vw,28px);margin-top:10px;letter-spacing:2px;animation:infin .5s ease .5s backwards}
+  .bflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;animation:bflash .5s .33s backwards}
+  @keyframes bflash{0%{opacity:0}12%{opacity:.9}100%{opacity:0}}
+  .bshock{position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:50%;border:14px solid rgba(255,255,255,.85);transform:translate(-50%,-50%);opacity:0;pointer-events:none;animation:shock .75s ease-out .35s backwards}
+  @keyframes shock{0%{width:10px;height:10px;opacity:.85;border-width:16px}100%{width:150%;height:150%;opacity:0;border-width:1px}}
+  /* バナー背景：全カバー4列モザイク＋上下スクロール */
+  .bgrid{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;overflow:hidden}
+  .bcol{display:flex;flex-direction:column;gap:6px}
+  .bcol img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;display:block}
+  .bcol.up{animation:mUp 38s linear infinite}.bcol.down{animation:mDown 44s linear infinite}
+  .bcol:nth-child(2){animation-duration:50s}.bcol:nth-child(3){animation-duration:42s}.bcol:nth-child(4){animation-duration:56s}
+  @keyframes mUp{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+  @keyframes mDown{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+  .bscrim{position:absolute;inset:0;z-index:1}
+  .banner .btxt,.banner .bsub{position:relative;z-index:3}
+  .banner .bshock,.banner .bflash{z-index:2}
+  .banner.bg0 .bgrid{filter:blur(5px) brightness(.5) saturate(.9)}
+  .banner.bg0 .bscrim{background:radial-gradient(120% 90% at 50% 50%,rgba(22,13,42,.4),rgba(22,13,42,.84))}
+  .banner.bg1 .bgrid{filter:grayscale(.85) brightness(.55);opacity:.55}
+  .banner.bg1 .bscrim{background:linear-gradient(135deg,rgba(255,94,168,.55),rgba(155,92,255,.5),rgba(54,197,255,.55))}
+  .banner.bg2 .bgrid{filter:brightness(.72) saturate(1.05)}
+  .banner.bg2 .bscrim{background:radial-gradient(58% 46% at 50% 50%,rgba(0,0,0,.82) 0%,rgba(0,0,0,.5) 46%,rgba(0,0,0,.12) 100%)}
   /* 標準 */
   .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2%;padding:2.5% 3%}
   .rk{flex:none;font-family:"Baloo 2";font-weight:800;font-size:clamp(80px,22vh,320px);line-height:.82;color:#fff;text-shadow:0 7px 0 rgba(0,0,0,.2),0 0 34px rgba(255,255,255,.55);animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
@@ -181,9 +249,17 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .rkF span{font-size:.34em}
   .tierF{position:absolute;top:4%;right:3.5%;font-weight:800;font-size:clamp(14px,2.4vw,28px);background:rgba(0,0,0,.5);padding:6px 18px;border-radius:999px;color:#fff}
   .botF{position:absolute;left:3.5%;right:27%;bottom:5%;color:#fff;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .6s ease .12s backwards}
-  .tiF{font-family:"Mochiy Pop One";font-size:clamp(18px,2.4vw,34px);line-height:1.2}
-  .metaF{font-weight:800;font-size:clamp(13px,1.8vw,22px);margin-top:6px;opacity:.95}
-  .introF{font-weight:700;font-size:clamp(13px,1.8vw,22px);margin-top:5px;max-width:96%;line-height:1.5}
+  .tiF{font-family:"Mochiy Pop One";font-size:clamp(18px,2.4vw,34px);line-height:1.28;word-break:keep-all;overflow-wrap:break-word}
+  .metaF{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(13px,1.8vw,22px);margin-top:7px}
+  .introF{font-weight:700;font-size:clamp(13px,1.8vw,22px);margin-top:6px;max-width:96%;line-height:1.55;word-break:auto-phrase;overflow-wrap:break-word}
+  /* 文字スタイル3案（全面カバー） */
+  .botF.ts0{background:rgba(12,8,28,.52);border:1.5px solid rgba(255,255,255,.3);border-radius:18px;padding:14px 18px}
+  .botF.ts0 .mg{color:#ffd23f}.botF.ts0 .my{color:#7fd7ff}.botF.ts0 .mp{color:#5cf0c8}
+  .botF.ts1 .tiF,.botF.ts1 .metaF span,.botF.ts1 .introF{text-shadow:-1.5px -1.5px 0 #160d2a,1.5px -1.5px 0 #160d2a,-1.5px 1.5px 0 #160d2a,1.5px 1.5px 0 #160d2a,0 3px 10px rgba(0,0,0,.95)}
+  .botF.ts1 .mg{color:#ff8ad1}.botF.ts1 .my{color:#ffe14d}.botF.ts1 .mp{color:#7dffb0}
+  .botF.ts2{border-left:6px solid #ff5ea8;border-radius:0 14px 14px 0;background:linear-gradient(90deg,rgba(0,0,0,.6),rgba(0,0,0,.05));padding:12px 16px}
+  .botF.ts2 .metaF span{padding:3px 12px;border-radius:999px;font-size:.92em}
+  .botF.ts2 .mg{background:#ffd23f;color:#5a3d00}.botF.ts2 .my{background:#36c5ff;color:#06324f}.botF.ts2 .mp{background:#3ff2c2;color:#064b3a}
   .radF{position:absolute;right:2.5%;bottom:4%;background:rgba(0,0,0,.42);border-radius:18px;padding:6px}
   .radF .radar{width:clamp(160px,18vw,260px)}
   #frame.vert .botF{right:3.5%}#frame.vert .radF{top:13%;bottom:auto;right:3.5%}#frame.vert .radF .radar{width:clamp(120px,28vw,190px)}
@@ -208,6 +284,46 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .metaC{font-weight:800;font-size:clamp(13px,1.7vw,20px);margin-top:6px;opacity:.95}
   .radC .radar{width:clamp(150px,16vw,230px);margin-top:4px}
   #frame.vert .cineWrap{flex-direction:column;gap:2%}#frame.vert .cineInfo{max-width:88%;text-align:center}#frame.vert .cineCv{height:38vh}
+  /* TOP10 タメ演出（案A/B/C） */
+  .slide.tame{flex-direction:column;gap:1.6vh;padding:5% 7%;text-align:center;overflow:hidden}
+  .tame .tmbg{position:absolute;inset:0;z-index:0}
+  .tame .tmlabel,.tame .tmrank,.tame .tmhints,.tame .tmradar,.tame .tmq{position:relative;z-index:2}
+  .tame .thint,.tame .tmradar,.tame .tmlabel,.tame .tmq{opacity:0;animation:tmIn .5s ease both}
+  @keyframes tmIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .tmrank{font-family:"Baloo 2";font-weight:800;line-height:.85;animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
+  .tmhints{display:flex;flex-direction:column;gap:1.1vh;max-width:90%}
+  .thint{font-weight:800;font-size:clamp(16px,2.6vw,34px);line-height:1.4}
+  .thint .thk{opacity:.9}
+  .thint.ti3{font-weight:700;font-size:clamp(13px,1.9vw,24px);opacity:.96}
+  .tmradar .radar{width:clamp(160px,20vw,300px)}
+  .tmA .tmbg{background:radial-gradient(120% 100% at 50% 38%,#221540,#0a0612)}
+  .tmA .tmlabel{font-family:"Mochiy Pop One";font-size:clamp(15px,2.4vw,28px);color:#ffd23f}
+  .tmA .tmrank{font-size:clamp(70px,18vh,240px);color:#ffd23f;text-shadow:0 0 34px rgba(255,210,63,.5),0 6px 0 rgba(0,0,0,.25)}
+  .tmA .thint .thk{color:#ff8ad1}
+  .tmA .tmq{position:absolute;right:5%;bottom:4%;font-family:"Baloo 2";font-weight:800;font-size:clamp(120px,40vh,460px);color:rgba(255,255,255,.09);z-index:1}
+  .tmB .tmbg{background:#04060a}
+  .tmB .tmbg::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(54,197,255,.10) 0 1px,transparent 1px 4px)}
+  .tmB .tmbg::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 50% 45%,rgba(54,197,255,.12),transparent 70%)}
+  .tmB .tmlabel{font-family:"Baloo 2";letter-spacing:3px;font-size:clamp(14px,2.2vw,26px);color:#36c5ff;text-shadow:0 0 12px rgba(54,197,255,.6)}
+  .tmB .tmrank{position:absolute;top:5%;right:5%;font-size:clamp(28px,6vw,72px);color:rgba(54,197,255,.9)}
+  .tmB .tmhints{font-family:"Baloo 2"}
+  .tmB .thint{color:#dff4ff;letter-spacing:.5px}
+  .tmB .thint .thk{color:#36c5ff}
+  .tmB .tmradar{filter:drop-shadow(0 0 10px rgba(54,197,255,.5))}
+  .tmC .tmbg{background:radial-gradient(42% 60% at 50% 36%,#3a3216,#150d24 50%,#070310 82%)}
+  .tmC .tmlabel{font-family:"Mochiy Pop One";font-size:clamp(15px,2.4vw,28px);color:rgba(255,232,170,.85);letter-spacing:6px}
+  .tmC .tmrank{font-size:clamp(64px,16vh,220px);color:var(--gold);text-shadow:0 0 44px rgba(255,184,0,.6)}
+  .tmC .thint{color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.8)}
+  .tmC .thint .thk{color:var(--gold)}
+  .tmC .tmradar{filter:drop-shadow(0 0 16px rgba(255,210,120,.55))}
+  /* タメ→公開のつなぎ */
+  .full.rev .revflash{position:absolute;inset:0;background:#fff;z-index:9;opacity:0;animation:rflash .5s ease forwards;pointer-events:none}
+  @keyframes rflash{0%{opacity:.92}100%{opacity:0}}
+  .full.rev .curt{position:absolute;top:0;bottom:0;width:51%;background:#070310;z-index:9;pointer-events:none}
+  .full.rev .curt.l{left:0;animation:curtL .7s cubic-bezier(.7,0,.25,1) forwards}
+  .full.rev .curt.r{right:0;animation:curtR .7s cubic-bezier(.7,0,.25,1) forwards}
+  @keyframes curtL{to{transform:translateX(-101%)}}
+  @keyframes curtR{to{transform:translateX(101%)}}
   /* フィード(案H) */
   .feed{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;gap:1.4vh;padding:46vh 7%;will-change:transform}
   .frow{display:flex;align-items:center;gap:3%;opacity:.35;transform:scale(.82);transition:opacity .35s,transform .35s}
@@ -227,14 +343,14 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .ctl select{font:inherit;border-radius:999px;border:0;padding:7px 10px;font-weight:800}
   .hint{color:rgba(255,255,255,.6);font-size:12px;font-weight:700;text-align:center}
 </style></head><body>
-  <div id="frame"><div id="stage"></div></div>
+  <div id="frame"><div id="stage"></div><div id="pbar"><div id="pfill"></div></div></div>
   <div class="ctl">
     <button id="pv">⏮</button><button id="pp">⏸</button><button id="nx">⏭</button><button id="rs">↺ 最初から</button>
     <span class="prog" id="prog">—</span>
     速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(3分)</option><option value="0.6">速い</option></select>
-    <button id="lm">標準</button><button id="or">横 16:9</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
+    <button id="lm">オート</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">横 16:9</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
   </div>
-  <div class="hint">「レイアウト」ボタンで 標準→全面カバー(案F)→シネマ(案G)→フィード(案H) を巡回切替／「縦 9:16」でショート向け。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3 を同フォルダに置くと🔇から再生。</div>
+  <div class="hint">既定は<b>オート</b>＝順位が上がるほど画面が自動で豪華化（51〜100:標準 → 11〜50:シネマ → 1〜10:全面カバー）。「レイアウト」ボタンで オート→標準→全面カバー→シネマ→フィード を巡回。下端の<b>進行バー</b>は青→赤へ温度上昇。<b>「タメ」</b>でTOP10の正体伏せ演出(案A/B/C/OFF)を切替。「縦 9:16」でショート向け。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3 を同フォルダに置くと🔇から再生。</div>
   <audio id="bgm" src="movie_bgm.mp3" loop></audio>
   <script src="movie.js"></script>
 </body></html>'''

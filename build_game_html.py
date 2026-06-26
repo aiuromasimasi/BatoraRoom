@@ -58,6 +58,7 @@ if os.path.exists("games_data.csv"):
                 "intro": row.get("ゲーム紹介", "").strip(),
                 "genre": row.get("ジャンル", "").strip(),
                 "year": row.get("発売年", "").strip(),
+                "plat": row.get("プラットフォーム", "").strip(),
                 "played": row.get("主に遊んだ年", "").strip(),
                 "m": _n(row.get("思い入れ度")), "i": _n(row.get("衝撃度")), "f": _n(row.get("面白さ")),
                 "r": _n(row.get("ストーリー")), "mu": _n(row.get("音楽・サウンド")),
@@ -312,7 +313,8 @@ JS = '''  // reveal stagger within each grid row
     const cid=fig.dataset.cid, d=GD[cid]; if(!d) return;
     const rk=(fig.querySelector('.rk')?.textContent)||'1';
     const cover='game_covers/c'+cid+'.jpg';
-    const meta=[d.genre,(d.year?'発売 '+d.year:''),(d.played?'主に遊んだ '+d.played:'')].filter(Boolean).map(x=>'<b>'+esc(x)+'</b>').join('');
+    const meta=[['🎮',d.genre,'#7b53d6'],['🕹',d.plat,'#0f8f6e'],['📅',(d.year?d.year+'年':''),'#1f86c8'],['⏱',(d.played?'主に'+d.played:''),'#c25a16']]
+      .filter(p=>p[1]).map(p=>'<b style="color:'+p[2]+'">'+p[0]+' '+esc(p[1])+'</b>').join('');
     const rated = d.m!=null&&d.i!=null&&d.f!=null;
     let viz;
     if(rated){
