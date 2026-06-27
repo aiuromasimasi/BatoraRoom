@@ -30,17 +30,23 @@ if os.path.exists("games_data.csv"):
                 "year": row.get("発売年","").strip(),"plat": row.get("プラットフォーム","").strip(),
                 "m":_n(row.get("思い入れ度")),"i":_n(row.get("衝撃度")),
                 "f":_n(row.get("面白さ")),"r":_n(row.get("ストーリー")),"mu":_n(row.get("音楽・サウンド"))}
-games = []
-for r in sorted(rank):
-    cid = title2cid[rank[r]]; d = gd.get(cid, {})
-    games.append({"rank": r, "title": rank[r], "img": f"game_covers/c{cid}.jpg",
+cid2title = {v: k for k, v in title2cid.items()}
+def mkgame(r, cid):
+    d = gd.get(cid, {})
+    return {"rank": r, "title": cid2title.get(cid, "?"), "img": f"game_covers/c{cid}.jpg",
         "intro": d.get("intro",""), "genre": d.get("genre",""), "year": d.get("year",""), "plat": d.get("plat",""),
-        "m": d.get("m"), "i": d.get("i"), "f": d.get("f"), "r": d.get("r"), "mu": d.get("mu")})
+        "m": d.get("m"), "i": d.get("i"), "f": d.get("f"), "r": d.get("r"), "mu": d.get("mu")}
+games = [mkgame(r, title2cid[rank[r]]) for r in sorted(rank)]
+# Part1: ランク外（予備軍）を cid 昇順で 101〜200 位に暫定割当（最大100作）
+ranked_cids = {title2cid[t] for t in rank.values()}
+reserve = sorted(cid for cid in range(1, c + 1) if cid not in ranked_cids)
+for i, cid in enumerate(reserve[:100]):
+    games.append(mkgame(101 + i, cid))
 GAMES_JSON = json.dumps(games, ensure_ascii=False)
 
 JS = '''const GAMES = __GAMES__;
 const byRank = {}; GAMES.forEach(g=>byRank[g.rank]=g);
-const COVERS=GAMES.map(g=>g.img);
+const COVERS=GAMES.filter(g=>g.rank<=100).map(g=>g.img);
 const MOSAIC=(()=>{const cols=['','','',''];COVERS.forEach((s,k)=>{cols[k%4]+=`<img src="${s}" alt="" loading="lazy">`;});return '<div class="bgrid">'+cols.map((c,k)=>`<div class="bcol ${k%2?'down':'up'}">${c}${c}</div>`).join('')+'</div>';})();
 const AX=[{k:'m',a:-90,c:'#ff5ea8',l:'思'},{k:'i',a:-18,c:'#ff8a3d',l:'衝'},{k:'f',a:54,c:'#36c5ff',l:'面'},{k:'r',a:126,c:'#1bbf9a',l:'物'},{k:'mu',a:198,c:'#9b5cff',l:'音'}];
 function radar(d){
@@ -58,24 +64,42 @@ function radar(d){
 function tierOf(r){return r<=1?'👑 第 1 位':r<=3?'BEST 3':r<=10?'TOP 10':r<=20?'BEST 20':r<=50?'BEST 50':'BEST 100';}
 const BANNERS={100:['BEST 100','100位 → 51位'],50:['BEST 50','50位 → 21位'],20:['BEST 20','20位 → 11位'],10:['TOP 10','10位 → 4位'],3:['BEST 3','表彰台'],1:['👑 No.1','頂点']};
 const steps=[];
-const TOTAL=180000;
+const T1=120000, T2=180000; // Part1(200→101)=2分 / Part2(100→1)=3分 → 合計5分
 const WT=s=>{ if(s.t==='b') return 0.85; const r=s.r;
   if(s.t==='tame') return r===1?3.0:r<=3?2.4:2.0;
   return r===1?3.6:r<=3?2.6:r<=10?2.0:r<=20?1.5:r<=50?1.15:0.78; };
 function buildSteps(){ steps.length=0;
-  for(let r=100;r>=1;r--){ if(BANNERS[r]) steps.push({t:'b',r}); if(TM && r<=10) steps.push({t:'tame',r}); steps.push({t:'g',r}); }
-  const sumW=steps.reduce((a,s)=>a+WT(s),0); steps.forEach(s=>s.base=WT(s)/sumW*TOTAL);
+  const has=r=>byRank[r]!=null;
+  // ---- Part1: 200→101位（暫定cid順）。P1: 0=A タイル / 1=B 横流し / 2=C 2列 / 3=D ラッシュ / 4=E モザイク ----
+  const p1=[];
+  if(P1===3){ // D ズームラッシュ：1枚ずつ＋10区切りのレンジ帯
+    for(let r=200;r>=101;r--){ if(!has(r))continue; if(r%10===0) p1.push({t:'p1rb',r}); p1.push({t:'p1one',r}); }
+    const w=s=>s.t==='p1rb'?0.55:1, sm=p1.reduce((a,s)=>a+w(s),0)||1; p1.forEach(s=>s.base=w(s)/sm*T1);
+  } else if(P1===1||P1===2){ // B/C 連続スクロール：1ステップ
+    p1.push({t:'p1cont',sub:P1===1?'film':'dual',base:T1});
+  } else { // A/E ページ：10作×最大10ページ
+    const sub=P1===0?'tile':'mosaic';
+    for(let hi=200;hi>=110;hi-=10){ const ranks=[]; for(let r=hi;r>hi-10;r--) if(has(r)) ranks.push(r); if(ranks.length) p1.push({t:'p1page',sub,ranks,hi,lo:hi-9}); }
+    const n=p1.length||1; p1.forEach(s=>s.base=T1/n);
+  }
+  // ---- Part2: 100→1位（現状維持・T2に正規化） ----
+  const p2=[];
+  for(let r=100;r>=1;r--){ if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=10) p2.push({t:'tame',r}); p2.push({t:'g',r}); }
+  const sumW=p2.reduce((a,s)=>a+WT(s),0); p2.forEach(s=>s.base=WT(s)/sumW*T2);
+  for(const s of p1) steps.push(s); for(const s of p2) steps.push(s);
 }
 
 const stage=document.getElementById('stage');
 let si=0, playing=true, mult=1, AUTO=true, LM=0, mode=0, TS=1, BG=0, TM=2, timer=null, feedRAF=null, feedStart=null;
+let P1=0, contRAF=null, contElapsed=0, contDur=0, contApply=null, contLast=0; // Part1（200→101）状態
 const LMN=['標準','全面カバー','シネマ(案G)','フィード(案H)'];
+const P1N=['A タイル','B 横流し','C 2列','D ラッシュ','E モザイク'];
 const TMN=['OFF','案A','案B','案C'];
 function isFeed(){return !AUTO && LM===3;}
 function curLM(r){return AUTO ? (r<=10?1:r<=50?2:0) : LM;} // オート昇格:51-100標準/11-50シネマ/1-10全面カバー
 function dur(s){return s.base*mult;}
 function setProgP(p){const f=document.getElementById('pfill');if(!f)return;f.style.width=(Math.max(0,Math.min(1,p))*100).toFixed(1)+'%';const h=200*(1-Math.max(0,Math.min(1,p)));f.style.background='linear-gradient(90deg,hsl('+h.toFixed(0)+',92%,58%),hsl('+(h-22).toFixed(0)+',95%,62%))';}
-function setProg(r){setProgP(r?(100-r)/99:0);}
+function setProg(r){ let p; if(r>100){p=((200-r)/100)*0.4;} else {p=0.4+((100-r)/99)*0.6;} setProgP(p); }
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function confetti(n){const w=document.createElement('div');w.className='cf';const cols=['#ff5ea8','#9b5cff','#36c5ff','#ffd23f','#3ff2c2','#ff8a3d'];
   for(let i=0;i<n;i++){const s=document.createElement('span');s.style.left=(Math.random()*100).toFixed(1)+'%';s.style.background=cols[i%cols.length];
@@ -124,24 +148,75 @@ function tameHTML(g,r,d){
     ${TM===1?'<div class="tmq" style="'+sd(.66)+'">?</div>':''}
   </div>`;
 }
+// ===== Part1（200→101位）ビルダー =====
+function p1pageHTML(s){
+  const cells=s.ranks.map((r,k)=>{ const g=byRank[r];
+    let st;
+    if(s.sub==='tile'){ st='animation-delay:'+(k*0.06).toFixed(2)+'s'; }
+    else { const a=k*2.39996; const dx=Math.round(Math.cos(a)*130), dy=Math.round(Math.sin(a)*130), rot=(k%2?1:-1)*12;
+      st='--dx:'+dx+'px;--dy:'+dy+'px;--rot:'+rot+'deg;animation-delay:'+(k*0.05).toFixed(2)+'s'; }
+    return `<div class="p1cell" style="${st}"><span class="pn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="pt">${esc(g.title)}</span></div>`;
+  }).join('');
+  return `<div class="p1page ${s.sub}"><div class="p1head">${s.hi} <span>→</span> ${s.lo} <small>位</small></div><div class="p1grid">${cells}</div></div>`;
+}
+function p1oneHTML(g,r){ const meta=[g.genre,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
+  return `<div class="p1one"><div class="o-rk">${r}<span>位</span></div><div class="o-cv"><img src="${g.img}" onerror="this.style.opacity=0"></div>
+    <div class="o-info"><div class="o-ti">${esc(g.title)}</div><div class="o-meta">${esc(meta)}</div></div></div>`; }
+function p1rbHTML(r){ return `<div class="p1rb"><div class="rbn">${r} <span>→</span> ${r-9}</div><div class="rbs">第 ${r-9} 〜 ${r} 位</div><div class="bflash"></div></div>`; }
+function buildCont(s){ contElapsed=0; contDur=dur(s);
+  const ranks=[]; for(let r=200;r>=101;r--) if(byRank[r]) ranks.push(r);
+  if(s.sub==='film'){
+    stage.innerHTML='<div class="p1film" id="p1sc">'+ranks.map(r=>{const g=byRank[r];
+      return `<div class="fcell"><div class="fcv"><span class="fn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"></div><div class="ft">${esc(g.title)}</div></div>`;}).join('')+'</div>';
+    const sc=document.getElementById('p1sc'), shift=Math.max(1,sc.scrollWidth-stage.clientWidth);
+    contApply=p=>{ sc.style.transform='translateX('+(-shift*p).toFixed(1)+'px)'; };
+  } else { // dual
+    const half=Math.ceil(ranks.length/2), L=ranks.slice(0,half), R=ranks.slice(half);
+    const col=(arr,cls)=>`<div class="p1dcol ${cls}">`+arr.map(r=>{const g=byRank[r];
+      return `<div class="dcell"><span class="dn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="dt">${esc(g.title)}</span></div>`;}).join('')+'</div>';
+    stage.innerHTML='<div class="bignum" id="p1big">200</div><div class="p1dual">'+col(L,'l')+col(R,'r')+'</div>';
+    const cl=document.querySelector('.p1dcol.l'), cr=document.querySelector('.p1dcol.r'), big=document.getElementById('p1big');
+    const sl=Math.max(1,cl.scrollHeight-stage.clientHeight), sr=Math.max(1,cr.scrollHeight-stage.clientHeight);
+    contApply=p=>{ cl.style.transform='translateY('+(-sl*p).toFixed(1)+'px)'; cr.style.transform='translateY('+(-sr*p).toFixed(1)+'px)';
+      big.textContent=Math.round(200-99*p); };
+  }
+}
+function contFrame(ts){ if(!playing)return; if(contLast)contElapsed+=ts-contLast; contLast=ts;
+  const p=Math.min(1,contElapsed/contDur); if(contApply)contApply(p); setProgP(p*0.4);
+  if(p>=1){ contLast=0; contElapsed=0; if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} return; }
+  contRAF=requestAnimationFrame(contFrame); }
 function render(s){
+  if(s.t==='p1page'){ stage.innerHTML=p1pageHTML(s); setProg(s.lo); return; }
+  if(s.t==='p1one'){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); setProg(s.r); return; }
+  if(s.t==='p1rb'){ stage.innerHTML=p1rbHTML(s.r); setProg(s.r); return; }
+  if(s.t==='p1cont'){ buildCont(s); return; }
   if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
   if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
   if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
   setProg(s.r);
 }
-function step(){ if(isFeed()) return; render(steps[si]); clearTimeout(timer); if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(steps[si])); updateProg(); }
-function updateProg(){const s=steps[si];document.getElementById('prog').textContent=(isFeed()?'フィード再生中':((s.t==='b'?'—':s.r+'位'+(s.t==='tame'?'(タメ)':''))+' / 残り'+Math.max(0,steps.length-1-si)));}
+function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer); cancelAnimationFrame(contRAF);
+  if(s.t==='p1cont'){ if(playing){ contLast=0; contRAF=requestAnimationFrame(contFrame); } updateProg(); return; }
+  if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(s)); updateProg(); }
+function updateProg(){const s=steps[si]; let t;
+  if(isFeed()) t='フィード再生中';
+  else if(s.t==='p1page') t='前半 '+s.hi+'–'+s.lo+'位';
+  else if(s.t==='p1one') t=s.r+'位';
+  else if(s.t==='p1rb') t=s.r+'–'+(s.r-9)+'位';
+  else if(s.t==='p1cont') t='前半（'+(s.sub==='film'?'横流し':'2列')+'）';
+  else t=(s.t==='b'?'—':s.r+'位'+(s.t==='tame'?'(タメ)':''))+' / 残り'+Math.max(0,steps.length-1-si);
+  document.getElementById('prog').textContent=t;}
 function updateBtn(){document.getElementById('pp').textContent=playing?'⏸':'▶';}
-function play(){if(isFeed())return;playing=true;updateBtn();step();}
-function pause(){playing=false;clearTimeout(timer);updateBtn();}
+function play(){ if(isFeed())return; playing=true; updateBtn(); const s=steps[si];
+  if(s&&s.t==='p1cont'){ contLast=0; contRAF=requestAnimationFrame(contFrame); return; } step(); }
+function pause(){ playing=false; clearTimeout(timer); cancelAnimationFrame(contRAF); contLast=0; updateBtn(); }
 // 案H フィード
 function buildFeed(){
   const list=GAMES.slice().sort((a,b)=>b.rank-a.rank);
   stage.innerHTML='<div class="feed" id="feed">'+list.map(g=>`<div class="frow"><div class="frk">${g.rank}<small>位</small></div><div class="fcv"><img src="${g.img}" onerror="this.style.opacity=0"></div><div class="fti">${esc(g.title)}</div></div>`).join('')+'</div>';
   const feed=document.getElementById('feed'), rows=[...feed.children]; feedStart=null;
-  const total=TOTAL*mult;
+  const total=(T1+T2)*mult;
   function fa(t){ if(LM!==3) return; if(feedStart==null)feedStart=t; const p=Math.min(1,(t-feedStart)/total);
     const max=Math.max(1,feed.scrollHeight-stage.clientHeight); feed.style.transform='translateY('+(-max*p).toFixed(1)+'px)';
     const fi=Math.round(p*(rows.length-1)); rows.forEach((r,k)=>r.classList.toggle('focus',k===fi)); setProgP(p);
@@ -149,7 +224,7 @@ function buildFeed(){
   feedRAF=requestAnimationFrame(fa);
 }
 document.getElementById('pp').onclick=()=>playing?pause():play();
-document.getElementById('rs').onclick=()=>{ if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();return;} si=0;play();};
+document.getElementById('rs').onclick=()=>{ if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();return;} cancelAnimationFrame(contRAF); si=0; contElapsed=0; playing=true; updateBtn(); step(); };
 document.getElementById('nx').onclick=()=>{if(isFeed())return;if(si<steps.length-1){si++;pause();render(steps[si]);updateProg();}};
 document.getElementById('pv').onclick=()=>{if(isFeed())return;if(si>0){si--;pause();render(steps[si]);updateProg();}};
 document.getElementById('sp').onchange=e=>{mult=+e.target.value;};
@@ -157,6 +232,8 @@ document.getElementById('lm').onclick=()=>{ mode=(mode+1)%5; cancelAnimationFram
   if(mode===0){AUTO=true;document.getElementById('lm').textContent='オート';}
   else{AUTO=false;LM=mode-1;document.getElementById('lm').textContent=LMN[LM];}
   if(isFeed()){ pause(); buildFeed(); updateProg(); } else { render(steps[si]); updateProg(); } };
+document.getElementById('p1').onclick=()=>{ P1=(P1+1)%5; document.getElementById('p1').textContent='前半'+P1N[P1];
+  cancelAnimationFrame(contRAF); cancelAnimationFrame(feedRAF); buildSteps(); si=0; contElapsed=0; pause(); render(steps[si]); updateProg(); };
 document.getElementById('ts').onclick=()=>{TS=(TS+1)%3;document.getElementById('ts').textContent='文字'+['A','B','C'][TS];if(!isFeed())render(steps[si]);};
 document.getElementById('bg').onclick=()=>{BG=(BG+1)%3;document.getElementById('bg').textContent='背景'+['A','B','C'][BG];cancelAnimationFrame(feedRAF);pause();si=steps.findIndex(s=>s.t==='b'&&s.r===20);render(steps[si]);updateProg();};
 document.getElementById('tame').onclick=()=>{ const cr=steps[si]?steps[si].r:100;
@@ -167,6 +244,7 @@ document.getElementById('or').onclick=()=>{const f=document.getElementById('fram
 document.getElementById('fs').onclick=()=>{const f=document.getElementById('frame');(f.requestFullscreen||f.webkitRequestFullscreen||(()=>{})).call(f);};
 const bgm=document.getElementById('bgm');
 document.getElementById('mu').onclick=()=>{if(bgm.paused){bgm.play().catch(()=>{});document.getElementById('mu').textContent='🔊';}else{bgm.pause();document.getElementById('mu').textContent='🔇';}};
+document.getElementById('p1').textContent='前半'+P1N[P1];
 buildSteps(); updateBtn(); step();
 '''
 JS = JS.replace("__GAMES__", GAMES_JSON)
@@ -220,7 +298,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .rk{flex:none;font-family:"Baloo 2";font-weight:800;font-size:clamp(80px,22vh,320px);line-height:.82;color:#fff;text-shadow:0 7px 0 rgba(0,0,0,.2),0 0 34px rgba(255,255,255,.55);animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
   .rk .rku{font-size:.34em;margin-left:2px}
   @keyframes rkin{from{transform:scale(2.4);opacity:0;filter:blur(6px)}to{transform:scale(1);opacity:1;filter:none}}
-  .mid{flex:none;animation:cvin .6s cubic-bezier(.2,1.2,.3,1) backwards}
+  .mid{flex:none;height:100%;display:flex;align-items:center;justify-content:center;animation:cvin .6s cubic-bezier(.2,1.2,.3,1) backwards}
   @keyframes cvin{from{transform:scale(.6) rotate(-4deg);opacity:0}to{transform:none;opacity:1}}
   .cvwrap{position:relative;height:88%;aspect-ratio:3/4;border-radius:18px;overflow:hidden;border:5px solid #fff;box-shadow:0 18px 50px rgba(0,0,0,.5)}
   #frame.vert .cvwrap{height:46vh}
@@ -324,6 +402,51 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .full.rev .curt.r{right:0;animation:curtR .7s cubic-bezier(.7,0,.25,1) forwards}
   @keyframes curtL{to{transform:translateX(-101%)}}
   @keyframes curtR{to{transform:translateX(101%)}}
+  /* ===== Part1（200→101位）高速パート ===== */
+  /* A タイル / E モザイク（10作ページ） */
+  .p1page{position:absolute;inset:0;display:flex;flex-direction:column;padding:2.6% 3.2%;gap:1.4vh;background:radial-gradient(120% 90% at 50% 26%,rgba(155,92,255,.4),rgba(22,13,42,.72))}
+  .p1head{font-family:"Mochiy Pop One";font-size:clamp(22px,5vw,60px);text-align:center;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.22),0 0 26px rgba(255,255,255,.5);animation:impact .5s cubic-bezier(.16,.9,.3,1.05) backwards}
+  .p1head span{color:var(--gold);margin:0 .15em}.p1head small{font-size:.5em;opacity:.85}
+  .p1grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr);gap:1vh .9vw;min-height:0}
+  .p1cell{position:relative;border-radius:12px;overflow:hidden;border:3px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.5);background:#241836}
+  .p1cell img{width:100%;height:100%;object-fit:cover;display:block}
+  .p1cell .pn{position:absolute;left:0;top:0;background:rgba(0,0,0,.66);color:#fff;font-family:"Baloo 2";font-weight:800;padding:1px 9px;border-bottom-right-radius:10px;font-size:clamp(13px,1.7vw,24px)}
+  .p1cell .pt{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.88),transparent);color:#fff;font-size:clamp(9px,1.05vw,14px);padding:15px 6px 4px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .p1page.tile .p1cell{opacity:0;animation:p1pop .5s cubic-bezier(.2,1.7,.3,1) forwards}
+  @keyframes p1pop{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:scale(1)}}
+  .p1page.mosaic .p1cell{opacity:0;animation:p1fly .6s cubic-bezier(.2,1.05,.3,1) forwards}
+  @keyframes p1fly{from{opacity:0;transform:translate(var(--dx,0),var(--dy,0)) scale(.3) rotate(var(--rot,0))}to{opacity:1;transform:none}}
+  #frame.vert .p1grid{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(5,1fr)}
+  /* D ズームラッシュ（1枚ずつ） */
+  .p1one{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:4%;padding:4%;background:radial-gradient(120% 90% at 50% 40%,rgba(54,197,255,.28),rgba(22,13,42,.72))}
+  .p1one .o-rk{font-family:"Baloo 2";font-weight:800;font-size:clamp(60px,16vh,200px);line-height:.85;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.22),0 0 28px rgba(255,255,255,.5);animation:rkin .32s cubic-bezier(.2,1.5,.3,1) backwards}
+  .p1one .o-rk span{font-size:.32em}
+  .p1one .o-cv{flex:none;height:64%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px rgba(0,0,0,.6);animation:slidein .32s cubic-bezier(.2,1.2,.3,1) backwards}
+  .p1one .o-cv img{width:100%;height:100%;object-fit:cover}
+  .p1one .o-info{max-width:36%}
+  .p1one .o-ti{font-family:"Mochiy Pop One";font-size:clamp(18px,3vw,42px);line-height:1.18;text-shadow:0 3px 10px rgba(0,0,0,.4)}
+  .p1one .o-meta{font-weight:800;font-size:clamp(13px,1.8vw,22px);opacity:.92;margin-top:6px}
+  #frame.vert .p1one{flex-direction:column;gap:2%}#frame.vert .p1one .o-info{max-width:88%;text-align:center}#frame.vert .p1one .o-cv{height:40vh}
+  .p1rb{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 50%,rgba(255,94,168,.45),rgba(22,13,42,.82))}
+  .p1rb .rbn{font-family:"Mochiy Pop One";font-size:clamp(44px,11vw,140px);color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.25),0 0 30px rgba(255,255,255,.6);animation:impact .5s cubic-bezier(.16,.9,.3,1.05) backwards}
+  .p1rb .rbn span{color:var(--gold)}
+  .p1rb .rbs{font-weight:800;letter-spacing:3px;margin-top:6px;font-size:clamp(14px,2.4vw,26px);opacity:.9}
+  /* B 横フィルム */
+  .p1film{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;gap:1.4vw;padding:0 50vw;will-change:transform}
+  .p1film .fcell{flex:none;width:clamp(120px,15vw,210px)}
+  .p1film .fcv{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:3px solid #fff;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .p1film .fcv img{width:100%;height:100%;object-fit:cover}
+  .p1film .fn{position:absolute;left:0;top:0;background:rgba(0,0,0,.66);color:#fff;font-family:"Baloo 2";font-weight:800;padding:1px 9px;border-bottom-right-radius:10px;font-size:clamp(13px,1.6vw,22px)}
+  .p1film .ft{text-align:center;font-family:"Mochiy Pop One";font-size:clamp(12px,1.5vw,20px);margin-top:8px;text-shadow:0 2px 8px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* C 縦2列 */
+  .p1dual{position:absolute;inset:0;display:flex;gap:4%;padding:0 9%;overflow:hidden}
+  .p1dcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:1.3vh;will-change:transform}
+  .p1dcol.r{margin-top:-10vh}
+  .p1dual .dcell{position:relative;width:clamp(108px,14vh,188px);border-radius:11px;overflow:hidden;border:3px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.5);flex:none}
+  .p1dual .dcell img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+  .p1dual .dcell .dn{position:absolute;left:0;top:0;background:rgba(0,0,0,.66);color:#fff;font-family:"Baloo 2";font-weight:800;padding:1px 9px;border-bottom-right-radius:10px;font-size:clamp(12px,1.5vw,20px)}
+  .p1dual .dcell .dt{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.84),transparent);color:#fff;font-size:clamp(9px,1vw,13px);padding:13px 6px 3px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bignum{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:"Baloo 2";font-weight:800;font-size:clamp(90px,30vh,360px);color:rgba(255,255,255,.13);z-index:3;pointer-events:none}
   /* フィード(案H) */
   .feed{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;gap:1.4vh;padding:46vh 7%;will-change:transform}
   .frow{display:flex;align-items:center;gap:3%;opacity:.35;transform:scale(.82);transition:opacity .35s,transform .35s}
@@ -347,12 +470,13 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   <div class="ctl">
     <button id="pv">⏮</button><button id="pp">⏸</button><button id="nx">⏭</button><button id="rs">↺ 最初から</button>
     <span class="prog" id="prog">—</span>
-    速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(3分)</option><option value="0.6">速い</option></select>
-    <button id="lm">オート</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">横 16:9</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
+    速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(5分)</option><option value="0.6">速い</option></select>
+    <button id="p1">前半A タイル</button><button id="lm">オート</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">横 16:9</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
   </div>
-  <div class="hint">既定は<b>オート</b>＝順位が上がるほど画面が自動で豪華化（51〜100:標準 → 11〜50:シネマ → 1〜10:全面カバー）。「レイアウト」ボタンで オート→標準→全面カバー→シネマ→フィード を巡回。下端の<b>進行バー</b>は青→赤へ温度上昇。<b>「タメ」</b>でTOP10の正体伏せ演出(案A/B/C/OFF)を切替。「縦 9:16」でショート向け。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3 を同フォルダに置くと🔇から再生。</div>
+  <div class="hint">全体5分＝<b>前半（200→101位）を一気に</b>＋<b>後半（100→1位）はじっくり</b>。<b>「前半」</b>ボタンで200→101位の見せ方を巡回（A タイルドカン／B 横流し／C 2列スクロール／D ズームラッシュ／E モザイク集合）。後半は<b>オート</b>で順位が上がるほど豪華化（51〜100:標準 → 11〜50:シネマ → 1〜10:全面カバー）、「レイアウト」で切替。<b>「タメ」</b>でTOP10の正体伏せ演出。下端の<b>進行バー</b>は青→赤へ。「縦 9:16」でショート向け。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
   <audio id="bgm" src="movie_bgm.mp3" loop></audio>
   <script src="movie.js"></script>
 </body></html>'''
 open("movie.html", "w", encoding="utf-8").write(HTML)
-print(f"movie.html + movie.js 生成（{len(games)}作・4レイアウト）")
+p1n = sum(1 for g in games if g["rank"] > 100)
+print(f"movie.html + movie.js 生成（前半{p1n}作+後半100作=計{len(games)}作・5分構成・前半5案A〜E切替）")
