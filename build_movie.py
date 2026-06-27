@@ -70,18 +70,10 @@ const WT=s=>{ if(s.t==='b') return 0.85; const r=s.r;
   return r===1?3.6:r<=3?2.6:r<=10?2.0:r<=20?1.5:r<=50?1.15:0.78; };
 function buildSteps(){ steps.length=0;
   const has=r=>byRank[r]!=null;
-  // ---- Part1: 200→101位（暫定cid順）。P1: 0=A タイル / 1=B 横流し / 2=C 2列 / 3=D ラッシュ / 4=E モザイク ----
+  // ---- Part1: 200→101位（暫定cid順）1枚ずつラッシュ・帯なし。見せ方はP1(0〜4)で切替 ----
   const p1=[];
-  if(P1===3){ // D ズームラッシュ：1枚ずつ＋10区切りのレンジ帯
-    for(let r=200;r>=101;r--){ if(!has(r))continue; if(r%10===0) p1.push({t:'p1rb',r}); p1.push({t:'p1one',r}); }
-    const w=s=>s.t==='p1rb'?0.55:1, sm=p1.reduce((a,s)=>a+w(s),0)||1; p1.forEach(s=>s.base=w(s)/sm*T1);
-  } else if(P1===1||P1===2){ // B/C 連続スクロール：1ステップ
-    p1.push({t:'p1cont',sub:P1===1?'film':'dual',base:T1});
-  } else { // A/E ページ：10作×最大10ページ
-    const sub=P1===0?'tile':'mosaic';
-    for(let hi=200;hi>=110;hi-=10){ const ranks=[]; for(let r=hi;r>hi-10;r--) if(has(r)) ranks.push(r); if(ranks.length) p1.push({t:'p1page',sub,ranks,hi,lo:hi-9}); }
-    const n=p1.length||1; p1.forEach(s=>s.base=T1/n);
-  }
+  for(let r=200;r>=101;r--){ if(has(r)) p1.push({t:'p1one',r}); }
+  const sm=p1.length||1; p1.forEach(s=>s.base=T1/sm);
   // ---- Part2: 100→1位（現状維持・T2に正規化） ----
   const p2=[];
   for(let r=100;r>=1;r--){ if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=10) p2.push({t:'tame',r}); p2.push({t:'g',r}); }
@@ -91,9 +83,9 @@ function buildSteps(){ steps.length=0;
 
 const stage=document.getElementById('stage');
 let si=0, playing=true, mult=1, AUTO=true, LM=0, mode=0, TS=1, BG=0, TM=2, timer=null, feedRAF=null, feedStart=null;
-let P1=0, contRAF=null, contElapsed=0, contDur=0, contApply=null, contLast=0; // Part1（200→101）状態
+let P1=0; // Part1（200→101）ラッシュの見せ方
 const LMN=['標準','全面カバー','シネマ(案G)','フィード(案H)'];
-const P1N=['A タイル','B 横流し','C 2列','D ラッシュ','E モザイク'];
+const P1N=['①全面','②ブラー','③カード','④シネスコ','⑤ステージ'];
 const TMN=['OFF','案A','案B','案C'];
 function isFeed(){return !AUTO && LM===3;}
 function curLM(r){return AUTO ? (r<=10?1:r<=50?2:0) : LM;} // オート昇格:51-100標準/11-50シネマ/1-10全面カバー
@@ -148,69 +140,50 @@ function tameHTML(g,r,d){
     ${TM===1?'<div class="tmq" style="'+sd(.66)+'">?</div>':''}
   </div>`;
 }
-// ===== Part1（200→101位）ビルダー =====
-function p1pageHTML(s){
-  const cells=s.ranks.map((r,k)=>{ const g=byRank[r];
-    let st;
-    if(s.sub==='tile'){ st='animation-delay:'+(k*0.06).toFixed(2)+'s'; }
-    else { const a=k*2.39996; const dx=Math.round(Math.cos(a)*130), dy=Math.round(Math.sin(a)*130), rot=(k%2?1:-1)*12;
-      st='--dx:'+dx+'px;--dy:'+dy+'px;--rot:'+rot+'deg;animation-delay:'+(k*0.05).toFixed(2)+'s'; }
-    return `<div class="p1cell" style="${st}"><span class="pn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="pt">${esc(g.title)}</span></div>`;
-  }).join('');
-  return `<div class="p1page ${s.sub}"><div class="p1head">${s.hi} <span>→</span> ${s.lo} <small>位</small></div><div class="p1grid">${cells}</div></div>`;
-}
-function p1oneHTML(g,r){ const meta=[g.genre,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
-  return `<div class="p1one"><div class="o-rk">${r}<span>位</span></div><div class="o-cv"><img src="${g.img}" onerror="this.style.opacity=0"></div>
-    <div class="o-info"><div class="o-ti">${esc(g.title)}</div><div class="o-meta">${esc(meta)}</div></div></div>`; }
-function p1rbHTML(r){ return `<div class="p1rb"><div class="rbn">${r} <span>→</span> ${r-9}</div><div class="rbs">第 ${r-9} 〜 ${r} 位</div><div class="bflash"></div></div>`; }
-function buildCont(s){ contElapsed=0; contDur=dur(s);
-  const ranks=[]; for(let r=200;r>=101;r--) if(byRank[r]) ranks.push(r);
-  if(s.sub==='film'){
-    stage.innerHTML='<div class="p1film" id="p1sc">'+ranks.map(r=>{const g=byRank[r];
-      return `<div class="fcell"><div class="fcv"><span class="fn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"></div><div class="ft">${esc(g.title)}</div></div>`;}).join('')+'</div>';
-    const sc=document.getElementById('p1sc'), shift=Math.max(1,sc.scrollWidth-stage.clientWidth);
-    contApply=p=>{ sc.style.transform='translateX('+(-shift*p).toFixed(1)+'px)'; };
-  } else { // dual
-    const half=Math.ceil(ranks.length/2), L=ranks.slice(0,half), R=ranks.slice(half);
-    const col=(arr,cls)=>`<div class="p1dcol ${cls}">`+arr.map(r=>{const g=byRank[r];
-      return `<div class="dcell"><span class="dn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="dt">${esc(g.title)}</span></div>`;}).join('')+'</div>';
-    stage.innerHTML='<div class="bignum" id="p1big">200</div><div class="p1dual">'+col(L,'l')+col(R,'r')+'</div>';
-    const cl=document.querySelector('.p1dcol.l'), cr=document.querySelector('.p1dcol.r'), big=document.getElementById('p1big');
-    const sl=Math.max(1,cl.scrollHeight-stage.clientHeight), sr=Math.max(1,cr.scrollHeight-stage.clientHeight);
-    contApply=p=>{ cl.style.transform='translateY('+(-sl*p).toFixed(1)+'px)'; cr.style.transform='translateY('+(-sr*p).toFixed(1)+'px)';
-      big.textContent=Math.round(200-99*p); };
+// ===== Part1（200→101位）ラッシュ5案ビルダー =====
+function p1oneHTML(g,r){
+  const meta=[g.genre,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
+  const ti=esc(g.title), m=esc(meta), src=g.img;
+  if(P1===0){ // ① 全面ブチ抜き
+    return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0"><div class="fbscrim"></div>
+      <div class="fbrk">${r}<span>位</span></div><div class="fbbot"><div class="fbti">${ti}</div><div class="fbmeta">${m}</div></div></div>`;
   }
+  if(P1===1){ // ② ブラー自己背景
+    return `<div class="p1one blur"><img class="bgblur" src="${src}" onerror="this.style.opacity=0"><div class="blurdark"></div>
+      <div class="blurcv"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="brk">${r}<span>位</span></div><div class="bbot"><div class="bti">${ti}</div><div class="bmeta">${m}</div></div></div>`;
+  }
+  if(P1===2){ // ③ カード送り
+    return `<div class="p1one slide"><div class="slcard"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="slside"><div class="slrk">${r}<span>位</span></div><div class="slti">${ti}</div><div class="slmeta">${m}</div></div></div>`;
+  }
+  if(P1===3){ // ④ シネスコ黒帯
+    return `<div class="p1one cs"><div class="csbar t"></div><div class="csbar b"></div><div class="csflash"></div>
+      <div class="cswrap"><div class="csrk">${r}<span>位</span></div><div class="cscv"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="csinfo"><div class="csti">${ti}</div><div class="csmeta">${m}</div></div></div></div>`;
+  }
+  // ⑤ スポットステージ
+  return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0"></div>
+    <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="stti">${ti}</div><div class="stmeta">${m}</div></div></div>`;
 }
-function contFrame(ts){ if(!playing)return; if(contLast)contElapsed+=ts-contLast; contLast=ts;
-  const p=Math.min(1,contElapsed/contDur); if(contApply)contApply(p); setProgP(p*0.4);
-  if(p>=1){ contLast=0; contElapsed=0; if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} return; }
-  contRAF=requestAnimationFrame(contFrame); }
 function render(s){
-  if(s.t==='p1page'){ stage.innerHTML=p1pageHTML(s); setProg(s.lo); return; }
   if(s.t==='p1one'){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); setProg(s.r); return; }
-  if(s.t==='p1rb'){ stage.innerHTML=p1rbHTML(s.r); setProg(s.r); return; }
-  if(s.t==='p1cont'){ buildCont(s); return; }
   if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
   if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
   if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
   setProg(s.r);
 }
-function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer); cancelAnimationFrame(contRAF);
-  if(s.t==='p1cont'){ if(playing){ contLast=0; contRAF=requestAnimationFrame(contFrame); } updateProg(); return; }
+function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer);
   if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(s)); updateProg(); }
 function updateProg(){const s=steps[si]; let t;
   if(isFeed()) t='フィード再生中';
-  else if(s.t==='p1page') t='前半 '+s.hi+'–'+s.lo+'位';
-  else if(s.t==='p1one') t=s.r+'位';
-  else if(s.t==='p1rb') t=s.r+'–'+(s.r-9)+'位';
-  else if(s.t==='p1cont') t='前半（'+(s.sub==='film'?'横流し':'2列')+'）';
+  else if(s.t==='p1one') t='前半 '+s.r+'位 / 残り'+Math.max(0,steps.length-1-si);
   else t=(s.t==='b'?'—':s.r+'位'+(s.t==='tame'?'(タメ)':''))+' / 残り'+Math.max(0,steps.length-1-si);
   document.getElementById('prog').textContent=t;}
 function updateBtn(){document.getElementById('pp').textContent=playing?'⏸':'▶';}
-function play(){ if(isFeed())return; playing=true; updateBtn(); const s=steps[si];
-  if(s&&s.t==='p1cont'){ contLast=0; contRAF=requestAnimationFrame(contFrame); return; } step(); }
-function pause(){ playing=false; clearTimeout(timer); cancelAnimationFrame(contRAF); contLast=0; updateBtn(); }
+function play(){ if(isFeed())return; playing=true; updateBtn(); step(); }
+function pause(){ playing=false; clearTimeout(timer); updateBtn(); }
 // 案H フィード
 function buildFeed(){
   const list=GAMES.slice().sort((a,b)=>b.rank-a.rank);
@@ -224,7 +197,7 @@ function buildFeed(){
   feedRAF=requestAnimationFrame(fa);
 }
 document.getElementById('pp').onclick=()=>playing?pause():play();
-document.getElementById('rs').onclick=()=>{ if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();return;} cancelAnimationFrame(contRAF); si=0; contElapsed=0; playing=true; updateBtn(); step(); };
+document.getElementById('rs').onclick=()=>{ if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();return;} si=0; playing=true; updateBtn(); step(); };
 document.getElementById('nx').onclick=()=>{if(isFeed())return;if(si<steps.length-1){si++;pause();render(steps[si]);updateProg();}};
 document.getElementById('pv').onclick=()=>{if(isFeed())return;if(si>0){si--;pause();render(steps[si]);updateProg();}};
 document.getElementById('sp').onchange=e=>{mult=+e.target.value;};
@@ -233,7 +206,7 @@ document.getElementById('lm').onclick=()=>{ mode=(mode+1)%5; cancelAnimationFram
   else{AUTO=false;LM=mode-1;document.getElementById('lm').textContent=LMN[LM];}
   if(isFeed()){ pause(); buildFeed(); updateProg(); } else { render(steps[si]); updateProg(); } };
 document.getElementById('p1').onclick=()=>{ P1=(P1+1)%5; document.getElementById('p1').textContent='前半'+P1N[P1];
-  cancelAnimationFrame(contRAF); cancelAnimationFrame(feedRAF); buildSteps(); si=0; contElapsed=0; pause(); render(steps[si]); updateProg(); };
+  cancelAnimationFrame(feedRAF); buildSteps(); si=0; pause(); render(steps[si]); updateProg(); };
 document.getElementById('ts').onclick=()=>{TS=(TS+1)%3;document.getElementById('ts').textContent='文字'+['A','B','C'][TS];if(!isFeed())render(steps[si]);};
 document.getElementById('bg').onclick=()=>{BG=(BG+1)%3;document.getElementById('bg').textContent='背景'+['A','B','C'][BG];cancelAnimationFrame(feedRAF);pause();si=steps.findIndex(s=>s.t==='b'&&s.r===20);render(steps[si]);updateProg();};
 document.getElementById('tame').onclick=()=>{ const cr=steps[si]?steps[si].r:100;
@@ -402,51 +375,67 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .full.rev .curt.r{right:0;animation:curtR .7s cubic-bezier(.7,0,.25,1) forwards}
   @keyframes curtL{to{transform:translateX(-101%)}}
   @keyframes curtR{to{transform:translateX(101%)}}
-  /* ===== Part1（200→101位）高速パート ===== */
-  /* A タイル / E モザイク（10作ページ） */
-  .p1page{position:absolute;inset:0;display:flex;flex-direction:column;padding:2.6% 3.2%;gap:1.4vh;background:radial-gradient(120% 90% at 50% 26%,rgba(155,92,255,.4),rgba(22,13,42,.72))}
-  .p1head{font-family:"Mochiy Pop One";font-size:clamp(22px,5vw,60px);text-align:center;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.22),0 0 26px rgba(255,255,255,.5);animation:impact .5s cubic-bezier(.16,.9,.3,1.05) backwards}
-  .p1head span{color:var(--gold);margin:0 .15em}.p1head small{font-size:.5em;opacity:.85}
-  .p1grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr);gap:1vh .9vw;min-height:0}
-  .p1cell{position:relative;border-radius:12px;overflow:hidden;border:3px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.5);background:#241836}
-  .p1cell img{width:100%;height:100%;object-fit:cover;display:block}
-  .p1cell .pn{position:absolute;left:0;top:0;background:rgba(0,0,0,.66);color:#fff;font-family:"Baloo 2";font-weight:800;padding:1px 9px;border-bottom-right-radius:10px;font-size:clamp(13px,1.7vw,24px)}
-  .p1cell .pt{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.88),transparent);color:#fff;font-size:clamp(9px,1.05vw,14px);padding:15px 6px 4px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .p1page.tile .p1cell{opacity:0;animation:p1pop .5s cubic-bezier(.2,1.7,.3,1) forwards}
-  @keyframes p1pop{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:scale(1)}}
-  .p1page.mosaic .p1cell{opacity:0;animation:p1fly .6s cubic-bezier(.2,1.05,.3,1) forwards}
-  @keyframes p1fly{from{opacity:0;transform:translate(var(--dx,0),var(--dy,0)) scale(.3) rotate(var(--rot,0))}to{opacity:1;transform:none}}
-  #frame.vert .p1grid{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(5,1fr)}
-  /* D ズームラッシュ（1枚ずつ） */
-  .p1one{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:4%;padding:4%;background:radial-gradient(120% 90% at 50% 40%,rgba(54,197,255,.28),rgba(22,13,42,.72))}
-  .p1one .o-rk{font-family:"Baloo 2";font-weight:800;font-size:clamp(60px,16vh,200px);line-height:.85;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.22),0 0 28px rgba(255,255,255,.5);animation:rkin .32s cubic-bezier(.2,1.5,.3,1) backwards}
-  .p1one .o-rk span{font-size:.32em}
-  .p1one .o-cv{flex:none;height:64%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px rgba(0,0,0,.6);animation:slidein .32s cubic-bezier(.2,1.2,.3,1) backwards}
-  .p1one .o-cv img{width:100%;height:100%;object-fit:cover}
-  .p1one .o-info{max-width:36%}
-  .p1one .o-ti{font-family:"Mochiy Pop One";font-size:clamp(18px,3vw,42px);line-height:1.18;text-shadow:0 3px 10px rgba(0,0,0,.4)}
-  .p1one .o-meta{font-weight:800;font-size:clamp(13px,1.8vw,22px);opacity:.92;margin-top:6px}
-  #frame.vert .p1one{flex-direction:column;gap:2%}#frame.vert .p1one .o-info{max-width:88%;text-align:center}#frame.vert .p1one .o-cv{height:40vh}
-  .p1rb{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 50%,rgba(255,94,168,.45),rgba(22,13,42,.82))}
-  .p1rb .rbn{font-family:"Mochiy Pop One";font-size:clamp(44px,11vw,140px);color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.25),0 0 30px rgba(255,255,255,.6);animation:impact .5s cubic-bezier(.16,.9,.3,1.05) backwards}
-  .p1rb .rbn span{color:var(--gold)}
-  .p1rb .rbs{font-weight:800;letter-spacing:3px;margin-top:6px;font-size:clamp(14px,2.4vw,26px);opacity:.9}
-  /* B 横フィルム */
-  .p1film{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;gap:1.4vw;padding:0 50vw;will-change:transform}
-  .p1film .fcell{flex:none;width:clamp(120px,15vw,210px)}
-  .p1film .fcv{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:3px solid #fff;box-shadow:0 12px 30px rgba(0,0,0,.5)}
-  .p1film .fcv img{width:100%;height:100%;object-fit:cover}
-  .p1film .fn{position:absolute;left:0;top:0;background:rgba(0,0,0,.66);color:#fff;font-family:"Baloo 2";font-weight:800;padding:1px 9px;border-bottom-right-radius:10px;font-size:clamp(13px,1.6vw,22px)}
-  .p1film .ft{text-align:center;font-family:"Mochiy Pop One";font-size:clamp(12px,1.5vw,20px);margin-top:8px;text-shadow:0 2px 8px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  /* C 縦2列 */
-  .p1dual{position:absolute;inset:0;display:flex;gap:4%;padding:0 9%;overflow:hidden}
-  .p1dcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:1.3vh;will-change:transform}
-  .p1dcol.r{margin-top:-10vh}
-  .p1dual .dcell{position:relative;width:clamp(108px,14vh,188px);border-radius:11px;overflow:hidden;border:3px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.5);flex:none}
-  .p1dual .dcell img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
-  .p1dual .dcell .dn{position:absolute;left:0;top:0;background:rgba(0,0,0,.66);color:#fff;font-family:"Baloo 2";font-weight:800;padding:1px 9px;border-bottom-right-radius:10px;font-size:clamp(12px,1.5vw,20px)}
-  .p1dual .dcell .dt{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.84),transparent);color:#fff;font-size:clamp(9px,1vw,13px);padding:13px 6px 3px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bignum{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:"Baloo 2";font-weight:800;font-size:clamp(90px,30vh,360px);color:rgba(255,255,255,.13);z-index:3;pointer-events:none}
+  /* ===== Part1（200→101位）ラッシュ5案 ===== */
+  .p1one{position:absolute;inset:0;overflow:hidden;background:#070310}
+  .p1one img{display:block}
+  @keyframes ctrin{from{opacity:0;transform:translate(-50%,-50%) scale(.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+  @keyframes fbin{from{opacity:0;transform:scale(1.08)}to{opacity:1;transform:none}}
+  @keyframes slcin{from{opacity:0;transform:translate(40%,-50%)}to{opacity:1;transform:translate(-50%,-50%)}}
+  @keyframes csbarin{from{height:50%}to{}}
+  /* ① 全面ブチ抜き */
+  .p1one.fb .fbimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fbin .45s ease backwards}
+  .p1one.fb .fbscrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 48%,rgba(0,0,0,.92) 100%)}
+  .p1one.fb .fbrk{position:absolute;top:3%;left:4%;font-family:"Baloo 2";font-weight:800;font-size:clamp(70px,21vh,280px);line-height:.82;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.9);animation:rkin .45s cubic-bezier(.2,1.5,.3,1) backwards}
+  .p1one.fb .fbrk span{font-size:.3em}
+  .p1one.fb .fbbot{position:absolute;left:4%;right:4%;bottom:5%;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .5s ease .08s backwards}
+  .p1one.fb .fbti{font-family:"Mochiy Pop One";font-size:clamp(24px,4.4vw,60px);line-height:1.12}
+  .p1one.fb .fbmeta{font-weight:800;font-size:clamp(14px,2.1vw,28px);margin-top:7px;opacity:.95}
+  /* ② ブラー自己背景 */
+  .p1one.blur .bgblur{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(34px) saturate(1.25);animation:fbin .45s ease backwards}
+  .p1one.blur .blurdark{position:absolute;inset:0;background:rgba(8,5,18,.52)}
+  .p1one.blur .blurcv{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);height:86%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid rgba(255,255,255,.95);box-shadow:0 22px 64px rgba(0,0,0,.65);animation:ctrin .5s cubic-bezier(.2,1.2,.3,1) backwards}
+  .p1one.blur .blurcv img{width:100%;height:100%;object-fit:cover}
+  .p1one.blur .brk{position:absolute;top:3.5%;left:4%;z-index:2;font-family:"Baloo 2";font-weight:800;font-size:clamp(58px,16vh,210px);line-height:.82;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.85);animation:rkin .45s cubic-bezier(.2,1.5,.3,1) backwards}
+  .p1one.blur .brk span{font-size:.3em}
+  .p1one.blur .bbot{position:absolute;left:0;right:0;bottom:3.5%;z-index:2;text-align:center;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .5s ease .08s backwards}
+  .p1one.blur .bti{font-family:"Mochiy Pop One";font-size:clamp(20px,3.4vw,48px)}
+  .p1one.blur .bmeta{font-weight:800;font-size:clamp(13px,2vw,26px);opacity:.95;margin-top:5px}
+  /* ③ カード送り */
+  .p1one.slide{background:radial-gradient(120% 90% at 50% 28%,#241a3e,#0b0716)}
+  .p1one.slide .slcard{position:absolute;top:50%;left:42%;transform:translate(-50%,-50%);height:82%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid #fff;box-shadow:0 22px 64px rgba(0,0,0,.65);animation:slcin .5s cubic-bezier(.2,1.1,.3,1) backwards}
+  .p1one.slide .slcard img{width:100%;height:100%;object-fit:cover}
+  .p1one.slide .slside{position:absolute;right:5%;top:50%;transform:translateY(-50%);width:32%;animation:infin .5s ease .12s backwards}
+  .p1one.slide .slrk{font-family:"Baloo 2";font-weight:800;font-size:clamp(56px,16vh,210px);line-height:.82;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.22),0 0 26px rgba(255,255,255,.4)}
+  .p1one.slide .slrk span{font-size:.28em}
+  .p1one.slide .slti{font-family:"Mochiy Pop One";font-size:clamp(18px,2.7vw,40px);line-height:1.16;margin-top:8px;text-shadow:0 3px 10px rgba(0,0,0,.5)}
+  .p1one.slide .slmeta{font-weight:800;font-size:clamp(13px,1.9vw,24px);opacity:.92;margin-top:6px}
+  #frame.vert .p1one.slide .slcard{left:50%;height:62%}
+  #frame.vert .p1one.slide .slside{left:0;right:0;top:auto;bottom:5%;width:100%;text-align:center;transform:none}
+  /* ④ シネスコ黒帯 */
+  .p1one.cs{background:#000}
+  .p1one.cs .csbar{position:absolute;left:0;right:0;height:11%;background:#000;z-index:3}
+  .p1one.cs .csbar.t{top:0;animation:csbarin .5s ease backwards}
+  .p1one.cs .csbar.b{bottom:0;animation:csbarin .5s ease backwards}
+  .p1one.cs .csflash{position:absolute;inset:0;background:#fff;z-index:4;opacity:0;animation:fl .45s ease forwards;pointer-events:none}
+  .p1one.cs .cswrap{position:absolute;inset:0;height:100%;display:flex;align-items:center;justify-content:center;gap:5%;padding:0 7%}
+  .p1one.cs .csrk{flex:none;font-family:"Baloo 2";font-weight:800;font-size:clamp(56px,17vh,240px);line-height:.82;color:#fff;text-shadow:0 0 30px rgba(255,255,255,.4);animation:flashin .5s cubic-bezier(.2,1.6,.3,1) backwards}
+  .p1one.cs .csrk span{font-size:.28em}
+  .p1one.cs .cscv{flex:none;height:72%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:4px solid #fff;box-shadow:0 16px 48px rgba(0,0,0,.7);animation:slidein .5s cubic-bezier(.2,1.2,.3,1) backwards}
+  .p1one.cs .cscv img{width:100%;height:100%;object-fit:cover}
+  .p1one.cs .csinfo{flex:1;max-width:32%;animation:infin .5s ease .15s backwards}
+  .p1one.cs .csti{font-family:"Mochiy Pop One";font-size:clamp(18px,2.8vw,44px);line-height:1.14}
+  .p1one.cs .csmeta{font-weight:800;font-size:clamp(13px,1.9vw,24px);opacity:.95;margin-top:6px}
+  #frame.vert .p1one.cs .cswrap{flex-direction:column;gap:2.5%}#frame.vert .p1one.cs .csinfo{max-width:88%;text-align:center}#frame.vert .p1one.cs .cscv{height:50%}
+  /* ⑤ スポットステージ */
+  .p1one.st .stbg{position:absolute;inset:0;background:radial-gradient(58% 70% at 50% 16%,rgba(255,244,214,.24),rgba(10,7,20,0) 56%),radial-gradient(120% 100% at 50% 52%,#1b1532,#070310 82%)}
+  .p1one.st .stcv{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);height:74%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid rgba(255,255,255,.92);box-shadow:0 0 64px rgba(255,221,140,.32),0 26px 72px rgba(0,0,0,.7);animation:ctrin .6s cubic-bezier(.2,1.1,.3,1) backwards}
+  .p1one.st .stcv img{width:100%;height:100%;object-fit:cover}
+  .p1one.st .stbot{position:absolute;left:0;right:0;bottom:4%;text-align:center;animation:infin .5s ease .15s backwards}
+  .p1one.st .strk{font-family:"Baloo 2";font-weight:800;font-size:clamp(40px,9.5vh,128px);line-height:.82;color:var(--gold);text-shadow:0 0 30px rgba(255,200,80,.5)}
+  .p1one.st .strk span{font-size:.3em;color:#fff}
+  .p1one.st .stti{font-family:"Mochiy Pop One";font-size:clamp(18px,2.8vw,42px);margin-top:2px;text-shadow:0 3px 14px rgba(0,0,0,.9)}
+  .p1one.st .stmeta{font-weight:800;font-size:clamp(13px,1.9vw,24px);opacity:.9;margin-top:4px}
+  #frame.vert .p1one.st .stcv{height:54%;top:42%}
   /* フィード(案H) */
   .feed{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;gap:1.4vh;padding:46vh 7%;will-change:transform}
   .frow{display:flex;align-items:center;gap:3%;opacity:.35;transform:scale(.82);transition:opacity .35s,transform .35s}
@@ -471,9 +460,9 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
     <button id="pv">⏮</button><button id="pp">⏸</button><button id="nx">⏭</button><button id="rs">↺ 最初から</button>
     <span class="prog" id="prog">—</span>
     速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(5分)</option><option value="0.6">速い</option></select>
-    <button id="p1">前半A タイル</button><button id="lm">オート</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">横 16:9</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
+    <button id="p1">前半①全面</button><button id="lm">オート</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">横 16:9</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
   </div>
-  <div class="hint">全体5分＝<b>前半（200→101位）を一気に</b>＋<b>後半（100→1位）はじっくり</b>。<b>「前半」</b>ボタンで200→101位の見せ方を巡回（A タイルドカン／B 横流し／C 2列スクロール／D ズームラッシュ／E モザイク集合）。後半は<b>オート</b>で順位が上がるほど豪華化（51〜100:標準 → 11〜50:シネマ → 1〜10:全面カバー）、「レイアウト」で切替。<b>「タメ」</b>でTOP10の正体伏せ演出。下端の<b>進行バー</b>は青→赤へ。「縦 9:16」でショート向け。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
+  <div class="hint">全体5分＝<b>前半（200→101位）を1枚ずつ一気に</b>＋<b>後半（100→1位）はじっくり</b>。<b>「前半」</b>ボタンで200→101位の見せ方を巡回（①全面ブチ抜き／②ブラー自己背景／③カード送り／④シネスコ黒帯／⑤スポットステージ）。後半は<b>オート</b>で順位が上がるほど豪華化（51〜100:標準 → 11〜50:シネマ → 1〜10:全面カバー）、「レイアウト」で切替。<b>「タメ」</b>でTOP10の正体伏せ演出。下端の<b>進行バー</b>は青→赤へ。「縦 9:16」でショート向け。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
   <audio id="bgm" src="movie_bgm.mp3" loop></audio>
   <script src="movie.js"></script>
 </body></html>'''

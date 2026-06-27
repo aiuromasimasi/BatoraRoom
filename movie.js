@@ -24,18 +24,10 @@ const WT=s=>{ if(s.t==='b') return 0.85; const r=s.r;
   return r===1?3.6:r<=3?2.6:r<=10?2.0:r<=20?1.5:r<=50?1.15:0.78; };
 function buildSteps(){ steps.length=0;
   const has=r=>byRank[r]!=null;
-  // ---- Part1: 200→101位（暫定cid順）。P1: 0=A タイル / 1=B 横流し / 2=C 2列 / 3=D ラッシュ / 4=E モザイク ----
+  // ---- Part1: 200→101位（暫定cid順）1枚ずつラッシュ・帯なし。見せ方はP1(0〜4)で切替 ----
   const p1=[];
-  if(P1===3){ // D ズームラッシュ：1枚ずつ＋10区切りのレンジ帯
-    for(let r=200;r>=101;r--){ if(!has(r))continue; if(r%10===0) p1.push({t:'p1rb',r}); p1.push({t:'p1one',r}); }
-    const w=s=>s.t==='p1rb'?0.55:1, sm=p1.reduce((a,s)=>a+w(s),0)||1; p1.forEach(s=>s.base=w(s)/sm*T1);
-  } else if(P1===1||P1===2){ // B/C 連続スクロール：1ステップ
-    p1.push({t:'p1cont',sub:P1===1?'film':'dual',base:T1});
-  } else { // A/E ページ：10作×最大10ページ
-    const sub=P1===0?'tile':'mosaic';
-    for(let hi=200;hi>=110;hi-=10){ const ranks=[]; for(let r=hi;r>hi-10;r--) if(has(r)) ranks.push(r); if(ranks.length) p1.push({t:'p1page',sub,ranks,hi,lo:hi-9}); }
-    const n=p1.length||1; p1.forEach(s=>s.base=T1/n);
-  }
+  for(let r=200;r>=101;r--){ if(has(r)) p1.push({t:'p1one',r}); }
+  const sm=p1.length||1; p1.forEach(s=>s.base=T1/sm);
   // ---- Part2: 100→1位（現状維持・T2に正規化） ----
   const p2=[];
   for(let r=100;r>=1;r--){ if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=10) p2.push({t:'tame',r}); p2.push({t:'g',r}); }
@@ -45,9 +37,9 @@ function buildSteps(){ steps.length=0;
 
 const stage=document.getElementById('stage');
 let si=0, playing=true, mult=1, AUTO=true, LM=0, mode=0, TS=1, BG=0, TM=2, timer=null, feedRAF=null, feedStart=null;
-let P1=0, contRAF=null, contElapsed=0, contDur=0, contApply=null, contLast=0; // Part1（200→101）状態
+let P1=0; // Part1（200→101）ラッシュの見せ方
 const LMN=['標準','全面カバー','シネマ(案G)','フィード(案H)'];
-const P1N=['A タイル','B 横流し','C 2列','D ラッシュ','E モザイク'];
+const P1N=['①全面','②ブラー','③カード','④シネスコ','⑤ステージ'];
 const TMN=['OFF','案A','案B','案C'];
 function isFeed(){return !AUTO && LM===3;}
 function curLM(r){return AUTO ? (r<=10?1:r<=50?2:0) : LM;} // オート昇格:51-100標準/11-50シネマ/1-10全面カバー
@@ -102,69 +94,50 @@ function tameHTML(g,r,d){
     ${TM===1?'<div class="tmq" style="'+sd(.66)+'">?</div>':''}
   </div>`;
 }
-// ===== Part1（200→101位）ビルダー =====
-function p1pageHTML(s){
-  const cells=s.ranks.map((r,k)=>{ const g=byRank[r];
-    let st;
-    if(s.sub==='tile'){ st='animation-delay:'+(k*0.06).toFixed(2)+'s'; }
-    else { const a=k*2.39996; const dx=Math.round(Math.cos(a)*130), dy=Math.round(Math.sin(a)*130), rot=(k%2?1:-1)*12;
-      st='--dx:'+dx+'px;--dy:'+dy+'px;--rot:'+rot+'deg;animation-delay:'+(k*0.05).toFixed(2)+'s'; }
-    return `<div class="p1cell" style="${st}"><span class="pn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="pt">${esc(g.title)}</span></div>`;
-  }).join('');
-  return `<div class="p1page ${s.sub}"><div class="p1head">${s.hi} <span>→</span> ${s.lo} <small>位</small></div><div class="p1grid">${cells}</div></div>`;
-}
-function p1oneHTML(g,r){ const meta=[g.genre,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
-  return `<div class="p1one"><div class="o-rk">${r}<span>位</span></div><div class="o-cv"><img src="${g.img}" onerror="this.style.opacity=0"></div>
-    <div class="o-info"><div class="o-ti">${esc(g.title)}</div><div class="o-meta">${esc(meta)}</div></div></div>`; }
-function p1rbHTML(r){ return `<div class="p1rb"><div class="rbn">${r} <span>→</span> ${r-9}</div><div class="rbs">第 ${r-9} 〜 ${r} 位</div><div class="bflash"></div></div>`; }
-function buildCont(s){ contElapsed=0; contDur=dur(s);
-  const ranks=[]; for(let r=200;r>=101;r--) if(byRank[r]) ranks.push(r);
-  if(s.sub==='film'){
-    stage.innerHTML='<div class="p1film" id="p1sc">'+ranks.map(r=>{const g=byRank[r];
-      return `<div class="fcell"><div class="fcv"><span class="fn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"></div><div class="ft">${esc(g.title)}</div></div>`;}).join('')+'</div>';
-    const sc=document.getElementById('p1sc'), shift=Math.max(1,sc.scrollWidth-stage.clientWidth);
-    contApply=p=>{ sc.style.transform='translateX('+(-shift*p).toFixed(1)+'px)'; };
-  } else { // dual
-    const half=Math.ceil(ranks.length/2), L=ranks.slice(0,half), R=ranks.slice(half);
-    const col=(arr,cls)=>`<div class="p1dcol ${cls}">`+arr.map(r=>{const g=byRank[r];
-      return `<div class="dcell"><span class="dn">${r}</span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="dt">${esc(g.title)}</span></div>`;}).join('')+'</div>';
-    stage.innerHTML='<div class="bignum" id="p1big">200</div><div class="p1dual">'+col(L,'l')+col(R,'r')+'</div>';
-    const cl=document.querySelector('.p1dcol.l'), cr=document.querySelector('.p1dcol.r'), big=document.getElementById('p1big');
-    const sl=Math.max(1,cl.scrollHeight-stage.clientHeight), sr=Math.max(1,cr.scrollHeight-stage.clientHeight);
-    contApply=p=>{ cl.style.transform='translateY('+(-sl*p).toFixed(1)+'px)'; cr.style.transform='translateY('+(-sr*p).toFixed(1)+'px)';
-      big.textContent=Math.round(200-99*p); };
+// ===== Part1（200→101位）ラッシュ5案ビルダー =====
+function p1oneHTML(g,r){
+  const meta=[g.genre,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
+  const ti=esc(g.title), m=esc(meta), src=g.img;
+  if(P1===0){ // ① 全面ブチ抜き
+    return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0"><div class="fbscrim"></div>
+      <div class="fbrk">${r}<span>位</span></div><div class="fbbot"><div class="fbti">${ti}</div><div class="fbmeta">${m}</div></div></div>`;
   }
+  if(P1===1){ // ② ブラー自己背景
+    return `<div class="p1one blur"><img class="bgblur" src="${src}" onerror="this.style.opacity=0"><div class="blurdark"></div>
+      <div class="blurcv"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="brk">${r}<span>位</span></div><div class="bbot"><div class="bti">${ti}</div><div class="bmeta">${m}</div></div></div>`;
+  }
+  if(P1===2){ // ③ カード送り
+    return `<div class="p1one slide"><div class="slcard"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="slside"><div class="slrk">${r}<span>位</span></div><div class="slti">${ti}</div><div class="slmeta">${m}</div></div></div>`;
+  }
+  if(P1===3){ // ④ シネスコ黒帯
+    return `<div class="p1one cs"><div class="csbar t"></div><div class="csbar b"></div><div class="csflash"></div>
+      <div class="cswrap"><div class="csrk">${r}<span>位</span></div><div class="cscv"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="csinfo"><div class="csti">${ti}</div><div class="csmeta">${m}</div></div></div></div>`;
+  }
+  // ⑤ スポットステージ
+  return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0"></div>
+    <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="stti">${ti}</div><div class="stmeta">${m}</div></div></div>`;
 }
-function contFrame(ts){ if(!playing)return; if(contLast)contElapsed+=ts-contLast; contLast=ts;
-  const p=Math.min(1,contElapsed/contDur); if(contApply)contApply(p); setProgP(p*0.4);
-  if(p>=1){ contLast=0; contElapsed=0; if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} return; }
-  contRAF=requestAnimationFrame(contFrame); }
 function render(s){
-  if(s.t==='p1page'){ stage.innerHTML=p1pageHTML(s); setProg(s.lo); return; }
   if(s.t==='p1one'){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); setProg(s.r); return; }
-  if(s.t==='p1rb'){ stage.innerHTML=p1rbHTML(s.r); setProg(s.r); return; }
-  if(s.t==='p1cont'){ buildCont(s); return; }
   if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
   if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
   if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
   setProg(s.r);
 }
-function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer); cancelAnimationFrame(contRAF);
-  if(s.t==='p1cont'){ if(playing){ contLast=0; contRAF=requestAnimationFrame(contFrame); } updateProg(); return; }
+function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer);
   if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(s)); updateProg(); }
 function updateProg(){const s=steps[si]; let t;
   if(isFeed()) t='フィード再生中';
-  else if(s.t==='p1page') t='前半 '+s.hi+'–'+s.lo+'位';
-  else if(s.t==='p1one') t=s.r+'位';
-  else if(s.t==='p1rb') t=s.r+'–'+(s.r-9)+'位';
-  else if(s.t==='p1cont') t='前半（'+(s.sub==='film'?'横流し':'2列')+'）';
+  else if(s.t==='p1one') t='前半 '+s.r+'位 / 残り'+Math.max(0,steps.length-1-si);
   else t=(s.t==='b'?'—':s.r+'位'+(s.t==='tame'?'(タメ)':''))+' / 残り'+Math.max(0,steps.length-1-si);
   document.getElementById('prog').textContent=t;}
 function updateBtn(){document.getElementById('pp').textContent=playing?'⏸':'▶';}
-function play(){ if(isFeed())return; playing=true; updateBtn(); const s=steps[si];
-  if(s&&s.t==='p1cont'){ contLast=0; contRAF=requestAnimationFrame(contFrame); return; } step(); }
-function pause(){ playing=false; clearTimeout(timer); cancelAnimationFrame(contRAF); contLast=0; updateBtn(); }
+function play(){ if(isFeed())return; playing=true; updateBtn(); step(); }
+function pause(){ playing=false; clearTimeout(timer); updateBtn(); }
 // 案H フィード
 function buildFeed(){
   const list=GAMES.slice().sort((a,b)=>b.rank-a.rank);
@@ -178,7 +151,7 @@ function buildFeed(){
   feedRAF=requestAnimationFrame(fa);
 }
 document.getElementById('pp').onclick=()=>playing?pause():play();
-document.getElementById('rs').onclick=()=>{ if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();return;} cancelAnimationFrame(contRAF); si=0; contElapsed=0; playing=true; updateBtn(); step(); };
+document.getElementById('rs').onclick=()=>{ if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();return;} si=0; playing=true; updateBtn(); step(); };
 document.getElementById('nx').onclick=()=>{if(isFeed())return;if(si<steps.length-1){si++;pause();render(steps[si]);updateProg();}};
 document.getElementById('pv').onclick=()=>{if(isFeed())return;if(si>0){si--;pause();render(steps[si]);updateProg();}};
 document.getElementById('sp').onchange=e=>{mult=+e.target.value;};
@@ -187,7 +160,7 @@ document.getElementById('lm').onclick=()=>{ mode=(mode+1)%5; cancelAnimationFram
   else{AUTO=false;LM=mode-1;document.getElementById('lm').textContent=LMN[LM];}
   if(isFeed()){ pause(); buildFeed(); updateProg(); } else { render(steps[si]); updateProg(); } };
 document.getElementById('p1').onclick=()=>{ P1=(P1+1)%5; document.getElementById('p1').textContent='前半'+P1N[P1];
-  cancelAnimationFrame(contRAF); cancelAnimationFrame(feedRAF); buildSteps(); si=0; contElapsed=0; pause(); render(steps[si]); updateProg(); };
+  cancelAnimationFrame(feedRAF); buildSteps(); si=0; pause(); render(steps[si]); updateProg(); };
 document.getElementById('ts').onclick=()=>{TS=(TS+1)%3;document.getElementById('ts').textContent='文字'+['A','B','C'][TS];if(!isFeed())render(steps[si]);};
 document.getElementById('bg').onclick=()=>{BG=(BG+1)%3;document.getElementById('bg').textContent='背景'+['A','B','C'][BG];cancelAnimationFrame(feedRAF);pause();si=steps.findIndex(s=>s.t==='b'&&s.r===20);render(steps[si]);updateProg();};
 document.getElementById('tame').onclick=()=>{ const cr=steps[si]?steps[si].r:100;
