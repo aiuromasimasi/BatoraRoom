@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>思い入れのあるゲーム ランキング100 ✦ カウントダウン</title>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Baloo+2:wght@800&family=M+PLUS+Rounded+1c:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--pink:#ff5ea8;--purple:#9b5cff;--blue:#36c5ff;--gold:#ffb800;--mint:#3ff2c2;--orange:#ff8a3d}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"M PLUS Rounded 1c",sans-serif;background:#160d2a;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;color:#fff;overflow:hidden}
+  #frame{position:relative;width:min(98vw,calc(90vh*16/9));aspect-ratio:16/9;border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.6);border:3px solid rgba(255,255,255,.14)}
+  #frame.vert{width:min(98vw,calc(90vh*9/16));aspect-ratio:9/16}
+  #stage{position:absolute;inset:0;background:linear-gradient(135deg,#ff5ea8,#9b5cff,#36c5ff,#3ff2c2);background-size:400% 400%;animation:bg 16s ease infinite;overflow:hidden}
+  @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes grow{from{transform:scale(0)}to{transform:scale(1)}}
+  .banner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 6%;animation:bpop .55s cubic-bezier(.2,1.4,.3,1)}
+  @keyframes bpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  .btxt{font-family:"Mochiy Pop One";font-size:clamp(30px,6.4vw,84px);line-height:1.05;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.18),0 0 30px rgba(255,255,255,.6);white-space:nowrap}
+  .bsub{font-weight:800;font-size:clamp(15px,2.6vw,28px);margin-top:8px;letter-spacing:2px}
+  /* 標準 */
+  .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2%;padding:2.5% 3%}
+  .rk{flex:none;font-family:"Baloo 2";font-weight:800;font-size:clamp(80px,22vh,320px);line-height:.82;color:#fff;text-shadow:0 7px 0 rgba(0,0,0,.2),0 0 34px rgba(255,255,255,.55);animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
+  .rk .rku{font-size:.34em;margin-left:2px}
+  @keyframes rkin{from{transform:scale(2.4);opacity:0;filter:blur(6px)}to{transform:scale(1);opacity:1;filter:none}}
+  .mid{flex:none;animation:cvin .6s cubic-bezier(.2,1.2,.3,1) backwards}
+  @keyframes cvin{from{transform:scale(.6) rotate(-4deg);opacity:0}to{transform:none;opacity:1}}
+  .cvwrap{position:relative;height:88%;aspect-ratio:3/4;border-radius:18px;overflow:hidden;border:5px solid #fff;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  #frame.vert .cvwrap{height:46vh}
+  .cvglow{position:absolute;inset:-30%;background:conic-gradient(from 0deg,var(--gold),var(--pink),var(--purple),var(--blue),var(--mint),var(--gold));animation:spin 8s linear infinite;opacity:.5;z-index:0}
+  .cv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+  .info{flex:1;max-width:44%;display:flex;flex-direction:column;gap:10px;animation:infin .6s ease .12s backwards}
+  @keyframes infin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+  .tier{align-self:flex-start;font-weight:800;font-size:clamp(13px,2vw,22px);background:rgba(255,255,255,.25);padding:5px 18px;border-radius:999px}
+  .ti{font-family:"Mochiy Pop One";font-size:clamp(24px,3.8vw,56px);line-height:1.15;text-shadow:0 3px 10px rgba(0,0,0,.35)}
+  .meta{font-weight:800;font-size:clamp(14px,2vw,26px);opacity:.95}
+  .intro{font-weight:700;font-size:clamp(13px,1.8vw,22px);line-height:1.55;opacity:.96}
+  .rwrap{margin-top:2px}.radar{width:clamp(200px,22vw,320px)}
+  .sweep{transform-origin:0 0;animation:spin 3s linear infinite}
+  #frame.vert .slide{flex-direction:column;gap:1%;padding:4% 5%}
+  #frame.vert .info{max-width:92%;text-align:center;align-items:center}
+  #frame.vert .tier{align-self:center}
+  #frame.vert .rk{font-size:clamp(64px,12vh,180px)}
+  .no1 .rk{color:var(--gold);text-shadow:0 0 44px rgba(255,184,0,.9),0 7px 0 rgba(0,0,0,.2)}
+  .no1 .cvwrap{border-color:var(--gold);box-shadow:0 0 0 6px rgba(255,184,0,.5),0 20px 60px rgba(0,0,0,.5)}
+  /* 全面カバー(案F) */
+  .slide.full{padding:0}
+  .slide.full .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center;animation:ken linear forwards}
+  @keyframes ken{from{transform:scale(1.03)}to{transform:scale(1.18)}}
+  .slide.full .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 42%,rgba(0,0,0,.86) 100%)}
+  .rkF{position:absolute;top:2.5%;left:3.5%;font-family:"Baloo 2";font-weight:800;font-size:clamp(80px,21vh,300px);line-height:.85;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.85),0 0 30px rgba(0,0,0,.5);animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
+  .rkF span{font-size:.34em}
+  .tierF{position:absolute;top:4%;right:3.5%;font-weight:800;font-size:clamp(14px,2.4vw,28px);background:rgba(0,0,0,.5);padding:6px 18px;border-radius:999px;color:#fff}
+  .botF{position:absolute;left:3.5%;right:27%;bottom:5%;color:#fff;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .6s ease .12s backwards}
+  .tiF{font-family:"Mochiy Pop One";font-size:clamp(18px,2.4vw,34px);line-height:1.2}
+  .metaF{font-weight:800;font-size:clamp(13px,1.8vw,22px);margin-top:6px;opacity:.95}
+  .introF{font-weight:700;font-size:clamp(13px,1.8vw,22px);margin-top:5px;max-width:96%;line-height:1.5}
+  .radF{position:absolute;right:2.5%;bottom:4%;background:rgba(0,0,0,.42);border-radius:18px;padding:6px}
+  .radF .radar{width:clamp(160px,18vw,260px)}
+  #frame.vert .botF{right:3.5%}#frame.vert .radF{top:13%;bottom:auto;right:3.5%}#frame.vert .radF .radar{width:clamp(120px,28vw,190px)}
+  .full.no1 .rkF{color:var(--gold);text-shadow:0 0 44px rgba(255,184,0,.95),0 4px 18px rgba(0,0,0,.8)}
+  /* シネマ(案G) */
+  .slide.cine{padding:0;display:flex;align-items:center;justify-content:center}
+  .cine .lb{position:absolute;left:0;right:0;height:11%;background:#000;z-index:3;animation:lbin .5s ease backwards}
+  .cine .lb.t{top:0}.cine .lb.b{bottom:0}
+  @keyframes lbin{from{height:50%}to{}}
+  .cine .flash{position:absolute;inset:0;background:#fff;z-index:4;opacity:0;animation:fl .5s ease forwards;pointer-events:none}
+  @keyframes fl{0%{opacity:.85}100%{opacity:0}}
+  .cineWrap{display:flex;align-items:center;justify-content:center;gap:4%;width:100%;padding:0 6%}
+  .cineRk{font-family:"Baloo 2";font-weight:800;font-size:clamp(70px,20vh,280px);line-height:.85;color:#fff;text-shadow:0 0 34px rgba(255,255,255,.6),0 6px 0 rgba(0,0,0,.25);animation:flashin .6s cubic-bezier(.2,1.6,.3,1) backwards}
+  .cineRk span{font-size:.32em}
+  @keyframes flashin{from{transform:scale(2.6);opacity:0;filter:blur(8px)}to{transform:scale(1);opacity:1;filter:none}}
+  .cineCv{flex:none;height:66%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:4px solid #fff;box-shadow:0 16px 44px rgba(0,0,0,.6);animation:slidein .6s cubic-bezier(.2,1.2,.3,1) .15s backwards}
+  .cineCv img{width:100%;height:100%;object-fit:cover}
+  @keyframes slidein{from{transform:translateX(80px);opacity:0}to{transform:none;opacity:1}}
+  .cineInfo{max-width:34%;animation:infin .6s ease .3s backwards}
+  .tierC{display:inline-block;font-weight:800;font-size:clamp(12px,1.8vw,20px);background:rgba(255,255,255,.22);padding:4px 14px;border-radius:999px}
+  .tiC{font-family:"Mochiy Pop One";font-size:clamp(20px,2.8vw,40px);line-height:1.15;margin-top:8px;text-shadow:0 3px 10px rgba(0,0,0,.4)}
+  .metaC{font-weight:800;font-size:clamp(13px,1.7vw,20px);margin-top:6px;opacity:.95}
+  .radC .radar{width:clamp(150px,16vw,230px);margin-top:4px}
+  #frame.vert .cineWrap{flex-direction:column;gap:2%}#frame.vert .cineInfo{max-width:88%;text-align:center}#frame.vert .cineCv{height:38vh}
+  /* フィード(案H) */
+  .feed{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;gap:1.4vh;padding:46vh 7%;will-change:transform}
+  .frow{display:flex;align-items:center;gap:3%;opacity:.35;transform:scale(.82);transition:opacity .35s,transform .35s}
+  .frow.focus{opacity:1;transform:scale(1.06)}
+  .frow .frk{flex:none;font-family:"Baloo 2";font-weight:800;font-size:clamp(30px,6vw,84px);min-width:2.2em;text-align:right;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.2)}
+  .frow .frk small{font-size:.4em}
+  .frow .fcv{flex:none;width:clamp(64px,10vw,130px);aspect-ratio:3/4;border-radius:10px;overflow:hidden;border:3px solid #fff;box-shadow:0 10px 26px rgba(0,0,0,.45)}
+  .frow .fcv img{width:100%;height:100%;object-fit:cover}
+  .frow .fti{font-family:"Mochiy Pop One";font-size:clamp(16px,2.8vw,38px);text-shadow:0 2px 8px rgba(0,0,0,.4)}
+  .frow.focus .fcv{border-color:var(--gold)}
+  .cf{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:5}
+  .cf span{position:absolute;top:-18px;width:11px;height:16px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(680deg);opacity:.1}}
+  .ctl{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,.08);padding:8px 14px;border-radius:999px;max-width:98vw}
+  .ctl button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 13px;cursor:pointer;background:rgba(255,255,255,.92);color:#2a1a4a}
+  .ctl .prog{color:#fff;font-weight:800;font-size:13px;min-width:118px;text-align:center}
+  .ctl select{font:inherit;border-radius:999px;border:0;padding:7px 10px;font-weight:800}
+  .hint{color:rgba(255,255,255,.6);font-size:12px;font-weight:700;text-align:center}
+</style></head><body>
+  <div id="frame"><div id="stage"></div></div>
+  <div class="ctl">
+    <button id="pv">⏮</button><button id="pp">⏸</button><button id="nx">⏭</button><button id="rs">↺ 最初から</button>
+    <span class="prog" id="prog">—</span>
+    速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(3分)</option><option value="0.6">速い</option></select>
+    <button id="lm">標準</button><button id="or">横 16:9</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
+  </div>
+  <div class="hint">「レイアウト」ボタンで 標準→全面カバー(案F)→シネマ(案G)→フィード(案H) を巡回切替／「縦 9:16」でショート向け。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3 を同フォルダに置くと🔇から再生。</div>
+  <audio id="bgm" src="movie_bgm.mp3" loop></audio>
+  <script src="movie.js"></script>
+</body></html>

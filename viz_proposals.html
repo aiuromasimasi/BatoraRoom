@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3軸の魅せ方 5案 ✦ バトラ</title>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--pink:#ff5ea8;--purple:#9b5cff;--blue:#36c5ff;--yellow:#ffd23f;--mint:#3ff2c2;--orange:#ff8a3d;--gold:#ffb800;--ink:#2a1a4a}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"M PLUS Rounded 1c",sans-serif;color:var(--ink);padding:24px 16px 60px;
+    background:linear-gradient(135deg,#ffd6ec,#d6e4ff,#d9fff4,#fff3c4,#ffd6ec);background-size:400% 400%;animation:bg 22s ease infinite}
+  @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+  h1{font-family:"Mochiy Pop One";text-align:center;font-size:clamp(20px,5vw,30px);color:var(--purple);margin-bottom:4px}
+  .lead{text-align:center;font-weight:700;color:#6a4d8a;margin-bottom:22px;font-size:13px;line-height:1.7}
+  .grid{display:grid;gap:20px;max-width:1100px;margin:0 auto;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .card{background:rgba(255,255,255,.92);border:3px solid #fff;border-radius:24px;padding:18px 16px 20px;
+    box-shadow:0 14px 30px rgba(58,36,86,.18);display:flex;flex-direction:column;align-items:center}
+  .opt{font-family:"Mochiy Pop One";font-size:13px;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));
+    padding:4px 14px;border-radius:999px;margin-bottom:4px}
+  .nm{font-weight:800;font-size:17px;margin:6px 0 2px;text-align:center}
+  .desc{font-weight:700;color:#6a4d8a;font-size:12px;text-align:center;line-height:1.6;margin-top:8px;min-height:3em}
+  .stage{height:230px;display:flex;align-items:center;justify-content:center;width:100%}
+  .leg{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px;font-size:11px;font-weight:800}
+  .leg span{display:inline-flex;align-items:center;gap:4px}
+  .dot{width:10px;height:10px;border-radius:50%}
+  /* bars */
+  .bar{width:100%;margin:7px 0}
+  .bar .top{display:flex;justify-content:space-between;font-weight:800;font-size:13px;margin-bottom:3px}
+  .track{height:18px;border-radius:999px;background:#eee5ff;overflow:hidden}
+  .fill{height:100%;border-radius:999px;transform-origin:left;animation:grow 1.1s cubic-bezier(.2,1,.3,1) backwards}
+  /* gem */
+  .gemwrap{position:relative;width:170px;height:200px;display:flex;align-items:center;justify-content:center}
+  .gemglow{position:absolute;inset:-20%;background:conic-gradient(from 0deg,var(--gold),var(--pink),var(--purple),var(--blue),var(--mint),var(--gold));
+    border-radius:50%;filter:blur(18px);opacity:.6;animation:spin 7s linear infinite}
+  /* aura */
+  .aura{position:relative;width:200px;height:200px;display:grid;place-items:center}
+  .ring{position:absolute;border-radius:50%;border-style:solid;opacity:.85}
+  .aura .core{position:relative;font-size:40px;animation:pulse 2.5s ease-in-out infinite;z-index:2;filter:drop-shadow(0 4px 8px rgba(255,184,0,.6))}
+  .note{max-width:1100px;margin:24px auto 0;background:rgba(255,255,255,.9);border:3px solid #fff;border-radius:18px;padding:14px 18px;font-weight:700;color:var(--ink);font-size:13px;line-height:1.8}
+  .note b{color:var(--pink)}
+</style>
+</head>
+<body>
+  <h1>🎮 3軸の魅せ方 5案</h1>
+  <p class="lead">画像タップ時に出す「思い入れ度・衝撃度・面白さ」の表現案。サンプル値＝<b>思い入れ9 / 衝撃8 / 面白さ10</b> で描画。<br>気に入った番号を教えてください（1つでも複数比較でもOK）。</p>
+
+  <div class="grid">
+
+    <!-- 1: ネオン三角レーダー -->
+    <div class="card">
+      <span class="opt">案 1</span><div class="nm">ネオン三角レーダー</div>
+      <div class="stage">
+        <svg viewBox="0 0 200 200" width="210" height="210">
+          <g transform="translate(100,105)">
+            <polygon points="0,-80 69,40 -69,40" fill="none" stroke="#d9c9f7" stroke-width="1"/>
+            <polygon points="0,-53 46,27 -46,27" fill="none" stroke="#e7dcfb" stroke-width="1"/>
+            <polygon points="0,-26 23,13 -23,13" fill="none" stroke="#eee" stroke-width="1"/>
+            <polygon points="0,-72 55,32 -55,16" fill="rgba(255,94,168,.35)" stroke="#ff5ea8" stroke-width="3"
+              style="filter:drop-shadow(0 0 8px rgba(255,94,168,.8));animation:pulse 3s ease-in-out infinite;transform-origin:center"/>
+            <circle cx="0" cy="-72" r="5" fill="#ffb800"/><circle cx="55" cy="32" r="5" fill="#ff8a3d"/><circle cx="-55" cy="16" r="5" fill="#36c5ff"/>
+            <text x="0" y="-90" text-anchor="middle" font-size="11" font-weight="800" fill="#9b5cff">思い入れ9</text>
+            <text x="78" y="54" text-anchor="middle" font-size="11" font-weight="800" fill="#ff8a3d">衝撃8</text>
+            <text x="-78" y="54" text-anchor="middle" font-size="11" font-weight="800" fill="#36c5ff">面白さ10</text>
+          </g>
+        </svg>
+      </div>
+      <div class="desc">3軸を三角形レーダーで一目に。値が大きいほど三角形が広がり発光。形でゲームの“性格”が分かる。</div>
+    </div>
+
+    <!-- 2: ネオン・ゲージバー -->
+    <div class="card">
+      <span class="opt">案 2</span><div class="nm">ネオン・ゲージバー</div>
+      <div class="stage" style="flex-direction:column;justify-content:center;padding:0 6px">
+        <div class="bar"><div class="top"><span>💖 思い入れ</span><span style="color:#ff5ea8">9</span></div>
+          <div class="track"><div class="fill" style="width:90%;background:linear-gradient(90deg,#ff5ea8,#ffb800);box-shadow:0 0 10px rgba(255,94,168,.7)"></div></div></div>
+        <div class="bar"><div class="top"><span>⚡ 衝撃</span><span style="color:#ff8a3d">8</span></div>
+          <div class="track"><div class="fill" style="width:80%;background:linear-gradient(90deg,#ff8a3d,#ffd23f);box-shadow:0 0 10px rgba(255,138,61,.7);animation-delay:.15s"></div></div></div>
+        <div class="bar"><div class="top"><span>🎉 面白さ</span><span style="color:#36c5ff">10</span></div>
+          <div class="track"><div class="fill" style="width:100%;background:linear-gradient(90deg,#36c5ff,#3ff2c2);box-shadow:0 0 10px rgba(54,197,255,.7);animation-delay:.3s"></div></div></div>
+      </div>
+      <div class="desc">3本の発光メーター。数値が直感的で読みやすい。満タンは虹色に脈動。一番わかりやすい王道。</div>
+    </div>
+
+    <!-- 3: ジェムクリスタル -->
+    <div class="card">
+      <span class="opt">案 3</span><div class="nm">ジェムクリスタル</div>
+      <div class="stage">
+        <div class="gemwrap">
+          <div class="gemglow"></div>
+          <svg viewBox="0 0 120 140" width="150" height="170" style="position:relative;z-index:1;filter:drop-shadow(0 8px 16px rgba(58,36,86,.4))">
+            <polygon points="60,4 110,40 90,130 30,130 10,40" fill="url(#g3)" stroke="#fff" stroke-width="2"/>
+            <polygon points="60,4 110,40 60,60 10,40" fill="rgba(255,255,255,.35)"/>
+            <polygon points="10,40 60,60 30,130" fill="rgba(255,255,255,.12)"/>
+            <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffb800"/><stop offset=".5" stop-color="#ff5ea8"/><stop offset="1" stop-color="#9b5cff"/></linearGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="desc">3軸を宝石の「大きさ・色・輝き」に変換。総合が高いほど巨大化＆発光。コレクション感とゴージャス度MAX。</div>
+    </div>
+
+    <!-- 4: オーラリング -->
+    <div class="card">
+      <span class="opt">案 4</span><div class="nm">オーラリング（光輪）</div>
+      <div class="stage">
+        <div class="aura">
+          <div class="ring" style="width:190px;height:190px;border-width:7px;border-color:#36c5ff;box-shadow:0 0 16px #36c5ff,inset 0 0 12px #36c5ff;animation:spin 9s linear infinite"></div>
+          <div class="ring" style="width:150px;height:150px;border-width:7px;border-color:#ff8a3d;box-shadow:0 0 14px #ff8a3d,inset 0 0 10px #ff8a3d;animation:spin 7s linear infinite reverse"></div>
+          <div class="ring" style="width:112px;height:112px;border-width:8px;border-color:#ff5ea8;box-shadow:0 0 16px #ff5ea8,inset 0 0 10px #ff5ea8;animation:spin 5s linear infinite"></div>
+          <div class="core">👑</div>
+        </div>
+      </div>
+      <div class="desc">3軸を3重の光の輪で表現（外＝面白さ/中＝衝撃/内＝思い入れ）。値が大きいほど輪が太く明るい。表彰状級の豪華さ。</div>
+    </div>
+
+    <!-- 5: 三つ巴ドーナツ -->
+    <div class="card">
+      <span class="opt">案 5</span><div class="nm">三つ巴ドーナツ</div>
+      <div class="stage">
+        <svg viewBox="0 0 200 200" width="210" height="210" style="filter:drop-shadow(0 4px 10px rgba(58,36,86,.25))">
+          <g transform="translate(100,100)">
+            <circle r="74" fill="none" stroke="#eee5ff" stroke-width="16"/>
+            <circle r="74" fill="none" stroke="#ff5ea8" stroke-width="16" stroke-linecap="round"
+              stroke-dasharray="139 465" transform="rotate(-90)" style="filter:drop-shadow(0 0 6px rgba(255,94,168,.8))"/>
+            <circle r="74" fill="none" stroke="#ff8a3d" stroke-width="16" stroke-linecap="round"
+              stroke-dasharray="124 465" transform="rotate(30)" style="filter:drop-shadow(0 0 6px rgba(255,138,61,.8))"/>
+            <circle r="74" fill="none" stroke="#36c5ff" stroke-width="16" stroke-linecap="round"
+              stroke-dasharray="155 465" transform="rotate(150)" style="filter:drop-shadow(0 0 6px rgba(54,197,255,.8))"/>
+            <text x="0" y="-4" text-anchor="middle" font-size="13" font-weight="800" fill="#6a4d8a">総合</text>
+            <text x="0" y="20" text-anchor="middle" font-family="Mochiy Pop One" font-size="26" fill="#9b5cff">9.0</text>
+          </g>
+        </svg>
+      </div>
+      <div class="desc">円を3分割した発光メーター＋中央に総合スコア。コンパクトで華やか。リング配色で3軸を区別。</div>
+    </div>
+
+  </div>
+
+  <div class="leg" style="margin-top:18px">
+    <span><span class="dot" style="background:#ff5ea8"></span>思い入れ度</span>
+    <span><span class="dot" style="background:#ff8a3d"></span>衝撃度</span>
+    <span><span class="dot" style="background:#36c5ff"></span>面白さ</span>
+  </div>
+
+  <div class="note">
+    使い方の流れ：<b>① games_data.csv に「主に遊んだ年・思い入れ度・衝撃度・面白さ」を10段階で記入</b> → ② 好きな案番号を選ぶ →
+    <b>③ 画像タップで「カバー＋紹介文＋選んだ3軸ビジュアル」がモーダル表示</b>される仕組みを game.html に実装します。<br>
+    ※ これは見本（固定値）です。実装版は各ゲームの実数値でアニメーション表示。複数案を組み合わせ（例：案2＋案5）も可能です。
+  </div>
+</body>
+</html>
