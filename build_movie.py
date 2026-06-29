@@ -167,6 +167,14 @@ function p1oneHTML(g,r){
   return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0"></div>
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
+// タイトルが長い時は折り返しすぎ・はみ出しを避けて自動縮小（単語単位折返しはCSS側）
+function fitEl(el,maxLines){ if(!el) return; el.style.fontSize='';
+  const cs=getComputedStyle(el); const lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.2;
+  let fs=parseFloat(cs.fontSize),g=0; const maxH=lh*maxLines+2;
+  while((el.scrollHeight>maxH||el.scrollWidth>el.clientWidth+1)&&fs>13&&g<60){ fs-=1; el.style.fontSize=fs+'px'; g++; } }
+function fitTitles(root){ if(!root) return;
+  fitEl(root.querySelector('.cti'),3); fitEl(root.querySelector('.ti'),3);
+  fitEl(root.querySelector('.tiF'),3); fitEl(root.querySelector('.tiC'),3); }
 function render(s){
   if(s.t==='p1one'){
     if(!stage.querySelector('.p1one')){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); }
@@ -175,11 +183,13 @@ function render(s){
       const sl=stage.querySelectorAll('.p1one'); for(let i=0;i<sl.length-2;i++) sl[i].remove();
       const prev=sl[sl.length-2]; if(prev) setTimeout(()=>{ if(prev.parentNode) prev.remove(); }, 320);
     }
+    fitTitles(stage.querySelector('.p1one:last-child'));
     const nx=byRank[s.r-1]; if(nx){ const im=new Image(); im.src=nx.img; } // 次カバー先読み
     setProg(s.r); return; }
   if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
   if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
+  fitTitles(stage);
   if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
   setProg(s.r);
 }
@@ -240,7 +250,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   :root{--pink:#ff5ea8;--purple:#9b5cff;--blue:#36c5ff;--gold:#ffb800;--mint:#3ff2c2;--orange:#ff8a3d}
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:"M PLUS Rounded 1c",sans-serif;background:#160d2a;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;color:#fff;overflow:hidden}
-  #frame{position:relative;width:min(98vw,calc(90vh*16/9));aspect-ratio:16/9;border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.6);border:3px solid rgba(255,255,255,.14)}
+  #frame{position:relative;width:min(98vw,calc(90vh*16/9));aspect-ratio:16/9;border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.6);border:3px solid rgba(255,255,255,.14);container-type:size}
   #frame.vert{width:min(98vw,calc(90vh*9/16));aspect-ratio:9/16}
   #stage{position:absolute;inset:0;background:linear-gradient(135deg,#ff5ea8,#9b5cff,#36c5ff,#3ff2c2);background-size:400% 400%;animation:bg 16s ease infinite;overflow:hidden}
   @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -289,7 +299,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .info{flex:1;max-width:44%;display:flex;flex-direction:column;gap:10px;animation:infin .6s ease .12s backwards}
   @keyframes infin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
   .tier{align-self:flex-start;font-weight:800;font-size:clamp(13px,2vw,22px);background:rgba(255,255,255,.25);padding:5px 18px;border-radius:999px}
-  .ti{font-family:"Mochiy Pop One";font-size:clamp(24px,3.8vw,56px);line-height:1.15;text-shadow:0 3px 10px rgba(0,0,0,.35)}
+  .ti{font-family:"Mochiy Pop One";font-size:clamp(20px,5.6cqmin,52px);line-height:1.15;text-shadow:0 3px 10px rgba(0,0,0,.35)}
   .meta{font-weight:800;font-size:clamp(14px,2vw,26px);opacity:.95}
   .intro{font-weight:700;font-size:clamp(13px,1.8vw,22px);line-height:1.55;opacity:.96}
   .rwrap{margin-top:2px}.radar{width:clamp(200px,22vw,320px)}
@@ -309,7 +319,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .rkF span{font-size:.34em}
   .tierF{position:absolute;top:4%;right:3.5%;font-weight:800;font-size:clamp(14px,2.4vw,28px);background:rgba(0,0,0,.5);padding:6px 18px;border-radius:999px;color:#fff}
   .botF{position:absolute;left:3.5%;right:27%;bottom:5%;color:#fff;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .6s ease .12s backwards}
-  .tiF{font-family:"Mochiy Pop One";font-size:clamp(18px,2.4vw,34px);line-height:1.28;word-break:keep-all;overflow-wrap:break-word}
+  .tiF{font-family:"Mochiy Pop One";font-size:clamp(17px,4.2cqmin,40px);line-height:1.26}
   .metaF{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(13px,1.8vw,22px);margin-top:7px}
   .introF{font-weight:700;font-size:clamp(13px,1.8vw,22px);margin-top:6px;max-width:96%;line-height:1.55;word-break:auto-phrase;overflow-wrap:break-word}
   /* 文字スタイル3案（全面カバー） */
@@ -340,7 +350,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   @keyframes slidein{from{transform:translateX(80px);opacity:0}to{transform:none;opacity:1}}
   .cineInfo{max-width:34%;animation:infin .6s ease .3s backwards}
   .tierC{display:inline-block;font-weight:800;font-size:clamp(12px,1.8vw,20px);background:rgba(255,255,255,.22);padding:4px 14px;border-radius:999px}
-  .tiC{font-family:"Mochiy Pop One";font-size:clamp(20px,2.8vw,40px);line-height:1.15;margin-top:8px;text-shadow:0 3px 10px rgba(0,0,0,.4)}
+  .tiC{font-family:"Mochiy Pop One";font-size:clamp(17px,4.4cqmin,42px);line-height:1.16;margin-top:8px;text-shadow:0 3px 10px rgba(0,0,0,.4)}
   .metaC{font-weight:800;font-size:clamp(13px,1.7vw,20px);margin-top:6px;opacity:.95}
   .radC .radar{width:clamp(150px,16vw,230px);margin-top:4px}
   #frame.vert .cineWrap{flex-direction:column;gap:2%}#frame.vert .cineInfo{max-width:88%;text-align:center}#frame.vert .cineCv{height:38vh}
@@ -443,7 +453,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .p1one.st .stcap .cmeta{justify-content:center}
   #frame.vert .p1one.st .stcv{height:46%;top:34%}
   /* Part1 共通キャプション（紹介文/ジャンル/年・文字A/B/C対応） */
-  .p1cap .cti{font-family:"Mochiy Pop One";font-size:clamp(18px,3vw,46px);line-height:1.14;word-break:keep-all;overflow-wrap:break-word}
+  .p1cap .cti{font-family:"Mochiy Pop One";font-size:clamp(18px,5.4cqmin,48px);line-height:1.14}
   .p1cap .cmeta{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(12px,1.7vw,23px);margin-top:7px}
   .p1cap .cintro{font-weight:700;font-size:clamp(12px,1.6vw,21px);line-height:1.48;margin-top:6px;opacity:.97;word-break:auto-phrase;overflow-wrap:break-word}
   .p1cap.ts0{background:rgba(12,8,28,.55);border:1.5px solid rgba(255,255,255,.3);border-radius:16px;padding:12px 16px}
@@ -453,6 +463,8 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .p1cap.ts2{border-left:6px solid #ff5ea8;border-radius:0 14px 14px 0;background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.05));padding:10px 14px}
   .p1cap.ts2 .cmeta span{padding:3px 12px;border-radius:999px;font-size:.92em}
   .p1cap.ts2 .mg{background:#ffd23f;color:#5a3d00}.p1cap.ts2 .my{background:#36c5ff;color:#06324f}.p1cap.ts2 .mp{background:#3ff2c2;color:#064b3a}
+  /* タイトルは単語単位で折り返し（中途半端な改行を防止）＋はみ出しは自動縮小(JS) */
+  .ti,.tiF,.tiC,.p1cap .cti{word-break:auto-phrase;overflow-wrap:break-word;line-break:strict}
   /* フィード(案H) */
   .feed{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;gap:1.4vh;padding:46vh 7%;will-change:transform}
   .frow{display:flex;align-items:center;gap:3%;opacity:.35;transform:scale(.82);transition:opacity .35s,transform .35s}

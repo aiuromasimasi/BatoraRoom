@@ -121,6 +121,14 @@ function p1oneHTML(g,r){
   return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0"></div>
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
+// タイトルが長い時は折り返しすぎ・はみ出しを避けて自動縮小（単語単位折返しはCSS側）
+function fitEl(el,maxLines){ if(!el) return; el.style.fontSize='';
+  const cs=getComputedStyle(el); const lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.2;
+  let fs=parseFloat(cs.fontSize),g=0; const maxH=lh*maxLines+2;
+  while((el.scrollHeight>maxH||el.scrollWidth>el.clientWidth+1)&&fs>13&&g<60){ fs-=1; el.style.fontSize=fs+'px'; g++; } }
+function fitTitles(root){ if(!root) return;
+  fitEl(root.querySelector('.cti'),3); fitEl(root.querySelector('.ti'),3);
+  fitEl(root.querySelector('.tiF'),3); fitEl(root.querySelector('.tiC'),3); }
 function render(s){
   if(s.t==='p1one'){
     if(!stage.querySelector('.p1one')){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); }
@@ -129,11 +137,13 @@ function render(s){
       const sl=stage.querySelectorAll('.p1one'); for(let i=0;i<sl.length-2;i++) sl[i].remove();
       const prev=sl[sl.length-2]; if(prev) setTimeout(()=>{ if(prev.parentNode) prev.remove(); }, 320);
     }
+    fitTitles(stage.querySelector('.p1one:last-child'));
     const nx=byRank[s.r-1]; if(nx){ const im=new Image(); im.src=nx.img; } // 次カバー先読み
     setProg(s.r); return; }
   if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
   if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
+  fitTitles(stage);
   if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
   setProg(s.r);
 }
