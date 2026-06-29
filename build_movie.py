@@ -168,7 +168,15 @@ function p1oneHTML(g,r){
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
 function render(s){
-  if(s.t==='p1one'){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); setProg(s.r); return; }
+  if(s.t==='p1one'){
+    if(!stage.querySelector('.p1one')){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); }
+    else { // 暗転せずクロスフェード: 新スライドを上に重ね、旧スライドは少し残してから除去
+      stage.insertAdjacentHTML('beforeend', p1oneHTML(byRank[s.r],s.r));
+      const sl=stage.querySelectorAll('.p1one'); for(let i=0;i<sl.length-2;i++) sl[i].remove();
+      const prev=sl[sl.length-2]; if(prev) setTimeout(()=>{ if(prev.parentNode) prev.remove(); }, 320);
+    }
+    const nx=byRank[s.r-1]; if(nx){ const im=new Image(); im.src=nx.img; } // 次カバー先読み
+    setProg(s.r); return; }
   if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
   if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
@@ -377,11 +385,13 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   @keyframes curtL{to{transform:translateX(-101%)}}
   @keyframes curtR{to{transform:translateX(101%)}}
   /* ===== Part1（200→101位）ラッシュ5案 ===== */
-  .p1one{position:absolute;inset:0;overflow:hidden;background:#070310}
+  .p1one{position:absolute;inset:0;overflow:hidden;background:#070310;animation:p1in .3s ease backwards}
   .p1one img{display:block}
-  @keyframes ctrin{from{opacity:0;transform:translate(-50%,-50%) scale(.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-  @keyframes fbin{from{opacity:0;transform:scale(1.08)}to{opacity:1;transform:none}}
-  @keyframes slcin{from{opacity:0;transform:translate(40%,-50%)}to{opacity:1;transform:translate(-50%,-50%)}}
+  @keyframes p1in{from{opacity:0}to{opacity:1}}
+  @keyframes ctrin{from{transform:translate(-50%,-50%) scale(.93)}to{transform:translate(-50%,-50%) scale(1)}}
+  @keyframes fbin{from{transform:scale(1.06)}to{transform:none}}
+  @keyframes slcin{from{transform:translate(36%,-50%)}to{transform:translate(-50%,-50%)}}
+  @keyframes csin{from{transform:translateX(40px)}to{transform:none}}
   @keyframes csbarin{from{height:50%}to{}}
   /* ① 全面ブチ抜き */
   .p1one.fb .fbimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fbin .45s ease backwards}
@@ -419,7 +429,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .p1one.cs .cswrap{position:absolute;inset:0;height:100%;display:flex;align-items:center;justify-content:center;gap:4%;padding:0 6%}
   .p1one.cs .csrk{position:absolute;top:11%;left:5%;z-index:2;font-family:"Baloo 2";font-weight:800;font-size:clamp(44px,13vh,170px);line-height:.82;color:#fff;text-shadow:0 0 30px rgba(255,255,255,.4);animation:flashin .5s cubic-bezier(.2,1.6,.3,1) backwards}
   .p1one.cs .csrk span{font-size:.28em}
-  .p1one.cs .cscv{flex:none;height:70%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:4px solid #fff;box-shadow:0 16px 48px rgba(0,0,0,.7);animation:slidein .5s cubic-bezier(.2,1.2,.3,1) backwards}
+  .p1one.cs .cscv{flex:none;height:70%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:4px solid #fff;box-shadow:0 16px 48px rgba(0,0,0,.7);animation:csin .5s cubic-bezier(.2,1.2,.3,1) backwards}
   .p1one.cs .cscv img{width:100%;height:100%;object-fit:cover}
   .p1one.cs .cscap{flex:1;max-width:42%;animation:infin .5s ease .15s backwards}
   #frame.vert .p1one.cs .csbar{display:none}#frame.vert .p1one.cs .cswrap{flex-direction:column;gap:2%}#frame.vert .p1one.cs .csrk{top:5%;left:6%;font-size:clamp(34px,7vh,92px)}#frame.vert .p1one.cs .cscap{max-width:90%;text-align:center}#frame.vert .p1one.cs .cscap .cmeta{justify-content:center}#frame.vert .p1one.cs .cscv{height:44%}

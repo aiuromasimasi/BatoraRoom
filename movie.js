@@ -122,7 +122,15 @@ function p1oneHTML(g,r){
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
 function render(s){
-  if(s.t==='p1one'){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); setProg(s.r); return; }
+  if(s.t==='p1one'){
+    if(!stage.querySelector('.p1one')){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); }
+    else { // 暗転せずクロスフェード: 新スライドを上に重ね、旧スライドは少し残してから除去
+      stage.insertAdjacentHTML('beforeend', p1oneHTML(byRank[s.r],s.r));
+      const sl=stage.querySelectorAll('.p1one'); for(let i=0;i<sl.length-2;i++) sl[i].remove();
+      const prev=sl[sl.length-2]; if(prev) setTimeout(()=>{ if(prev.parentNode) prev.remove(); }, 320);
+    }
+    const nx=byRank[s.r-1]; if(nx){ const im=new Image(); im.src=nx.img; } // 次カバー先読み
+    setProg(s.r); return; }
   if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
   if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
