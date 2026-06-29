@@ -141,30 +141,31 @@ function tameHTML(g,r,d){
   </div>`;
 }
 // ===== Part1（200→101位）ラッシュ5案ビルダー =====
+function p1meta(g){ return `<span class="mg">${esc(g.genre)}</span>`+(g.plat?`<span class="mp">${esc(g.plat)}</span>`:'')+(g.year?`<span class="my">${esc(g.year)}年</span>`:''); }
 function p1oneHTML(g,r){
-  const meta=[g.genre,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
-  const ti=esc(g.title), m=esc(meta), src=g.img;
+  const ti=esc(g.title), mt=p1meta(g), intro=esc(g.intro||''), src=g.img, ts='ts'+TS;
+  const cap=`<div class="cti">${ti}</div><div class="cmeta">${mt}</div>`+(intro?`<div class="cintro">${intro}</div>`:'');
   if(P1===0){ // ① 全面ブチ抜き
     return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0"><div class="fbscrim"></div>
-      <div class="fbrk">${r}<span>位</span></div><div class="fbbot"><div class="fbti">${ti}</div><div class="fbmeta">${m}</div></div></div>`;
+      <div class="fbrk">${r}<span>位</span></div><div class="p1cap fbcap ${ts}">${cap}</div></div>`;
   }
   if(P1===1){ // ② ブラー自己背景
     return `<div class="p1one blur"><img class="bgblur" src="${src}" onerror="this.style.opacity=0"><div class="blurdark"></div>
       <div class="blurcv"><img src="${src}" onerror="this.style.opacity=0"></div>
-      <div class="brk">${r}<span>位</span></div><div class="bbot"><div class="bti">${ti}</div><div class="bmeta">${m}</div></div></div>`;
+      <div class="brk">${r}<span>位</span></div><div class="p1cap blurcap ${ts}">${cap}</div></div>`;
   }
   if(P1===2){ // ③ カード送り
     return `<div class="p1one slide"><div class="slcard"><img src="${src}" onerror="this.style.opacity=0"></div>
-      <div class="slside"><div class="slrk">${r}<span>位</span></div><div class="slti">${ti}</div><div class="slmeta">${m}</div></div></div>`;
+      <div class="slside"><div class="slrk">${r}<span>位</span></div><div class="p1cap slcap ${ts}">${cap}</div></div></div>`;
   }
   if(P1===3){ // ④ シネスコ黒帯
     return `<div class="p1one cs"><div class="csbar t"></div><div class="csbar b"></div><div class="csflash"></div>
       <div class="cswrap"><div class="csrk">${r}<span>位</span></div><div class="cscv"><img src="${src}" onerror="this.style.opacity=0"></div>
-      <div class="csinfo"><div class="csti">${ti}</div><div class="csmeta">${m}</div></div></div></div>`;
+      <div class="p1cap cscap ${ts}">${cap}</div></div></div>`;
   }
   // ⑤ スポットステージ
   return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0"></div>
-    <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="stti">${ti}</div><div class="stmeta">${m}</div></div></div>`;
+    <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
 function render(s){
   if(s.t==='p1one'){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); setProg(s.r); return; }
@@ -384,58 +385,64 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   @keyframes csbarin{from{height:50%}to{}}
   /* ① 全面ブチ抜き */
   .p1one.fb .fbimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fbin .45s ease backwards}
-  .p1one.fb .fbscrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 48%,rgba(0,0,0,.92) 100%)}
-  .p1one.fb .fbrk{position:absolute;top:3%;left:4%;font-family:"Baloo 2";font-weight:800;font-size:clamp(70px,21vh,280px);line-height:.82;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.9);animation:rkin .45s cubic-bezier(.2,1.5,.3,1) backwards}
+  .p1one.fb .fbscrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 18%,rgba(0,0,0,0) 36%,rgba(0,0,0,.95) 100%)}
+  .p1one.fb .fbrk{position:absolute;top:3%;left:4%;font-family:"Baloo 2";font-weight:800;font-size:clamp(60px,18vh,240px);line-height:.82;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.9);animation:rkin .45s cubic-bezier(.2,1.5,.3,1) backwards}
   .p1one.fb .fbrk span{font-size:.3em}
-  .p1one.fb .fbbot{position:absolute;left:4%;right:4%;bottom:5%;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .5s ease .08s backwards}
-  .p1one.fb .fbti{font-family:"Mochiy Pop One";font-size:clamp(24px,4.4vw,60px);line-height:1.12}
-  .p1one.fb .fbmeta{font-weight:800;font-size:clamp(14px,2.1vw,28px);margin-top:7px;opacity:.95}
+  .p1one.fb .fbcap{position:absolute;left:4%;right:4%;bottom:4.5%;animation:infin .5s ease .08s backwards}
   /* ② ブラー自己背景 */
   .p1one.blur .bgblur{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(34px) saturate(1.25);animation:fbin .45s ease backwards}
-  .p1one.blur .blurdark{position:absolute;inset:0;background:rgba(8,5,18,.52)}
-  .p1one.blur .blurcv{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);height:86%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid rgba(255,255,255,.95);box-shadow:0 22px 64px rgba(0,0,0,.65);animation:ctrin .5s cubic-bezier(.2,1.2,.3,1) backwards}
+  .p1one.blur .blurdark{position:absolute;inset:0;background:rgba(8,5,18,.55)}
+  .p1one.blur .blurcv{position:absolute;top:37%;left:50%;transform:translate(-50%,-50%);height:64%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid rgba(255,255,255,.95);box-shadow:0 22px 64px rgba(0,0,0,.65);animation:ctrin .5s cubic-bezier(.2,1.2,.3,1) backwards}
   .p1one.blur .blurcv img{width:100%;height:100%;object-fit:cover}
-  .p1one.blur .brk{position:absolute;top:3.5%;left:4%;z-index:2;font-family:"Baloo 2";font-weight:800;font-size:clamp(58px,16vh,210px);line-height:.82;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.85);animation:rkin .45s cubic-bezier(.2,1.5,.3,1) backwards}
+  .p1one.blur .brk{position:absolute;top:3%;left:4%;z-index:2;font-family:"Baloo 2";font-weight:800;font-size:clamp(50px,13vh,170px);line-height:.82;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.85);animation:rkin .45s cubic-bezier(.2,1.5,.3,1) backwards}
   .p1one.blur .brk span{font-size:.3em}
-  .p1one.blur .bbot{position:absolute;left:0;right:0;bottom:3.5%;z-index:2;text-align:center;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .5s ease .08s backwards}
-  .p1one.blur .bti{font-family:"Mochiy Pop One";font-size:clamp(20px,3.4vw,48px)}
-  .p1one.blur .bmeta{font-weight:800;font-size:clamp(13px,2vw,26px);opacity:.95;margin-top:5px}
+  .p1one.blur .blurcap{position:absolute;left:0;right:0;bottom:3%;z-index:2;padding:0 6%;text-align:center;animation:infin .5s ease .08s backwards}
+  .p1one.blur .blurcap .cmeta{justify-content:center}
+  #frame.vert .p1one.blur .blurcv{height:48%;top:31%}
   /* ③ カード送り */
   .p1one.slide{background:radial-gradient(120% 90% at 50% 28%,#241a3e,#0b0716)}
-  .p1one.slide .slcard{position:absolute;top:50%;left:42%;transform:translate(-50%,-50%);height:82%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid #fff;box-shadow:0 22px 64px rgba(0,0,0,.65);animation:slcin .5s cubic-bezier(.2,1.1,.3,1) backwards}
+  .p1one.slide .slcard{position:absolute;top:50%;left:39%;transform:translate(-50%,-50%);height:82%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid #fff;box-shadow:0 22px 64px rgba(0,0,0,.65);animation:slcin .5s cubic-bezier(.2,1.1,.3,1) backwards}
   .p1one.slide .slcard img{width:100%;height:100%;object-fit:cover}
-  .p1one.slide .slside{position:absolute;right:5%;top:50%;transform:translateY(-50%);width:32%;animation:infin .5s ease .12s backwards}
-  .p1one.slide .slrk{font-family:"Baloo 2";font-weight:800;font-size:clamp(56px,16vh,210px);line-height:.82;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.22),0 0 26px rgba(255,255,255,.4)}
+  .p1one.slide .slside{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:36%;animation:infin .5s ease .12s backwards}
+  .p1one.slide .slrk{font-family:"Baloo 2";font-weight:800;font-size:clamp(50px,14vh,180px);line-height:.82;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.22),0 0 26px rgba(255,255,255,.4)}
   .p1one.slide .slrk span{font-size:.28em}
-  .p1one.slide .slti{font-family:"Mochiy Pop One";font-size:clamp(18px,2.7vw,40px);line-height:1.16;margin-top:8px;text-shadow:0 3px 10px rgba(0,0,0,.5)}
-  .p1one.slide .slmeta{font-weight:800;font-size:clamp(13px,1.9vw,24px);opacity:.92;margin-top:6px}
-  #frame.vert .p1one.slide .slcard{left:50%;height:62%}
-  #frame.vert .p1one.slide .slside{left:0;right:0;top:auto;bottom:5%;width:100%;text-align:center;transform:none}
+  .p1one.slide .slcap{margin-top:8px}
+  #frame.vert .p1one.slide .slcard{left:50%;height:52%;top:36%}
+  #frame.vert .p1one.slide .slside{left:0;right:0;top:auto;bottom:4%;width:100%;text-align:center;transform:none}
+  #frame.vert .p1one.slide .slcap .cmeta{justify-content:center}
   /* ④ シネスコ黒帯 */
   .p1one.cs{background:#000}
-  .p1one.cs .csbar{position:absolute;left:0;right:0;height:11%;background:#000;z-index:3}
+  .p1one.cs .csbar{position:absolute;left:0;right:0;height:10%;background:#000;z-index:3}
   .p1one.cs .csbar.t{top:0;animation:csbarin .5s ease backwards}
   .p1one.cs .csbar.b{bottom:0;animation:csbarin .5s ease backwards}
   .p1one.cs .csflash{position:absolute;inset:0;background:#fff;z-index:4;opacity:0;animation:fl .45s ease forwards;pointer-events:none}
-  .p1one.cs .cswrap{position:absolute;inset:0;height:100%;display:flex;align-items:center;justify-content:center;gap:5%;padding:0 7%}
-  .p1one.cs .csrk{flex:none;font-family:"Baloo 2";font-weight:800;font-size:clamp(56px,17vh,240px);line-height:.82;color:#fff;text-shadow:0 0 30px rgba(255,255,255,.4);animation:flashin .5s cubic-bezier(.2,1.6,.3,1) backwards}
+  .p1one.cs .cswrap{position:absolute;inset:0;height:100%;display:flex;align-items:center;justify-content:center;gap:4%;padding:0 6%}
+  .p1one.cs .csrk{position:absolute;top:11%;left:5%;z-index:2;font-family:"Baloo 2";font-weight:800;font-size:clamp(44px,13vh,170px);line-height:.82;color:#fff;text-shadow:0 0 30px rgba(255,255,255,.4);animation:flashin .5s cubic-bezier(.2,1.6,.3,1) backwards}
   .p1one.cs .csrk span{font-size:.28em}
-  .p1one.cs .cscv{flex:none;height:72%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:4px solid #fff;box-shadow:0 16px 48px rgba(0,0,0,.7);animation:slidein .5s cubic-bezier(.2,1.2,.3,1) backwards}
+  .p1one.cs .cscv{flex:none;height:70%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:4px solid #fff;box-shadow:0 16px 48px rgba(0,0,0,.7);animation:slidein .5s cubic-bezier(.2,1.2,.3,1) backwards}
   .p1one.cs .cscv img{width:100%;height:100%;object-fit:cover}
-  .p1one.cs .csinfo{flex:1;max-width:32%;animation:infin .5s ease .15s backwards}
-  .p1one.cs .csti{font-family:"Mochiy Pop One";font-size:clamp(18px,2.8vw,44px);line-height:1.14}
-  .p1one.cs .csmeta{font-weight:800;font-size:clamp(13px,1.9vw,24px);opacity:.95;margin-top:6px}
-  #frame.vert .p1one.cs .cswrap{flex-direction:column;gap:2.5%}#frame.vert .p1one.cs .csinfo{max-width:88%;text-align:center}#frame.vert .p1one.cs .cscv{height:50%}
+  .p1one.cs .cscap{flex:1;max-width:42%;animation:infin .5s ease .15s backwards}
+  #frame.vert .p1one.cs .csbar{display:none}#frame.vert .p1one.cs .cswrap{flex-direction:column;gap:2%}#frame.vert .p1one.cs .csrk{top:5%;left:6%;font-size:clamp(34px,7vh,92px)}#frame.vert .p1one.cs .cscap{max-width:90%;text-align:center}#frame.vert .p1one.cs .cscap .cmeta{justify-content:center}#frame.vert .p1one.cs .cscv{height:44%}
   /* ⑤ スポットステージ */
   .p1one.st .stbg{position:absolute;inset:0;background:radial-gradient(58% 70% at 50% 16%,rgba(255,244,214,.24),rgba(10,7,20,0) 56%),radial-gradient(120% 100% at 50% 52%,#1b1532,#070310 82%)}
-  .p1one.st .stcv{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);height:74%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid rgba(255,255,255,.92);box-shadow:0 0 64px rgba(255,221,140,.32),0 26px 72px rgba(0,0,0,.7);animation:ctrin .6s cubic-bezier(.2,1.1,.3,1) backwards}
+  .p1one.st .stcv{position:absolute;top:39%;left:50%;transform:translate(-50%,-50%);height:60%;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:4px solid rgba(255,255,255,.92);box-shadow:0 0 64px rgba(255,221,140,.32),0 26px 72px rgba(0,0,0,.7);animation:ctrin .6s cubic-bezier(.2,1.1,.3,1) backwards}
   .p1one.st .stcv img{width:100%;height:100%;object-fit:cover}
-  .p1one.st .stbot{position:absolute;left:0;right:0;bottom:4%;text-align:center;animation:infin .5s ease .15s backwards}
-  .p1one.st .strk{font-family:"Baloo 2";font-weight:800;font-size:clamp(40px,9.5vh,128px);line-height:.82;color:var(--gold);text-shadow:0 0 30px rgba(255,200,80,.5)}
+  .p1one.st .stbot{position:absolute;left:0;right:0;bottom:3.5%;text-align:center;padding:0 6%;animation:infin .5s ease .15s backwards}
+  .p1one.st .strk{font-family:"Baloo 2";font-weight:800;font-size:clamp(34px,7.5vh,104px);line-height:.82;color:var(--gold);text-shadow:0 0 30px rgba(255,200,80,.5)}
   .p1one.st .strk span{font-size:.3em;color:#fff}
-  .p1one.st .stti{font-family:"Mochiy Pop One";font-size:clamp(18px,2.8vw,42px);margin-top:2px;text-shadow:0 3px 14px rgba(0,0,0,.9)}
-  .p1one.st .stmeta{font-weight:800;font-size:clamp(13px,1.9vw,24px);opacity:.9;margin-top:4px}
-  #frame.vert .p1one.st .stcv{height:54%;top:42%}
+  .p1one.st .stcap .cmeta{justify-content:center}
+  #frame.vert .p1one.st .stcv{height:46%;top:34%}
+  /* Part1 共通キャプション（紹介文/ジャンル/年・文字A/B/C対応） */
+  .p1cap .cti{font-family:"Mochiy Pop One";font-size:clamp(18px,3vw,46px);line-height:1.14;word-break:keep-all;overflow-wrap:break-word}
+  .p1cap .cmeta{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(12px,1.7vw,23px);margin-top:7px}
+  .p1cap .cintro{font-weight:700;font-size:clamp(12px,1.6vw,21px);line-height:1.48;margin-top:6px;opacity:.97;word-break:auto-phrase;overflow-wrap:break-word}
+  .p1cap.ts0{background:rgba(12,8,28,.55);border:1.5px solid rgba(255,255,255,.3);border-radius:16px;padding:12px 16px}
+  .p1cap.ts0 .mg{color:#ffd23f}.p1cap.ts0 .my{color:#7fd7ff}.p1cap.ts0 .mp{color:#5cf0c8}
+  .p1cap.ts1 .cti,.p1cap.ts1 .cmeta span,.p1cap.ts1 .cintro{text-shadow:-1.5px -1.5px 0 #160d2a,1.5px -1.5px 0 #160d2a,-1.5px 1.5px 0 #160d2a,1.5px 1.5px 0 #160d2a,0 3px 10px rgba(0,0,0,.95)}
+  .p1cap.ts1 .mg{color:#ff8ad1}.p1cap.ts1 .my{color:#ffe14d}.p1cap.ts1 .mp{color:#7dffb0}
+  .p1cap.ts2{border-left:6px solid #ff5ea8;border-radius:0 14px 14px 0;background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.05));padding:10px 14px}
+  .p1cap.ts2 .cmeta span{padding:3px 12px;border-radius:999px;font-size:.92em}
+  .p1cap.ts2 .mg{background:#ffd23f;color:#5a3d00}.p1cap.ts2 .my{background:#36c5ff;color:#06324f}.p1cap.ts2 .mp{background:#3ff2c2;color:#064b3a}
   /* フィード(案H) */
   .feed{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;gap:1.4vh;padding:46vh 7%;will-change:transform}
   .frow{display:flex;align-items:center;gap:3%;opacity:.35;transform:scale(.82);transition:opacity .35s,transform .35s}
