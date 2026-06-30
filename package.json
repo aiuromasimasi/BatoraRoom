@@ -1,0 +1,13 @@
+{
+  "name": "sanrio-movie-recorder",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "record": "node record_sanrio.mjs",
+    "record:standard": "node record_sanrio.mjs standard",
+    "record:fast": "node record_sanrio.mjs fast"
+  },
+  "dependencies": {
+    "puppeteer": "^24.43.1"
+  }
+}

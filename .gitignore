@@ -1,0 +1,8 @@
+node_modules/
+package-lock.json
+.rec_*/
+.ov_*/
+# 録画出力は重いので除外（オーバーレイ既定 overlays/sparkle.mp4 は再現性のため残す）
+sanrio_standard*.mp4
+sanrio_fast*.mp4
+sanrio_*.webm

@@ -1,0 +1,482 @@
+{
+ "1": {
+  "name": "ポムポムプリン",
+  "pageUrl": "https://www.sanrio.co.jp/characters/pompompurin/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-pompompurin.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式キャラページのリスト用立ち絵(全身・透過PNG)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-pompompurin1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像1(PNG)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-pompompurin2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像2(PNG)"
+   }
+  ]
+ },
+ "2": {
+  "name": "シナモロール",
+  "pageUrl": "https://www.sanrio.co.jp/characters/cinnamon/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-cinnamon.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式キャラページのメインビジュアル立ち絵(全身)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-cinnamon1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像1(PNG)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-cinnamon2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像2(PNG)"
+   }
+  ]
+ },
+ "3": {
+  "name": "ポチャッコ",
+  "pageUrl": "https://www.sanrio.co.jp/characters/pochacco/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-pochacco.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式キャラページのリスト用立ち絵(全身・透過PNG)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-pochacco1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像1(PNG)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-pochacco2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像2(PNG)"
+   }
+  ]
+ },
+ "4": {
+  "name": "クロミ",
+  "pageUrl": "https://www.sanrio.co.jp/characters/kuromi/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-kuromi.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式キャラページのリスト用立ち絵(全身・透過PNG)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-kuromi1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像1(PNG)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-kuromi2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像2(PNG)"
+   }
+  ]
+ },
+ "5": {
+  "name": "ハローキティ",
+  "pageUrl": "https://www.sanrio.co.jp/characters/hellokitty/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-hellokitty.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式キャラページのメインビジュアル立ち絵(全身)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-hellokitty-kt50th-1.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像(キティ50周年・JPG)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-hellokitty-kt50th-2.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "デザインギャラリー画像2(キティ50周年・JPG)"
+   }
+  ]
+ },
+ "6": {
+  "name": "あひるのペックル",
+  "pageUrl": "https://www.sanrio.co.jp/character/pekkle/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-pekkle.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メイン立ち絵(リスト用キャラクター画像)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-ahirunopekkuru1.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(全身イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-ahirunopekkuru2.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "7": {
+  "name": "マイメロディ",
+  "pageUrl": "https://www.sanrio.co.jp/character/mymelody/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-mymelody.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メイン立ち絵(リスト用キャラクター画像)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-mymelody1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(全身イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-mymelody2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "8": {
+  "name": "タキシードサム",
+  "pageUrl": "https://www.sanrio.co.jp/character/tuxedosam/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-tuxedosam.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メイン立ち絵(リスト用キャラクター画像)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-tuxedosam1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(全身イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-tuxedosam2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "9": {
+  "name": "ハンギョドン",
+  "pageUrl": "https://www.sanrio.co.jp/character/hangyodon/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-hangyodon-1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メインビジュアル(立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-hangyodon1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(全身イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-hangyodon2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "10": {
+  "name": "リトルツインスターズ（キキ＆ララ）",
+  "pageUrl": "https://www.sanrio.co.jp/character/kikilala/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-kikilala.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メインビジュアル(キキ＆ララ立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-kikilala1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(全身イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-kikilala2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "11": {
+  "name": "バッドばつ丸",
+  "pageUrl": "https://www.sanrio.co.jp/character/badtzmaru/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-badtzmaru-1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式キャラ一覧用メインビジュアル(立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-badtzmaru1.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像1(立ち絵/イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-badbadtzmaru6.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像(顔/イラスト)"
+   }
+  ]
+ },
+ "12": {
+  "name": "こぎみゅん",
+  "pageUrl": "https://www.sanrio.co.jp/character/cogimyun/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-cogimyun-1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ページ メインビジュアル(立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-cogimyun1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像1(イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-cogimyun2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像2(イラスト)"
+   }
+  ]
+ },
+ "13": {
+  "name": "マイスウィートピアノ",
+  "pageUrl": "https://www.sanrio.co.jp/character/mysweetpiano/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-mysweetpiano.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式キャラ一覧用メインビジュアル(立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-mysweetpiano1.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像1(立ち絵/イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-mysweetpiano2.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像2(イラスト)"
+   }
+  ]
+ },
+ "14": {
+  "name": "けろけろけろっぴ",
+  "pageUrl": "https://www.sanrio.co.jp/character/keroppi/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-keroppi.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ページ メインビジュアル(立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-keroppi1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像1(イラスト)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-keroppi2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ギャラリー画像2(イラスト)"
+   }
+  ]
+ },
+ "15": {
+  "name": "はなまるおばけ",
+  "pageUrl": "https://www.sanrio.co.jp/character/hanamaruobake/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2023/03/mv-hanamaruobake.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式ページ メインビジュアル(立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2024/05/digital-com-st-ho-standard.png",
+    "source": "sanrio.co.jp公式",
+    "note": "公式デジタルコンテンツ スタンダード絵柄(立ち絵)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2023/03/twitter-hanamaruobake.jpg",
+    "source": "sanrio.co.jp公式",
+    "note": "公式SNS用画像(顔/イラスト)"
+   }
+  ]
+ },
+ "16": {
+  "name": "ウィッシュミーメル",
+  "pageUrl": "https://www.sanrio.co.jp/characters/wishmemell/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-wishmemell.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メインビジュアル(キービジュアル/立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-wishmemell1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(立ち絵候補)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-wishmemell2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "17": {
+  "name": "ウサハナ",
+  "pageUrl": "https://www.sanrio.co.jp/characters/usahana/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-usahana.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メインビジュアル(キービジュアル/立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-usahana.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(立ち絵候補)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-usahana2-1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "18": {
+  "name": "がおぱわるぅ",
+  "pageUrl": "https://www.sanrio.co.jp/characters/gaopowerroo/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-gaopowerroo-1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メインビジュアル(キービジュアル/立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-gaopowerroo1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(立ち絵候補)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-gaopowerroo2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "19": {
+  "name": "コロコロクリリン",
+  "pageUrl": "https://www.sanrio.co.jp/characters/kuririn/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-kuririn1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(立ち絵候補)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/list-kuririn-1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "リスト用キャラ画像(顔/立ち絵)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-kuririn2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ },
+ "20": {
+  "name": "ぐでたま",
+  "pageUrl": "https://www.sanrio.co.jp/characters/gudetama/",
+  "candidates": [
+   {
+    "label": "A",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/mv-gudetama.png",
+    "source": "sanrio.co.jp公式",
+    "note": "メインビジュアル(キービジュアル/立ち絵)"
+   },
+   {
+    "label": "B",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-gudetama1.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像1(立ち絵候補)"
+   },
+   {
+    "label": "C",
+    "url": "https://www.sanrio.co.jp/wp-content/uploads/2022/06/gallery-gudetama2.png",
+    "source": "sanrio.co.jp公式",
+    "note": "ギャラリー画像2"
+   }
+  ]
+ }
+}
