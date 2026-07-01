@@ -17,6 +17,7 @@ function radar(d){
 }
 function tierOf(r){return r<=1?'👑 第 1 位':r<=3?'BEST 3':r<=10?'TOP 10':r<=20?'BEST 20':r<=50?'BEST 50':'BEST 100';}
 const BANNERS={100:['BEST 100','100位 → 51位'],50:['BEST 50','50位 → 21位'],20:['BEST 20','20位 → 11位'],10:['TOP 10','10位 → 4位'],3:['BEST 3','表彰台'],1:['👑 No.1','頂点']};
+const TAME_MAX=20; // タメ(正体伏せ)演出の対象範囲: この順位以下で発動
 const steps=[];
 const T1=60000, T2=180000; // Part1(200→101)=1分(2倍速) / Part2(100→1)=3分 → 合計4分
 const WT=s=>{ if(s.t==='b') return 0.85; const r=s.r;
@@ -30,7 +31,7 @@ function buildSteps(){ steps.length=0;
   const sm=p1.length||1; p1.forEach(s=>s.base=T1/sm);
   // ---- Part2: 100→1位（現状維持・T2に正規化） ----
   const p2=[];
-  for(let r=100;r>=1;r--){ if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=10) p2.push({t:'tame',r}); p2.push({t:'g',r}); }
+  for(let r=100;r>=1;r--){ if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=TAME_MAX) p2.push({t:'tame',r}); p2.push({t:'g',r}); }
   const sumW=p2.reduce((a,s)=>a+WT(s),0); p2.forEach(s=>s.base=WT(s)/sumW*T2);
   for(const s of p1) steps.push(s); for(const s of p2) steps.push(s);
 }
@@ -70,8 +71,8 @@ function gameHTML(g,r,d,lm){
   const meta=[g.genre,g.plat,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
   const metaSp=`<span class="mg">${esc(g.genre)}</span>`+(g.plat?`<span class="mp">${esc(g.plat)}</span>`:'')+(g.year?`<span class="my">${esc(g.year)}年</span>`:'');
   if(lm===1){ // 全面カバー(案F)
-    const rev=(TM&&r<=10)?(TM===3?'<div class="curt l"></div><div class="curt r"></div>':'<div class="revflash"></div>'):'';
-    return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=10?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">
+    const rev=(TM&&r<=TAME_MAX)?(TM===3?'<div class="curt l"></div><div class="curt r"></div>':'<div class="revflash"></div>'):'';
+    return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=TAME_MAX?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">
       <div class="scrim"></div><div class="rkF">${r}<span>位</span></div><div class="tierF">${tierOf(r)}</div>
       <div class="botF ts${TS}"><div class="tiF">${esc(g.title)}</div><div class="metaF">${metaSp}</div><div class="introF">${esc(g.intro)}</div></div>
       ${rated?'<div class="radF">'+radar(g)+'</div>':''}${rev}</div>`;
@@ -199,7 +200,7 @@ document.getElementById('ts').onclick=()=>{TS=(TS+1)%3;document.getElementById('
 document.getElementById('bg').onclick=()=>{BG=(BG+1)%3;document.getElementById('bg').textContent='背景'+['A','B','C'][BG];cancelAnimationFrame(feedRAF);pause();si=steps.findIndex(s=>s.t==='b'&&s.r===20);render(steps[si]);updateProg();};
 document.getElementById('tame').onclick=()=>{ const cr=steps[si]?steps[si].r:100;
   TM=(TM+1)%4; document.getElementById('tame').textContent='タメ'+TMN[TM]; buildSteps();
-  const tr=(TM&&cr>10)?7:cr; let i=steps.findIndex(s=>s.r===tr&&s.t==='tame'); if(i<0)i=steps.findIndex(s=>s.r===tr&&s.t==='g'); if(i<0)i=0;
+  const tr=(TM&&cr>TAME_MAX)?15:cr; let i=steps.findIndex(s=>s.r===tr&&s.t==='tame'); if(i<0)i=steps.findIndex(s=>s.r===tr&&s.t==='g'); if(i<0)i=0;
   si=i; cancelAnimationFrame(feedRAF); pause(); if(isFeed()){buildFeed();}else{render(steps[si]);} updateProg(); };
 document.getElementById('or').onclick=()=>{const f=document.getElementById('frame');f.classList.toggle('vert');document.getElementById('or').textContent=f.classList.contains('vert')?'縦 9:16':'横 16:9';if(isFeed()){cancelAnimationFrame(feedRAF);buildFeed();}};
 document.getElementById('fs').onclick=()=>{const f=document.getElementById('frame');(f.requestFullscreen||f.webkitRequestFullscreen||(()=>{})).call(f);};
