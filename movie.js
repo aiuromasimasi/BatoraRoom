@@ -51,6 +51,20 @@ function confetti(n){const w=document.createElement('div');w.className='cf';cons
   for(let i=0;i<n;i++){const s=document.createElement('span');s.style.left=(Math.random()*100).toFixed(1)+'%';s.style.background=cols[i%cols.length];
     s.style.animationDelay=(Math.random()*.5).toFixed(2)+'s';s.style.animationDuration=(2+Math.random()*1.6).toFixed(2)+'s';w.appendChild(s);}
   stage.appendChild(w);setTimeout(()=>w.remove(),4200);}
+// 常時のキラキラ演出（後半100→1位に段階適用: 51-100=控えめ/11-50=中/1-10=豪華）
+function sparkleTier(r){return r<=10?3:r<=50?2:1;}
+function sparkleHTML(r){
+  const tier=sparkleTier(r), n=tier===3?32:tier===2?18:9;
+  const cols=tier===3?['#ffd23f','#fff8dd','#ff9ee0','#9be8ff']:tier===2?['#fff','#bfe9ff','#ffd9f0']:['#fff'];
+  let s=`<div class="spkwrap t${tier}">`;
+  for(let i=0;i<n;i++){
+    const x=(Math.random()*100).toFixed(1), y=(Math.random()*100).toFixed(1);
+    const d=(1.5+Math.random()*2.3).toFixed(2), dl=(Math.random()*3.2).toFixed(2);
+    const sz=(tier===3?3.6+Math.random()*4.4:2.2+Math.random()*2.6).toFixed(1);
+    s+=`<span class="spk" style="left:${x}%;top:${y}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};animation-duration:${d}s;animation-delay:${dl}s"></span>`;
+  }
+  return s+'</div>';
+}
 function gameHTML(g,r,d,lm){
   const rated=g.m!=null&&g.i!=null&&g.f!=null;
   const meta=[g.genre,g.plat,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
@@ -140,11 +154,12 @@ function render(s){
     fitTitles(stage.querySelector('.p1one:last-child'));
     const nx=byRank[s.r-1]; if(nx){ const im=new Image(); im.src=nx.img; } // 次カバー先読み
     setProg(s.r); return; }
-  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
-  if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
+  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div>${sparkleHTML(s.r)}</div>`;setProg(s.r);return;}
+  if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
+  stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));
   fitTitles(stage);
-  if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
+  if(s.r===1) confetti(140); else if(s.r<=3) confetti(70); else if(s.r<=10) confetti(34); else if(s.r<=20) confetti(14);
   setProg(s.r);
 }
 function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer);

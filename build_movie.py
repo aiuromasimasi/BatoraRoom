@@ -97,6 +97,20 @@ function confetti(n){const w=document.createElement('div');w.className='cf';cons
   for(let i=0;i<n;i++){const s=document.createElement('span');s.style.left=(Math.random()*100).toFixed(1)+'%';s.style.background=cols[i%cols.length];
     s.style.animationDelay=(Math.random()*.5).toFixed(2)+'s';s.style.animationDuration=(2+Math.random()*1.6).toFixed(2)+'s';w.appendChild(s);}
   stage.appendChild(w);setTimeout(()=>w.remove(),4200);}
+// 常時のキラキラ演出（後半100→1位に段階適用: 51-100=控えめ/11-50=中/1-10=豪華）
+function sparkleTier(r){return r<=10?3:r<=50?2:1;}
+function sparkleHTML(r){
+  const tier=sparkleTier(r), n=tier===3?32:tier===2?18:9;
+  const cols=tier===3?['#ffd23f','#fff8dd','#ff9ee0','#9be8ff']:tier===2?['#fff','#bfe9ff','#ffd9f0']:['#fff'];
+  let s=`<div class="spkwrap t${tier}">`;
+  for(let i=0;i<n;i++){
+    const x=(Math.random()*100).toFixed(1), y=(Math.random()*100).toFixed(1);
+    const d=(1.5+Math.random()*2.3).toFixed(2), dl=(Math.random()*3.2).toFixed(2);
+    const sz=(tier===3?3.6+Math.random()*4.4:2.2+Math.random()*2.6).toFixed(1);
+    s+=`<span class="spk" style="left:${x}%;top:${y}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};animation-duration:${d}s;animation-delay:${dl}s"></span>`;
+  }
+  return s+'</div>';
+}
 function gameHTML(g,r,d,lm){
   const rated=g.m!=null&&g.i!=null&&g.f!=null;
   const meta=[g.genre,g.plat,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
@@ -186,11 +200,12 @@ function render(s){
     fitTitles(stage.querySelector('.p1one:last-child'));
     const nx=byRank[s.r-1]; if(nx){ const im=new Image(); im.src=nx.img; } // 次カバー先読み
     setProg(s.r); return; }
-  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div></div>`;setProg(s.r);return;}
-  if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));setProg(s.r);return;}
+  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div>${sparkleHTML(s.r)}</div>`;setProg(s.r);return;}
+  if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
+  stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));
   fitTitles(stage);
-  if(s.r===1) confetti(110); else if(s.r<=3) confetti(50);
+  if(s.r===1) confetti(140); else if(s.r<=3) confetti(70); else if(s.r<=10) confetti(34); else if(s.r<=20) confetti(14);
   setProg(s.r);
 }
 function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer);
@@ -478,6 +493,13 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .cf{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:5}
   .cf span{position:absolute;top:-18px;width:11px;height:16px;border-radius:2px;animation:fall linear forwards}
   @keyframes fall{to{transform:translateY(110vh) rotate(680deg);opacity:.1}}
+  /* 常時のキラキラ（後半100→1位・段階豪華化） */
+  .spkwrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6}
+  .spk{position:absolute;border-radius:50%;opacity:0;animation:spkTwinkle ease-in-out infinite}
+  @keyframes spkTwinkle{0%{opacity:0;transform:scale(.3) rotate(0deg)}50%{opacity:1;transform:scale(1.2) rotate(90deg)}100%{opacity:0;transform:scale(.3) rotate(180deg)}}
+  .spkwrap.t1 .spk{box-shadow:0 0 4px rgba(255,255,255,.7)}
+  .spkwrap.t2 .spk{box-shadow:0 0 8px rgba(255,255,255,.85)}
+  .spkwrap.t3 .spk{box-shadow:0 0 14px rgba(255,210,63,.9),0 0 4px #fff}
   .ctl{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,.08);padding:8px 14px;border-radius:999px;max-width:98vw}
   .ctl button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 13px;cursor:pointer;background:rgba(255,255,255,.92);color:#2a1a4a}
   .ctl .prog{color:#fff;font-weight:800;font-size:13px;min-width:118px;text-align:center}

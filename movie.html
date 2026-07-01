@@ -234,6 +234,13 @@
   .cf{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:5}
   .cf span{position:absolute;top:-18px;width:11px;height:16px;border-radius:2px;animation:fall linear forwards}
   @keyframes fall{to{transform:translateY(110vh) rotate(680deg);opacity:.1}}
+  /* 常時のキラキラ（後半100→1位・段階豪華化） */
+  .spkwrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6}
+  .spk{position:absolute;border-radius:50%;opacity:0;animation:spkTwinkle ease-in-out infinite}
+  @keyframes spkTwinkle{0%{opacity:0;transform:scale(.3) rotate(0deg)}50%{opacity:1;transform:scale(1.2) rotate(90deg)}100%{opacity:0;transform:scale(.3) rotate(180deg)}}
+  .spkwrap.t1 .spk{box-shadow:0 0 4px rgba(255,255,255,.7)}
+  .spkwrap.t2 .spk{box-shadow:0 0 8px rgba(255,255,255,.85)}
+  .spkwrap.t3 .spk{box-shadow:0 0 14px rgba(255,210,63,.9),0 0 4px #fff}
   .ctl{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,.08);padding:8px 14px;border-radius:999px;max-width:98vw}
   .ctl button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 13px;cursor:pointer;background:rgba(255,255,255,.92);color:#2a1a4a}
   .ctl .prog{color:#fff;font-weight:800;font-size:13px;min-width:118px;text-align:center}
