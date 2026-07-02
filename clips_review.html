@@ -1,0 +1,426 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>実機クリップ確認（100本）</title>
+<style>
+ *{box-sizing:border-box}
+ body{font-family:"Hiragino Kaku Gothic ProN",sans-serif;margin:0;padding:18px;color:#eef;background:#14102a;min-height:100vh}
+ h1{font-size:19px;text-align:center;margin:4px 0}
+ .sub{text-align:center;color:#b8a8e0;font-size:13px;margin-bottom:16px;line-height:1.6}
+ .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;max-width:1400px;margin:0 auto}
+ .cell{background:#1e1738;border-radius:12px;overflow:hidden;border:2px solid #322858}
+ .media{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer}
+ .media video{width:100%;height:100%;object-fit:cover;display:block}
+ .media .tap{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:2px 8px;border-radius:999px;pointer-events:none}
+ .cap{padding:8px 10px;font-size:12.5px;font-weight:700;line-height:1.5}
+ .cap .cid{color:#a78bfa;font-family:monospace;margin:0 4px}
+ .origin{display:block;font-size:11px;font-weight:600;margin-top:3px}
+ .origin .yt{color:#ff8a8a;text-decoration:none}
+ .origin .steam{color:#7fd7ff}
+ code{display:block;font-size:10px;color:#8a7ab8;margin-top:3px;user-select:all}
+</style></head><body>
+<h1>🎬 実機クリップ確認（100本）</h1>
+<p class="sub">サムネをタップで再生/停止。<b>別のゲームの映像</b>だったら下の rm コマンドで削除→ python3 build_movie.py で表紙にフォールバックします。<br>
+赤リンク＝YouTube出典（クリックで元動画）／青＝Steam公式トレーラー</p>
+<div class="grid">
+<div class="cell"><div class="media"><video src="game_clips/c1.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>3位</b> <b class="cid">c1</b> ブレス オブ ザ ワイルド
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=OMw-xmBEWuE" target="_blank">▶ これからはじめる『ゼルダの伝説　ブレス オブ ザ ワイルド』</a></span><code>rm game_clips/c1.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c2.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>1位</b> <b class="cid">c2</b> ティアーズ オブ ザ キングダム
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=YDwY24cOGEs" target="_blank">▶ NintendoSwitch ゼルダの伝説 ティアーズ オブ ザ キングダム プレイ動画</a></span><code>rm game_clips/c2.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c3.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>12位</b> <b class="cid">c3</b> ゼルダの伝説 神々のトライフォース
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=SBMgjt5VKpM" target="_blank">▶ 【レトロゲーム】謎解きアクションアドベンチャー！！ゼルダの伝説 神々のトライフォース総集</a></span><code>rm game_clips/c3.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c4.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>85位</b> <b class="cid">c4</b> ゼルダの伝説 夢をみる島
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=MgbB4g8NaT4" target="_blank">▶ (コメ付き) ゆっくりゼルダの伝説 夢をみる島 レトロゲーム ゲームボーイ GB版 プレ</a></span><code>rm game_clips/c4.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c5.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>86位</b> <b class="cid">c5</b> 星のカービィ ディスカバリー
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=bnxYboS1AaA" target="_blank">▶ NintendoSwitch 星のカービィ ディスカバリー プレイ動画</a></span><code>rm game_clips/c5.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c6.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>19位</b> <b class="cid">c6</b> スーパーマリオワールド
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=ZZt30VkZbEM" target="_blank">▶ 【SFC版】スーパーマリオワールド　#1　プレイ動画</a></span><code>rm game_clips/c6.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c7.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>90位</b> <b class="cid">c7</b> カエルのために鐘は鳴る
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=P3NRJWgDcGI" target="_blank">▶ 【GB】カエルの為に鐘は鳴る【エンディングまで】</a></span><code>rm game_clips/c7.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c8.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>72位</b> <b class="cid">c8</b> スーパーマリオ オデッセイ
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=CzzvOv8Scx4" target="_blank">▶ Super Mario Odyssey - Gameplay Walkthrough P</a></span><code>rm game_clips/c8.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c9.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>91位</b> <b class="cid">c9</b> ヨッシーストーリー
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=YvebOKK4opU" target="_blank">▶ 【N64】任天堂『ヨッシーストーリー -Yoshi's Story -』＿全２４ステージ</a></span><code>rm game_clips/c9.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c10.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>25位</b> <b class="cid">c10</b> スーパーマリオブラザーズ2（ディスクシステム）
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=CCjavgaOubU" target="_blank">▶ 【FDS】スーパーマリオブラザーズ2【エンディングまで】</a></span><code>rm game_clips/c10.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c11.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>97位</b> <b class="cid">c11</b> ゼルダの伝説（初代）
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=NNc6BLzx34M" target="_blank">▶ ゼルダの伝説1 ROM版　ファミコン（FC）プレイ動画　エンディングまで</a></span><code>rm game_clips/c11.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c12.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>54位</b> <b class="cid">c12</b> ICO
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=JBm-RRm6-TQ" target="_blank">▶ PS2   ICO Gameplay #1</a></span><code>rm game_clips/c12.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c13.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>93位</b> <b class="cid">c13</b> 朧村正
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=duAk8TdTx4o" target="_blank">▶ [TAS] Wii 朧村正(おぼろむらまさ) (JPN) プレイキャラきすけ 1時間03</a></span><code>rm game_clips/c13.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c14.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>13位</b> <b class="cid">c14</b> 聖剣伝説2
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c14.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c15.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>48位</b> <b class="cid">c15</b> LIVE A LIVE
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c15.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c16.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>52位</b> <b class="cid">c16</b> スーパーマリオRPG
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=uMIjdkld-b8" target="_blank">▶ 【スーパーマリオRPG】ジーノが仲間に！　#6【プレイ動画】</a></span><code>rm game_clips/c16.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c17.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>47位</b> <b class="cid">c17</b> 魔界塔士Sa・Ga2 秘宝伝説
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=vfxtzEEduMk" target="_blank">▶ 【ゆっくり実況】サガ２秘宝伝説をクリア【レトロゲーム】</a></span><code>rm game_clips/c17.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c18.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>22位</b> <b class="cid">c18</b> ドラゴンクエスト3
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=uuz9N92thDs" target="_blank">▶ FC版_ドラクエ3_何でもありRTA_57分56秒 自己ベスト更新【解説字幕付き】</a></span><code>rm game_clips/c18.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c19.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>81位</b> <b class="cid">c19</b> ドラゴンクエスト4
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=iNUEKDA_qug" target="_blank">▶ FC版ドラゴンクエストⅣ プレイ動画五章part27 天空の塔へ</a></span><code>rm game_clips/c19.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c20.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>44位</b> <b class="cid">c20</b> ドラゴンクエスト5
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=LqyNTlDIj4Y" target="_blank">▶ #1【ゆっくり実況】スーパーファミコン版ドラゴンクエストⅤを緩くプレイ【DQ5】【レトロ</a></span><code>rm game_clips/c20.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c21.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>66位</b> <b class="cid">c21</b> ドラゴンクエスト10
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=pPQ1JhMdyvw" target="_blank">▶ 【Wii】ドラゴンクエスト10 PART6 （ジュレ－島下層～ジュレットの町）</a></span><code>rm game_clips/c21.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c22.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>43位</b> <b class="cid">c22</b> ファイナルファンタジー3
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c22.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c23.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>53位</b> <b class="cid">c23</b> ファイナルファンタジー4
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c23.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c24.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>7位</b> <b class="cid">c24</b> ファイナルファンタジー5
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c24.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c25.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>14位</b> <b class="cid">c25</b> ファイナルファンタジー6
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c25.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c26.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>50位</b> <b class="cid">c26</b> ファイナルファンタジー7
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=NdjEsJH6mOw" target="_blank">▶ 【PS】ファイナルファンタジーVII インターナショナル【#1 オープニング～伍番魔晄炉</a></span><code>rm game_clips/c26.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c27.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>49位</b> <b class="cid">c27</b> NieR:Automata
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c27.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c28.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>41位</b> <b class="cid">c28</b> 真・女神転生
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=ShnXVxFUDlk" target="_blank">▶ 【ゆっくり実況】真・女神転生 スーパーファミコン 【レトロゲーム 】【RPG】【懐かしい</a></span><code>rm game_clips/c28.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c29.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>35位</b> <b class="cid">c29</b> 真・女神転生II
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=aycYfxjmACw" target="_blank">▶ 【ゆっくり実況】真・女神転生IIを全ルートクリア【レトロゲーム】</a></span><code>rm game_clips/c29.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c30.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>89位</b> <b class="cid">c30</b> 真・女神転生III NOCTURNE
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c30.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c31.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>42位</b> <b class="cid">c31</b> デビルサマナー
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=XwjVnNNDdu8" target="_blank">▶ 【ゆっくり実況】真・女神転生 デビルサマナー  #01（SS版) 【レトロゲーム】</a></span><code>rm game_clips/c31.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c32.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>34位</b> <b class="cid">c32</b> 英雄伝説3 白き魔女
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=X8NkrYqmxQk" target="_blank">▶ 【PC-98】英雄伝説III 白き魔女 -もうひとつの英雄たちの物語- OP</a></span><code>rm game_clips/c32.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c33.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>17位</b> <b class="cid">c33</b> クロノトリガー
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c33.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c34.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>88位</b> <b class="cid">c34</b> ロマンシング サガ2
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c34.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c35.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>40位</b> <b class="cid">c35</b> トルネコの大冒険 不思議のダンジョン
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=6hdTV-3VeI0" target="_blank">▶ トルネコの大冒険 不思議のダンジョン【SFC】#９ クリアして、お店を最大にするところま</a></span><code>rm game_clips/c35.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c36.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>84位</b> <b class="cid">c36</b> 不思議のダンジョン 風来のシレン
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=THMRXXnolE0" target="_blank">▶ 【SFC風来のシレン】#01 初見プレイ＆攻略も含む</a></span><code>rm game_clips/c36.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c37.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>15位</b> <b class="cid">c37</b> かまいたちの夜
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c37.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c38.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>94位</b> <b class="cid">c38</b> 弟切草
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=YiNwsZuT3uQ" target="_blank">▶ スーファミが生んだ名作『弟切草』双子編クリア【マルカツ!レトロゲーム】</a></span><code>rm game_clips/c38.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c39.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>21位</b> <b class="cid">c39</b> ダンガンロンパ 希望の学園と絶望の高校生
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c39.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c40.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>29位</b> <b class="cid">c40</b> スーパーダンガンロンパ2
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c40.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c41.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>2位</b> <b class="cid">c41</b> うみねこのなく頃に
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c41.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c42.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>5位</b> <b class="cid">c42</b> ひぐらしのなく頃に
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c42.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c43.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>38位</b> <b class="cid">c43</b> STEINS;GATE
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c43.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c44.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>61位</b> <b class="cid">c44</b> レイジングループ
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c44.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c45.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>80位</b> <b class="cid">c45</b> キミガシネ
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c45.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c46.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>78位</b> <b class="cid">c46</b> 都市伝説解体センター
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c46.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c47.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>18位</b> <b class="cid">c47</b> スウィートホーム
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=3U8ZVul2UsQ" target="_blank">▶ 【FC】スウィートホーム【エンディングまで】</a></span><code>rm game_clips/c47.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c48.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>24位</b> <b class="cid">c48</b> 街 〜運命の交差点〜
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=tYIPNs5ulyc" target="_blank">▶ 【PS】街 ～運命の交差点～【#1 やせるおもい】</a></span><code>rm game_clips/c48.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c49.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>87位</b> <b class="cid">c49</b> VA-11 Hall-A
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c49.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c50.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>100位</b> <b class="cid">c50</b> 魔法少女ノ魔女裁判
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c50.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c51.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>39位</b> <b class="cid">c51</b> AIR
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=T-sxWzknNYs" target="_blank">▶ #12【Switch版 AIR 】7月24日~ AIR 実況配信プレイ 神尾 観鈴編⚡【</a></span><code>rm game_clips/c51.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c52.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>23位</b> <b class="cid">c52</b> Kanon
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c52.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c53.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>68位</b> <b class="cid">c53</b> 雫
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=JmnbYm-5uSk" target="_blank">▶ 【雫】「毒電波」 全てのビジュアルノベルはここから始まった【Leaf / 1996年】</a></span><code>rm game_clips/c53.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c54.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>16位</b> <b class="cid">c54</b> 痕
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=LnNknyIgpRQ" target="_blank">▶ 「痕 -きずあと-」2009年リメイク　パート14</a></span><code>rm game_clips/c54.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c55.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>26位</b> <b class="cid">c55</b> ブランディッシュ3
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=OiPwV_ADNPg" target="_blank">▶ Brandish 3  PC98版  店頭デモ</a></span><code>rm game_clips/c55.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c56.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>10位</b> <b class="cid">c56</b> レイディアント シルバーガン
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=kTx-RBEFfD4" target="_blank">▶ 【SS】レイディアントシルバーガン【エンディングまで】</a></span><code>rm game_clips/c56.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c57.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>11位</b> <b class="cid">c57</b> 怒首領蜂
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=jMQg9c8spI4" target="_blank">▶ DoDonPachi / 怒首領蜂 (1997) Arcade - 2 Players </a></span><code>rm game_clips/c57.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c58.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>62位</b> <b class="cid">c58</b> グラディウスII
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=xvpZS_CSTNg" target="_blank">▶ 【紹介プレイ】グラディウスII (FC) 1周ノーミスクリア</a></span><code>rm game_clips/c58.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c59.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>55位</b> <b class="cid">c59</b> グラディウスIII
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=lgjLRp-H52w" target="_blank">▶ 【名作】グラディウスIII(アーケード版)ノーミス1周クリア GRADIUS III F</a></span><code>rm game_clips/c59.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c60.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>20位</b> <b class="cid">c60</b> グラディウス外伝
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=iTu3TJmrlJA" target="_blank">▶ PS1 グラディウス外伝 / Gradius Gaiden - Full Game</a></span><code>rm game_clips/c60.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c61.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>71位</b> <b class="cid">c61</b> 東方紺珠伝
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c61.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c62.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>33位</b> <b class="cid">c62</b> Gダライアス
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c62.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c63.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>75位</b> <b class="cid">c63</b> 斑鳩 IKARUGA
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c63.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c64.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>9位</b> <b class="cid">c64</b> QUAKE II
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c64.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c65.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>4位</b> <b class="cid">c65</b> UNREAL
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=ZAtJKd1qHzg" target="_blank">▶ Unreal (1998) Gameplay -No Commentary-</a></span><code>rm game_clips/c65.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c66.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>56位</b> <b class="cid">c66</b> Unreal Tournament
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=4vHZcZJTegQ" target="_blank">▶ Unreal Tournament 1999: Facing Worlds Gamepl</a></span><code>rm game_clips/c66.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c67.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>6位</b> <b class="cid">c67</b> ディアブロII
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c67.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c68.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>65位</b> <b class="cid">c68</b> WarCraft III
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=TcXyJadoxIU" target="_blank">▶ WarCraft 3 Reforged - Orcs Gameplay</a></span><code>rm game_clips/c68.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c69.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>36位</b> <b class="cid">c69</b> StarCraft
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=Nm-PXmOELAw" target="_blank">▶ BEST Terran vs #2 Protoss of ALL TIME - Flas</a></span><code>rm game_clips/c69.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c70.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>37位</b> <b class="cid">c70</b> Left 4 Dead
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c70.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c71.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>59位</b> <b class="cid">c71</b> Plants vs. Zombies
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c71.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c72.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>69位</b> <b class="cid">c72</b> ウルティマオンライン
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=8Z5luD6lUtY" target="_blank">▶ Ultima Online In 2025 &quot;Is It Worth Playing?&quot;</a></span><code>rm game_clips/c72.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c73.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>95位</b> <b class="cid">c73</b> Slay the Spire
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c73.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c74.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>46位</b> <b class="cid">c74</b> PAINKILLER
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=HqPeuQj2BP8" target="_blank">▶ Painkiller ... (PC) [2004] Gameplay</a></span><code>rm game_clips/c74.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c75.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>73位</b> <b class="cid">c75</b> 終ノ空
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=8IFb_FtdDzU" target="_blank">▶ 【紹介作品：終ノ空リメイク/ケロQ】たるたるエロゲプレイ道中記　第54回</a></span><code>rm game_clips/c75.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c76.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>79位</b> <b class="cid">c76</b> マインクラフト
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=CzNqlkAP-AQ" target="_blank">▶ How to start a Minecraft Survival the Right </a></span><code>rm game_clips/c76.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c77.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>8位</b> <b class="cid">c77</b> テトリス グランドマスター2 THE ABSOLUTE PLUS
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=7cIVPuK7I8E" target="_blank">▶ 【レトロゲーム】アケアカ新作「テトリス ジ・アブソリュート ザ・グランドマスター2PLU</a></span><code>rm game_clips/c77.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c78.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>31位</b> <b class="cid">c78</b> TETRIS THE GRAND MASTER 4 -ABSOLUTE EYE-
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c78.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c79.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>28位</b> <b class="cid">c79</b> スーパーストリートファイターII X
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=s4WLjY8vn8E" target="_blank">▶ 1994 [60fps] Super Street Fighter II X Ryu A</a></span><code>rm game_clips/c79.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c80.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>64位</b> <b class="cid">c80</b> バーチャファイター2
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=UbebO0RpsOk" target="_blank">▶ Virtua Fighter 2 - Xbox360 - Sega Model 2 Ar</a></span><code>rm game_clips/c80.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c81.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>74位</b> <b class="cid">c81</b> 鉄拳3
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=spHPxqqMYNM" target="_blank">▶ [TAS] Bryan As True Ogre Gameplay - Tekken 3</a></span><code>rm game_clips/c81.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c82.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>83位</b> <b class="cid">c82</b> THE KING OF FIGHTERS '98
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c82.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c83.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>60位</b> <b class="cid">c83</b> ストリートファイターIII 3rd STRIKE
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=EoT-EhuGJNE" target="_blank">▶ Street Fighter III: 3rd Strike - Ken (Arcade</a></span><code>rm game_clips/c83.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c84.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>99位</b> <b class="cid">c84</b> Deemo
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c84.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c85.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>45位</b> <b class="cid">c85</b> 将棋ウォーズ
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=Sluax4QUUW8" target="_blank">▶ 【将棋ウォーズ】スマホから実況してみた【shogiwars】</a></span><code>rm game_clips/c85.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c86.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>58位</b> <b class="cid">c86</b> DDR（Dance Dance Revolution）
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=A9CcqmBguqc" target="_blank">▶ [DDR] 足11 ナナホシ DDP PFC 999630 Difficult doub</a></span><code>rm game_clips/c86.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c87.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>63位</b> <b class="cid">c87</b> beatmania IIDX
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=6rDRv6766GQ" target="_blank">▶ [IIDX] V (ANOTHER) - Full Combo.</a></span><code>rm game_clips/c87.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c88.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>77位</b> <b class="cid">c88</b> It Takes Two
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c88.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c89.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>57位</b> <b class="cid">c89</b> God of War
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c89.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c90.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>30位</b> <b class="cid">c90</b> ロックマン2
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=Tk-kIeer_N8" target="_blank">▶ [ファミコン] ロックマン2 プレイ動画</a></span><code>rm game_clips/c90.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c91.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>70位</b> <b class="cid">c91</b> UNDERTALE
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c91.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c92.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>96位</b> <b class="cid">c92</b> CUPHEAD
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c92.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c93.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>98位</b> <b class="cid">c93</b> PICO PARK
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c93.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c94.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>76位</b> <b class="cid">c94</b> デイヴ・ザ・ダイバー
+      <span class="origin"><span class="steam">Steam公式トレーラー</span></span><code>rm game_clips/c94.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c95.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>51位</b> <b class="cid">c95</b> 悪魔城ドラキュラX 月下の夜想曲
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=CHZiDQTgoTY" target="_blank">▶ 悪魔城ドラキュラX 月下の夜想曲 Castlevania: Symphony of th</a></span><code>rm game_clips/c95.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c96.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>92位</b> <b class="cid">c96</b> レッドアリーマー（魔界村外伝）
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=B3oWNm563H4" target="_blank">▶ Game Boy Longplay [058] Gargoyle´s Quest</a></span><code>rm game_clips/c96.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c97.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>67位</b> <b class="cid">c97</b> コナミワイワイワールド
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=xEWKiY30t8U" target="_blank">▶ コナミ　ワイワイワールド（FC）　クリア動画</a></span><code>rm game_clips/c97.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c98.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>27位</b> <b class="cid">c98</b> NiGHTS into dreams...
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=eFxH6-g8FGQ" target="_blank">▶ Sega Saturn Longplay [001] NiGHTS into Dream</a></span><code>rm game_clips/c98.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c99.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>82位</b> <b class="cid">c99</b> デイトナUSA
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=PhMUtjrcmUM" target="_blank">▶ デイトナUSA（AC/PS3）　初級・中級・上級クリア動画</a></span><code>rm game_clips/c99.mp4</code></div></div>
+<div class="cell"><div class="media"><video src="game_clips/c100.mp4" preload="metadata" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
+    <div class="cap"><b>32位</b> <b class="cid">c100</b> セガラリー
+      <span class="origin"><a class="yt" href="https://www.youtube.com/watch?v=IshGEqHVcKk" target="_blank">▶ Sega Rally Championship 1995 (セガラリー・チャンピオンシッ</a></span><code>rm game_clips/c100.mp4</code></div></div>
+</div>
+</body></html>
