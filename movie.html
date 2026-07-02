@@ -52,7 +52,7 @@
   #frame.vert .cvwrap{height:46vh}
   .cvglow{position:absolute;inset:-30%;background:conic-gradient(from 0deg,var(--gold),var(--pink),var(--purple),var(--blue),var(--mint),var(--gold));animation:spin 8s linear infinite;opacity:.5;z-index:0}
   .cv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
-  .info{flex:1;max-width:44%;display:flex;flex-direction:column;gap:10px;animation:infin .6s ease .12s backwards}
+  .info{flex:1;max-width:44%;display:flex;flex-direction:column;gap:10px;animation:infin .6s ease 2s backwards}
   @keyframes infin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
   .tier{align-self:flex-start;font-weight:800;font-size:clamp(13px,2vw,22px);background:rgba(255,255,255,.25);padding:5px 18px;border-radius:999px}
   .ti{font-family:"Mochiy Pop One";font-size:clamp(20px,5.6cqmin,52px);line-height:1.15;text-shadow:0 3px 10px rgba(0,0,0,.35)}
@@ -74,7 +74,7 @@
   .rkF{position:absolute;top:2.5%;left:3.5%;font-family:"Baloo 2";font-weight:800;font-size:clamp(80px,21vh,300px);line-height:.85;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.85),0 0 30px rgba(0,0,0,.5);animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
   .rkF span{font-size:.34em}
   .tierF{position:absolute;top:4%;right:3.5%;font-weight:800;font-size:clamp(14px,2.4vw,28px);background:rgba(0,0,0,.5);padding:6px 18px;border-radius:999px;color:#fff}
-  .botF{position:absolute;left:3.5%;right:27%;bottom:5%;color:#fff;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .6s ease .12s backwards}
+  .botF{position:absolute;left:3.5%;right:27%;bottom:5%;color:#fff;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .6s ease 2s backwards}
   .tiF{font-family:"Mochiy Pop One";font-size:clamp(17px,4.2cqmin,40px);line-height:1.26}
   .metaF{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(13px,1.8vw,22px);margin-top:7px}
   .introF{font-weight:700;font-size:clamp(13px,1.8vw,22px);margin-top:6px;max-width:96%;line-height:1.55;word-break:auto-phrase;overflow-wrap:break-word}
@@ -86,7 +86,7 @@
   .botF.ts2{border-left:6px solid #ff5ea8;border-radius:0 14px 14px 0;background:linear-gradient(90deg,rgba(0,0,0,.6),rgba(0,0,0,.05));padding:12px 16px}
   .botF.ts2 .metaF span{padding:3px 12px;border-radius:999px;font-size:.92em}
   .botF.ts2 .mg{background:#ffd23f;color:#5a3d00}.botF.ts2 .my{background:#36c5ff;color:#06324f}.botF.ts2 .mp{background:#3ff2c2;color:#064b3a}
-  .radF{position:absolute;right:2.5%;bottom:4%;background:rgba(0,0,0,.42);border-radius:18px;padding:6px}
+  .radF{position:absolute;right:2.5%;bottom:4%;background:rgba(0,0,0,.42);border-radius:18px;padding:6px;animation:infin .6s ease 2s backwards}
   .radF .radar{width:clamp(160px,18vw,260px)}
   #frame.vert .botF{right:3.5%}#frame.vert .radF{top:13%;bottom:auto;right:3.5%}#frame.vert .radF .radar{width:clamp(120px,28vw,190px)}
   .full.no1 .rkF{color:var(--gold);text-shadow:0 0 44px rgba(255,184,0,.95),0 4px 18px rgba(0,0,0,.8)}
@@ -104,7 +104,7 @@
   .cineCv{flex:none;height:66%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:4px solid #fff;box-shadow:0 16px 44px rgba(0,0,0,.6);animation:slidein .6s cubic-bezier(.2,1.2,.3,1) .15s backwards}
   .cineCv img{width:100%;height:100%;object-fit:cover}
   @keyframes slidein{from{transform:translateX(80px);opacity:0}to{transform:none;opacity:1}}
-  .cineInfo{max-width:34%;animation:infin .6s ease .3s backwards}
+  .cineInfo{max-width:34%;animation:infin .6s ease 2s backwards}
   .tierC{display:inline-block;font-weight:800;font-size:clamp(12px,1.8vw,20px);background:rgba(255,255,255,.22);padding:4px 14px;border-radius:999px}
   .tiC{font-family:"Mochiy Pop One";font-size:clamp(17px,4.4cqmin,42px);line-height:1.16;margin-top:8px;text-shadow:0 3px 10px rgba(0,0,0,.4)}
   .metaC{font-weight:800;font-size:clamp(13px,1.7vw,20px);margin-top:6px;opacity:.95}
