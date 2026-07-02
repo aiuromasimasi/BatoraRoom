@@ -20,7 +20,7 @@
   "url": "https://www.youtube.com/watch?v=bT--MviXYqw&list=PLyNPy006ABoEHZUyOMlLXtpMKevU3h1eT"
  },
  "10": {
-  "start": 95
+  "start": 98
  },
  "11": {
   "start": 95
@@ -61,11 +61,25 @@
   "start": 14,
   "tidx": 1
  },
+ "28": {
+  "start": 4,
+  "url": "https://youtu.be/_PzsIh3oXBU?si=n5z5UOXCtwPphiQ4"
+ },
+ "29": {
+  "start": 548,
+  "url": "https://youtu.be/TgIcomBQle4?si=59kCNNyVRl0yCsoZ&t=548"
+ },
+ "30": {
+  "start": 4109,
+  "url": "https://youtu.be/jQmE3RTNIrc?si=nR7vaDobn3hi57nf&t=4109"
+ },
  "31": {
-  "start": 570
+  "start": 1829,
+  "url": "https://youtu.be/CnYWllG6XJs?si=jxkKyFgBRwLEvFaC&t=1829"
  },
  "32": {
-  "start": 410
+  "start": 1571,
+  "url": "https://youtu.be/6VvBSKt7MaE?si=15iyBXqzUA2lfRre&t=1571"
  },
  "33": {
   "start": 52
@@ -78,7 +92,12 @@
   "start": 10
  },
  "39": {
-  "start": 106
+  "start": 19,
+  "tidx": 1
+ },
+ "40": {
+  "start": 60,
+  "tidx": 1
  },
  "41": {
   "start": 480,
@@ -87,9 +106,20 @@
  "42": {
   "start": 17
  },
+ "43": {
+  "start": 88,
+  "url": "https://youtu.be/neHSqUDlRwI?si=KvmptR_IqLmuvxSA&t=88"
+ },
+ "44": {
+  "start": 52
+ },
  "46": {
   "start": 5,
   "tidx": 1
+ },
+ "48": {
+  "start": 1823,
+  "url": "https://youtu.be/nlXm8_UKgXs?si=wAJNmGV3XYz6HlPo&t=1823"
  },
  "49": {
   "start": 23
@@ -98,21 +128,30 @@
   "start": 35
  },
  "51": {
-  "start": 1560
+  "start": 155,
+  "url": "https://youtu.be/vrOcqetSVEs?si=EnXWf9ymMqT_z19r&t=155"
+ },
+ "52": {
+  "start": 105
  },
  "53": {
   "start": 85,
-  "url": "https://www.youtube.com/watch?v=SThobeQtehM"
+  "url": "https://youtu.be/SThobeQtehM?si=TVTP5LEkwNV8lZVb"
  },
  "54": {
-  "start": 23,
+  "start": 26,
   "url": "https://www.youtube.com/watch?v=qFJ50haX9Js&list=PLdqMrHS5mwVQiSzD3K9W9ZBoS49dVaXMR"
  },
  "55": {
-  "start": 441
+  "start": 33,
+  "url": "https://youtu.be/glJUmRaUfZw?si=_H3KO6i8MP4zzepK&t=33"
  },
  "56": {
   "start": 496
+ },
+ "57": {
+  "start": 3243,
+  "url": "https://youtu.be/_LDGr3zUW0k?si=Xa7Bsuc2Xps2GYVE&t=3243"
  },
  "60": {
   "start": 678
@@ -128,6 +167,10 @@
  },
  "67": {
   "start": 73
+ },
+ "69": {
+  "start": 2411,
+  "url": "https://youtu.be/pfZjdIuk6l4?si=bQZpuGb2zaDtf0w9&t=2411"
  },
  "70": {
   "start": 33,
@@ -171,7 +214,8 @@
   "url": "https://youtu.be/3LNb-5Y8e68?si=3AfKzwO4sv-RjLlc"
  },
  "89": {
-  "start": 8955,
+  "start": 8956,
+  "url": "https://youtu.be/FTPc0ZaHqKk?si=u99U3nWb3h9f6ZQ2&t=8956",
   "tidx": 1
  },
  "91": {
