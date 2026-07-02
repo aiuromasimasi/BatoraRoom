@@ -241,6 +241,53 @@
   .spkwrap.t1 .spk{box-shadow:0 0 4px rgba(255,255,255,.7)}
   .spkwrap.t2 .spk{box-shadow:0 0 8px rgba(255,255,255,.85)}
   .spkwrap.t3 .spk{box-shadow:0 0 14px rgba(255,210,63,.9),0 0 4px #fff}
+  /* canvas花火 */
+  .fw{position:absolute;inset:0;width:100%;height:100%;z-index:7;pointer-events:none}
+  /* 実機動画クリップのオーバーレイ（img の上に重なる。onerror で自滅→表紙に戻る） */
+  .cvwrap video,.cineCv video,.blurcv video,.slcard video,.cscv video,.stcv video,.pdCv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+  .cineCv{position:relative}.p1one.cs .cscv{position:relative}
+  .slide.full video.bg{animation:none}
+  /* ===== オープニング ===== */
+  .op{position:absolute;inset:0;overflow:hidden;background:#12092a}
+  .op .bgrid{filter:blur(6px) brightness(.45) saturate(.9)}
+  .opscrim{position:absolute;inset:0;background:radial-gradient(110% 85% at 50% 42%,rgba(18,9,42,.25),rgba(18,9,42,.9))}
+  .opin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6vh;text-align:center;z-index:2;padding:0 6%}
+  .opkicker{font-weight:800;font-size:clamp(15px,3.4cqmin,30px);letter-spacing:6px;color:#ffd9f0;opacity:0;animation:tmIn .5s ease forwards;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+  .optitle{font-family:"Mochiy Pop One";font-size:clamp(26px,7.2cqmin,64px);line-height:1.24;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.22),0 0 34px rgba(255,255,255,.5);opacity:0;animation:opIn .6s cubic-bezier(.16,.9,.3,1.05) forwards}
+  .opnum{font-family:"Baloo 2";font-weight:800;font-size:clamp(40px,12cqmin,120px);line-height:.9;color:#fff;opacity:0;animation:opIn .55s cubic-bezier(.16,.9,.3,1.05) forwards}
+  @keyframes opIn{0%{opacity:0;transform:scale(2.6);filter:blur(12px)}60%{opacity:1}80%{transform:scale(.94)}100%{opacity:1;transform:scale(1);filter:none}}
+  .opnum span{color:var(--gold);text-shadow:0 0 40px rgba(255,184,0,.8);font-size:1.25em}
+  .opcnt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none}
+  .opcnt span{position:absolute;font-family:"Baloo 2";font-weight:800;font-size:clamp(110px,42cqmin,420px);color:#fff;opacity:0;text-shadow:0 0 60px rgba(255,255,255,.75);animation:opCnt .9s cubic-bezier(.2,.9,.3,1) forwards}
+  @keyframes opCnt{0%{opacity:0;transform:scale(2.6)}22%{opacity:1;transform:scale(1)}78%{opacity:1}100%{opacity:0;transform:scale(.72)}}
+  /* ===== TOP10リキャップ ===== */
+  .recap{position:absolute;inset:0;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,#241a3e,#0a0616)}
+  .rcLabel{position:absolute;top:4.5%;left:0;right:0;text-align:center;font-family:"Mochiy Pop One";font-size:clamp(18px,4.4cqmin,40px);color:#ffd23f;text-shadow:0 3px 0 rgba(0,0,0,.25),0 0 22px rgba(255,210,63,.5);z-index:2}
+  .rcCard{position:absolute;top:50%;left:50%;width:min(56cqw,46cqh);aspect-ratio:3/4;transform:translate(-50%,-50%);border-radius:14px;overflow:hidden;border:4px solid #fff;box-shadow:0 18px 50px rgba(0,0,0,.6);opacity:0;animation:rcFlash .62s ease both}
+  .rcCard img{width:100%;height:100%;object-fit:cover}
+  .rcCard .rcRk{position:absolute;left:0;top:0;background:rgba(0,0,0,.72);color:#fff;font-family:"Baloo 2";font-weight:800;font-size:clamp(20px,5cqmin,44px);padding:2px 14px;border-bottom-right-radius:14px}
+  .rcCard .rcRk small{font-size:.5em}
+  @keyframes rcFlash{0%{opacity:0;transform:translate(-50%,-50%) scale(.55) rotate(-5deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.02) rotate(0)}82%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.18)}}
+  .rcDark{position:absolute;inset:0;background:#05020c;display:flex;align-items:center;justify-content:center;opacity:0;z-index:3;animation:rcDarkIn .7s ease forwards}
+  @keyframes rcDarkIn{to{opacity:1}}
+  .rcNext{font-family:"Mochiy Pop One";font-size:clamp(24px,6.4cqmin,60px);color:#fff;letter-spacing:2px;text-shadow:0 0 34px rgba(255,255,255,.5);animation:tmIn .6s ease .35s both}
+  /* ===== TOP3表彰台 ===== */
+  .podium{position:absolute;inset:0;overflow:hidden;background:radial-gradient(70% 55% at 50% 12%,rgba(255,240,200,.20),rgba(10,6,20,0) 58%),radial-gradient(130% 100% at 50% 55%,#221740,#070310 84%)}
+  .pdLabel{position:absolute;top:3.6%;left:0;right:0;text-align:center;font-family:"Baloo 2";font-weight:800;letter-spacing:6px;font-size:clamp(20px,5cqmin,46px);color:var(--gold);text-shadow:0 0 26px rgba(255,184,0,.6);z-index:2}
+  .pdRow{position:absolute;left:3%;right:3%;bottom:6%;display:flex;align-items:flex-end;justify-content:center;gap:2.5%}
+  .pd{flex:1;max-width:31%;display:flex;flex-direction:column;align-items:center;gap:.8vh;opacity:0;animation:pdIn .7s cubic-bezier(.2,1.25,.3,1) both}
+  @keyframes pdIn{from{opacity:0;transform:translateY(60px) scale(.75)}to{opacity:1;transform:none}}
+  .pdCv{position:relative;width:100%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+  .pdCv img{width:100%;height:100%;object-fit:cover}
+  .pdMedal{font-weight:800;font-size:clamp(14px,3.2cqmin,28px);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.7)}
+  .pdTi{font-family:"Mochiy Pop One";font-size:clamp(11px,2.4cqmin,20px);line-height:1.25;text-align:center;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.8);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .pdBlock{width:86%;border-radius:8px 8px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.08));border:2px solid rgba(255,255,255,.35);border-bottom:0}
+  .pd.gold{max-width:36%;z-index:2}
+  .pd.gold .pdCv{border-color:var(--gold);box-shadow:0 0 0 5px rgba(255,184,0,.45),0 0 54px rgba(255,184,0,.45),0 18px 50px rgba(0,0,0,.6)}
+  .pd.gold .pdBlock{height:13cqh;background:linear-gradient(180deg,rgba(255,210,63,.6),rgba(255,184,0,.16));border-color:rgba(255,220,120,.7)}
+  .pd.gold .pdMedal{color:var(--gold);font-size:clamp(17px,4cqmin,34px)}
+  .pd.silver .pdBlock{height:8.5cqh}
+  .pd.bronze .pdBlock{height:6cqh;background:linear-gradient(180deg,rgba(224,148,86,.5),rgba(224,148,86,.12));border-color:rgba(230,170,110,.55)}
   .ctl{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,.08);padding:8px 14px;border-radius:999px;max-width:98vw}
   .ctl button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 13px;cursor:pointer;background:rgba(255,255,255,.92);color:#2a1a4a}
   .ctl .prog{color:#fff;font-weight:800;font-size:13px;min-width:118px;text-align:center}
@@ -252,9 +299,9 @@
     <button id="pv">⏮</button><button id="pp">⏸</button><button id="nx">⏭</button><button id="rs">↺ 最初から</button>
     <span class="prog" id="prog">—</span>
     速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(4分)</option><option value="0.6">速い</option></select>
-    <button id="p1">前半①全面</button><button id="lm">全面カバー</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">縦 9:16</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
+    <button id="p1">前半①全面</button><button id="lm">全面カバー</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">縦 9:16</button><button id="se">SE ON</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
   </div>
-  <div class="hint">全体約4分＝<b>前半（200→101位）を1枚ずつ高速（2倍速）</b>＋<b>後半（100→1位）はじっくり</b>。既定は<b>縦9:16・全面カバー・前半①全面</b>。<b>「前半」</b>で200→101位の見せ方を巡回（①全面ブチ抜き／②ブラー自己背景／③カード送り／④シネスコ黒帯／⑤スポットステージ）。<b>「レイアウト」</b>で後半を全面カバー→シネマ→フィード→オート→標準に切替（オートは順位が上がるほど豪華化）。<b>「タメ」</b>でTOP20の正体伏せ演出。<b>「横 16:9」</b>で横向き。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
+  <div class="hint">構成＝<b>オープニング(8秒)→前半200→101位を高速→後半100→1位→TOP10リキャップ→1位→🏆表彰台フィナーレ</b>（全体約4分半）。既定は<b>縦9:16・全面カバー・前半①全面</b>。<b>game_clips/c番号.mp4</b>を置くとそのゲームは表紙の代わりに<b>実機映像</b>が流れる（無ければ表紙）。<b>「前半」</b>で見せ方巡回、<b>「レイアウト」</b>で後半切替、<b>「タメ」</b>でTOP20の正体伏せ、<b>「SE」</b>で効果音（初回はどれかボタンを押すと音が出ます）。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
   <audio id="bgm" src="movie_bgm.mp3" loop></audio>
   <script src="movie.js"></script>
 </body></html>

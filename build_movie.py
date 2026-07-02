@@ -33,7 +33,9 @@ if os.path.exists("games_data.csv"):
 cid2title = {v: k for k, v in title2cid.items()}
 def mkgame(r, cid):
     d = gd.get(cid, {})
+    clip = f"game_clips/c{cid}.mp4"
     return {"rank": r, "title": cid2title.get(cid, "?"), "img": f"game_covers/c{cid}.jpg",
+        "clip": clip if os.path.exists(clip) else None,
         "intro": d.get("intro",""), "genre": d.get("genre",""), "year": d.get("year",""), "plat": d.get("plat",""),
         "m": d.get("m"), "i": d.get("i"), "f": d.get("f"), "r": d.get("r"), "mu": d.get("mu")}
 games = [mkgame(r, title2cid[rank[r]]) for r in sorted(rank)]
@@ -71,15 +73,23 @@ const WT=s=>{ if(s.t==='b') return 0.85; const r=s.r;
   return r===1?3.6:r<=3?2.6:r<=10?2.0:r<=20?1.5:r<=50?1.15:0.78; };
 function buildSteps(){ steps.length=0;
   const has=r=>byRank[r]!=null;
+  // ---- オープニング（8秒・固定尺） ----
+  steps.push({t:'op',r:200,base:8000});
   // ---- Part1: 200→101位（暫定cid順）1枚ずつラッシュ・帯なし。見せ方はP1(0〜4)で切替 ----
   const p1=[];
   for(let r=200;r>=101;r--){ if(has(r)) p1.push({t:'p1one',r}); }
   const sm=p1.length||1; p1.forEach(s=>s.base=T1/sm);
-  // ---- Part2: 100→1位（現状維持・T2に正規化） ----
+  // ---- Part2: 100→1位（T2に正規化。リキャップは固定尺で別枠） ----
   const p2=[];
-  for(let r=100;r>=1;r--){ if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=TAME_MAX) p2.push({t:'tame',r}); p2.push({t:'g',r}); }
-  const sumW=p2.reduce((a,s)=>a+WT(s),0); p2.forEach(s=>s.base=WT(s)/sumW*T2);
+  for(let r=100;r>=1;r--){
+    if(r===1) p2.push({t:'recap',r:1,base:7600,fixed:true}); // 1位発表直前のTOP10リキャップ
+    if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=TAME_MAX) p2.push({t:'tame',r}); p2.push({t:'g',r});
+  }
+  const norm=p2.filter(s=>!s.fixed);
+  const sumW=norm.reduce((a,s)=>a+WT(s),0); norm.forEach(s=>s.base=WT(s)/sumW*T2);
   for(const s of p1) steps.push(s); for(const s of p2) steps.push(s);
+  // ---- TOP3表彰台フィナーレ（12秒・固定尺） ----
+  steps.push({t:'podium',r:1,base:12000});
 }
 
 const stage=document.getElementById('stage');
@@ -112,13 +122,60 @@ function sparkleHTML(r){
   }
   return s+'</div>';
 }
+// ==== canvas花火（1位・表彰台用） ====
+function fireworks(n){ n=n||3;
+  const cv=document.createElement('canvas'); cv.className='fw';
+  cv.width=stage.clientWidth; cv.height=stage.clientHeight; stage.appendChild(cv);
+  const ctx=cv.getContext('2d'); const parts=[]; const cols=['#ffd23f','#ff5ea8','#36c5ff','#3ff2c2','#ff8a3d','#ffffff'];
+  for(let b=0;b<n;b++){
+    const cx=cv.width*(0.18+Math.random()*0.64), cy=cv.height*(0.12+Math.random()*0.4), col=cols[b%cols.length], t0=b*380;
+    for(let i=0;i<64;i++){ const a=Math.PI*2*i/64+Math.random()*.12, sp=2+Math.random()*3.4;
+      parts.push({cx,cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t0,col,life:900+Math.random()*600}); } }
+  let start=null;
+  function fr(ts){ if(!start)start=ts; const el=ts-start; ctx.clearRect(0,0,cv.width,cv.height); let alive=false;
+    for(const p of parts){ const t=el-p.t0; if(t<0){alive=true;continue;} if(t>p.life)continue; alive=true;
+      const k=t/16.7, x=p.cx+p.vx*k, y=p.cy+p.vy*k+0.018*k*k, o=1-t/p.life;
+      ctx.globalAlpha=o; ctx.fillStyle=p.col; ctx.beginPath(); ctx.arc(x,y,2.3,0,7); ctx.fill(); }
+    if(alive&&cv.parentNode) requestAnimationFrame(fr); else cv.remove(); }
+  requestAnimationFrame(fr);
+}
+// ==== 実機動画クリップ: g.clip があれば <video> を重ねる（失敗時は自滅してカバー画像に戻る） ====
+const vid=(g,cls)=>g&&g.clip?`<video class="${cls||''}" src="${g.clip}" autoplay muted loop playsinline onerror="this.remove()"></video>`:'';
+// ==== SE（Web Audio 合成・素材ファイル不要） ====
+let AC=null, SEon=true;
+function actx(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} }
+  if(AC&&AC.state==='suspended'){ try{AC.resume().catch(()=>{});}catch(e){} } return AC; }
+function tone(type,f0,f1,t0,d,peak){ const c=AC,o=c.createOscillator(),g=c.createGain();
+  o.type=type; o.frequency.setValueAtTime(f0,t0); if(f1)o.frequency.exponentialRampToValueAtTime(f1,t0+d);
+  g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(peak,t0+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t0+d);
+  o.connect(g).connect(c.destination); o.start(t0); o.stop(t0+d+0.1); }
+function noiseSE(t0,d,peak,fc){ const c=AC,len=Math.floor(c.sampleRate*d),b=c.createBuffer(1,len,c.sampleRate),dd=b.getChannelData(0);
+  for(let i=0;i<len;i++)dd[i]=Math.random()*2-1;
+  const s=c.createBufferSource(); s.buffer=b; const f=c.createBiquadFilter(); f.type='lowpass'; f.frequency.value=fc||1000;
+  const g=c.createGain(); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(peak,t0+0.008); g.gain.exponentialRampToValueAtTime(0.0001,t0+d);
+  s.connect(f).connect(g).connect(c.destination); s.start(t0); }
+function se(kind,big){ if(!SEon)return; const c=actx(); if(!c||c.state!=='running')return; const t=c.currentTime+0.02;
+  try{
+    if(kind==='whoosh'){ noiseSE(t,0.26,0.09,900); }
+    else if(kind==='don'){ tone('sine',big?160:120,big?52:60,t,0.32,big?0.5:0.3); noiseSE(t,0.1,big?0.2:0.1,420); }
+    else if(kind==='tick'){ tone('square',1180,null,t,0.045,0.045); }
+    else if(kind==='heart'){ tone('sine',88,54,t,0.15,0.4); tone('sine',76,50,t+0.22,0.15,0.28); }
+    else if(kind==='shine'){ [1568,2093,2637].forEach((f,i)=>tone('triangle',f,null,t+i*0.055,0.3,0.06)); }
+    else if(kind==='fanfare'){ [523,659,784].forEach((f,i)=>tone('square',f,null,t+i*0.15,0.32,0.085));
+      [523,659,784,1047].forEach(f=>tone('triangle',f,null,t+0.62,1.0,0.075)); }
+  }catch(e){}
+}
+let hbTimer=null;
+function heartbeatLoop(){ clearTimeout(hbTimer);
+  if(!document.querySelector('.slide.tame'))return;
+  se('heart'); hbTimer=setTimeout(heartbeatLoop,840); }
 function gameHTML(g,r,d,lm){
   const rated=g.m!=null&&g.i!=null&&g.f!=null;
   const meta=[g.genre,g.plat,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
   const metaSp=`<span class="mg">${esc(g.genre)}</span>`+(g.plat?`<span class="mp">${esc(g.plat)}</span>`:'')+(g.year?`<span class="my">${esc(g.year)}年</span>`:'');
   if(lm===1){ // 全面カバー(案F)
     const rev=(TM&&r<=TAME_MAX)?(TM===3?'<div class="curt l"></div><div class="curt r"></div>':'<div class="revflash"></div>'):'';
-    return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=TAME_MAX?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">
+    return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=TAME_MAX?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">${vid(g,'bg')}
       <div class="scrim"></div><div class="rkF">${r}<span>位</span></div><div class="tierF">${tierOf(r)}</div>
       <div class="botF ts${TS}"><div class="tiF">${esc(g.title)}</div><div class="metaF">${metaSp}</div><div class="introF">${esc(g.intro)}</div></div>
       ${rated?'<div class="radF">'+radar(g)+'</div>':''}${rev}</div>`;
@@ -126,12 +183,12 @@ function gameHTML(g,r,d,lm){
   if(lm===2){ // シネマ(案G)
     return `<div class="slide cine ${r===1?'no1':''}"><div class="lb t"></div><div class="lb b"></div><div class="flash"></div>
       <div class="cineWrap"><div class="cineRk">${r}<span>位</span></div>
-        <div class="cineCv"><img src="${g.img}" alt="" onerror="this.style.opacity=0"></div>
+        <div class="cineCv"><img src="${g.img}" alt="" onerror="this.style.opacity=0">${vid(g)}</div>
         <div class="cineInfo"><div class="tierC">${tierOf(r)}</div><div class="tiC">${esc(g.title)}</div><div class="metaC">${esc(meta)}</div>${rated?'<div class="radC">'+radar(g)+'</div>':''}</div>
       </div></div>`;
   }
   return `<div class="slide ${r===1?'no1':''}"><div class="rk">${r}<span class="rku">位</span></div>
-    <div class="mid"><div class="cvwrap"><div class="cvglow"></div><img class="cv" src="${g.img}" alt="" onerror="this.style.opacity=0"></div></div>
+    <div class="mid"><div class="cvwrap"><div class="cvglow"></div><img class="cv" src="${g.img}" alt="" onerror="this.style.opacity=0">${vid(g,'cv')}</div></div>
     <div class="info"><div class="tier">${tierOf(r)}</div><div class="ti">${esc(g.title)}</div>
       <div class="meta">${esc(meta)}</div><div class="intro">${esc(g.intro)}</div>${rated?'<div class="rwrap">'+radar(g)+'</div>':''}</div></div>`;
 }
@@ -161,26 +218,52 @@ function p1oneHTML(g,r){
   const ti=esc(g.title), mt=p1meta(g), intro=esc(g.intro||''), src=g.img, ts='ts'+TS;
   const cap=`<div class="cti">${ti}</div><div class="cmeta">${mt}</div>`+(intro?`<div class="cintro">${intro}</div>`:'');
   if(P1===0){ // ① 全面ブチ抜き
-    return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0"><div class="fbscrim"></div>
+    return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0">${vid(g,'fbimg')}<div class="fbscrim"></div>
       <div class="fbrk">${r}<span>位</span></div><div class="p1cap fbcap ${ts}">${cap}</div></div>`;
   }
   if(P1===1){ // ② ブラー自己背景
     return `<div class="p1one blur"><img class="bgblur" src="${src}" onerror="this.style.opacity=0"><div class="blurdark"></div>
-      <div class="blurcv"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="blurcv"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
       <div class="brk">${r}<span>位</span></div><div class="p1cap blurcap ${ts}">${cap}</div></div>`;
   }
   if(P1===2){ // ③ カード送り
-    return `<div class="p1one slide"><div class="slcard"><img src="${src}" onerror="this.style.opacity=0"></div>
+    return `<div class="p1one slide"><div class="slcard"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
       <div class="slside"><div class="slrk">${r}<span>位</span></div><div class="p1cap slcap ${ts}">${cap}</div></div></div>`;
   }
   if(P1===3){ // ④ シネスコ黒帯
     return `<div class="p1one cs"><div class="csbar t"></div><div class="csbar b"></div><div class="csflash"></div>
-      <div class="cswrap"><div class="csrk">${r}<span>位</span></div><div class="cscv"><img src="${src}" onerror="this.style.opacity=0"></div>
+      <div class="cswrap"><div class="csrk">${r}<span>位</span></div><div class="cscv"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
       <div class="p1cap cscap ${ts}">${cap}</div></div></div>`;
   }
   // ⑤ スポットステージ
-  return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0"></div>
+  return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
+}
+// ==== オープニング（8秒） ====
+function opHTML(d){
+  const sd=x=>'animation-delay:'+(d*x/1000).toFixed(2)+'s';
+  return `<div class="op">${MOSAIC}<div class="opscrim"></div>
+    <div class="opin"><div class="opkicker" style="${sd(.04)}">バトラの</div>
+      <div class="optitle" style="${sd(.10)}">思い入れのある<br>ゲームランキング</div>
+      <div class="opnum" style="${sd(.28)}">TOP <span>200</span></div></div>
+    <div class="opcnt"><span style="${sd(.60)}">3</span><span style="${sd(.73)}">2</span><span style="${sd(.86)}">1</span></div></div>`;
+}
+// ==== 1位発表直前のTOP10リキャップ ====
+function recapHTML(d){
+  let cards='';
+  for(let r=10;r>=2;r--){ const g=byRank[r]; if(!g)continue; const idx=10-r;
+    cards+=`<div class="rcCard" style="animation-delay:${(d*(0.04+idx*0.082)/1000).toFixed(2)}s"><img src="${g.img}"><span class="rcRk">${r}<small>位</small></span></div>`; }
+  return `<div class="recap"><div class="rcLabel">ここまでの TOP10</div>${cards}
+    <div class="rcDark" style="animation-delay:${(d*0.80/1000).toFixed(2)}s"><div class="rcNext">第 1 位 は ——</div></div></div>`;
+}
+// ==== TOP3表彰台フィナーレ ====
+function podiumHTML(d){
+  const g1=byRank[1],g2=byRank[2],g3=byRank[3];
+  const box=(g,cls,medal,f)=>g?`<div class="pd ${cls}" style="animation-delay:${(d*f/1000).toFixed(2)}s">
+      <div class="pdCv"><img src="${g.img}">${vid(g)}</div><div class="pdMedal">${medal}</div>
+      <div class="pdTi">${esc(g.title)}</div><div class="pdBlock"></div></div>`:'';
+  return `<div class="podium"><div class="pdLabel">🏆 RESULT</div>
+    <div class="pdRow">${box(g2,'silver','🥈 第2位',0.30)}${box(g1,'gold','👑 第1位',0.56)}${box(g3,'bronze','🥉 第3位',0.05)}</div></div>`;
 }
 // タイトルが長い時は折り返しすぎ・はみ出しを避けて自動縮小（単語単位折返しはCSS側）
 function fitEl(el,maxLines){ if(!el) return; el.style.fontSize='';
@@ -191,6 +274,21 @@ function fitTitles(root){ if(!root) return;
   fitEl(root.querySelector('.cti'),3); fitEl(root.querySelector('.ti'),3);
   fitEl(root.querySelector('.tiF'),3); fitEl(root.querySelector('.tiC'),3); }
 function render(s){
+  if(s.t==='op'){ const dd=dur(s); stage.innerHTML=opHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(30));
+    se('shine');
+    [[.60,'tick'],[.73,'tick'],[.86,'don']].forEach(([f,k])=>setTimeout(()=>{if(document.querySelector('.op'))se(k,k==='don');},dd*f));
+    setProgP(0); return; }
+  if(s.t==='recap'){ const dd=dur(s); stage.innerHTML=recapHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(1));
+    se('whoosh');
+    for(let i=0;i<9;i++) setTimeout(()=>{if(document.querySelector('.recap'))se('tick');},dd*(0.04+i*0.082));
+    setTimeout(()=>{if(document.querySelector('.recap'))se('don',true);},dd*0.82);
+    setProg(2); return; }
+  if(s.t==='podium'){ const dd=dur(s); stage.innerHTML=podiumHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(1));
+    se('shine');
+    setTimeout(()=>{if(document.querySelector('.podium'))se('don',true);},dd*0.05);
+    setTimeout(()=>{if(document.querySelector('.podium'))se('don',true);},dd*0.30);
+    setTimeout(()=>{if(document.querySelector('.podium')){se('fanfare');fireworks(5);confetti(120);}},dd*0.56);
+    setProg(1); return; }
   if(s.t==='p1one'){
     if(!stage.querySelector('.p1one')){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); }
     else { // 暗転せずクロスフェード: 新スライドを上に重ね、旧スライドは少し残してから除去
@@ -199,20 +297,27 @@ function render(s){
       const prev=sl[sl.length-2]; if(prev) setTimeout(()=>{ if(prev.parentNode) prev.remove(); }, 320);
     }
     fitTitles(stage.querySelector('.p1one:last-child'));
+    se('tick');
     const nx=byRank[s.r-1]; if(nx){ const im=new Image(); im.src=nx.img; } // 次カバー先読み
     setProg(s.r); return; }
-  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div>${sparkleHTML(s.r)}</div>`;setProg(s.r);return;}
-  if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));setProg(s.r);return;}
+  if(s.t==='b'){const [a,b]=BANNERS[s.r];stage.innerHTML=`<div class="banner bg${BG}">${MOSAIC}<div class="bscrim"></div><div class="bshock"></div><div class="btxt">${a}</div><div class="bsub">${b}</div><div class="bflash"></div>${sparkleHTML(s.r)}</div>`;se('don',true);se('shine');setProg(s.r);return;}
+  if(s.t==='tame'){stage.innerHTML=tameHTML(byRank[s.r],s.r,dur(s));stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));se('don');heartbeatLoop();setProg(s.r);return;}
   const g=byRank[s.r]; stage.innerHTML=gameHTML(g,s.r,dur(s),curLM(s.r));
   stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));
   fitTitles(stage);
-  if(s.r===1) confetti(140); else if(s.r<=3) confetti(70); else if(s.r<=10) confetti(34); else if(s.r<=20) confetti(14);
+  se('whoosh'); se('don', s.r<=10);
+  if(s.r===1){ confetti(140); fireworks(4); se('fanfare'); }
+  else if(s.r<=3){ confetti(70); se('shine'); }
+  else if(s.r<=10) confetti(34); else if(s.r<=20) confetti(14);
   setProg(s.r);
 }
 function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer);
   if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(s)); updateProg(); }
 function updateProg(){const s=steps[si]; let t;
   if(isFeed()) t='フィード再生中';
+  else if(s.t==='op') t='オープニング';
+  else if(s.t==='recap') t='TOP10リキャップ';
+  else if(s.t==='podium') t='表彰台';
   else if(s.t==='p1one') t='前半 '+s.r+'位 / 残り'+Math.max(0,steps.length-1-si);
   else t=(s.t==='b'?'—':s.r+'位'+(s.t==='tame'?'(タメ)':''))+' / 残り'+Math.max(0,steps.length-1-si);
   document.getElementById('prog').textContent=t;}
@@ -242,6 +347,7 @@ document.getElementById('lm').onclick=()=>{ mode=(mode+1)%5; cancelAnimationFram
   if(isFeed()){ pause(); buildFeed(); updateProg(); } else { render(steps[si]); updateProg(); } };
 document.getElementById('p1').onclick=()=>{ P1=(P1+1)%5; document.getElementById('p1').textContent='前半'+P1N[P1];
   cancelAnimationFrame(feedRAF); buildSteps(); si=0; pause(); render(steps[si]); updateProg(); };
+document.getElementById('se').onclick=()=>{ SEon=!SEon; actx(); document.getElementById('se').textContent=SEon?'SE ON':'SE OFF'; if(SEon)se('shine'); };
 document.getElementById('ts').onclick=()=>{TS=(TS+1)%3;document.getElementById('ts').textContent='文字'+['A','B','C'][TS];if(!isFeed())render(steps[si]);};
 document.getElementById('bg').onclick=()=>{BG=(BG+1)%3;document.getElementById('bg').textContent='背景'+['A','B','C'][BG];cancelAnimationFrame(feedRAF);pause();si=steps.findIndex(s=>s.t==='b'&&s.r===20);render(steps[si]);updateProg();};
 document.getElementById('tame').onclick=()=>{ const cr=steps[si]?steps[si].r:100;
@@ -501,6 +607,53 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .spkwrap.t1 .spk{box-shadow:0 0 4px rgba(255,255,255,.7)}
   .spkwrap.t2 .spk{box-shadow:0 0 8px rgba(255,255,255,.85)}
   .spkwrap.t3 .spk{box-shadow:0 0 14px rgba(255,210,63,.9),0 0 4px #fff}
+  /* canvas花火 */
+  .fw{position:absolute;inset:0;width:100%;height:100%;z-index:7;pointer-events:none}
+  /* 実機動画クリップのオーバーレイ（img の上に重なる。onerror で自滅→表紙に戻る） */
+  .cvwrap video,.cineCv video,.blurcv video,.slcard video,.cscv video,.stcv video,.pdCv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+  .cineCv{position:relative}.p1one.cs .cscv{position:relative}
+  .slide.full video.bg{animation:none}
+  /* ===== オープニング ===== */
+  .op{position:absolute;inset:0;overflow:hidden;background:#12092a}
+  .op .bgrid{filter:blur(6px) brightness(.45) saturate(.9)}
+  .opscrim{position:absolute;inset:0;background:radial-gradient(110% 85% at 50% 42%,rgba(18,9,42,.25),rgba(18,9,42,.9))}
+  .opin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6vh;text-align:center;z-index:2;padding:0 6%}
+  .opkicker{font-weight:800;font-size:clamp(15px,3.4cqmin,30px);letter-spacing:6px;color:#ffd9f0;opacity:0;animation:tmIn .5s ease forwards;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+  .optitle{font-family:"Mochiy Pop One";font-size:clamp(26px,7.2cqmin,64px);line-height:1.24;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.22),0 0 34px rgba(255,255,255,.5);opacity:0;animation:opIn .6s cubic-bezier(.16,.9,.3,1.05) forwards}
+  .opnum{font-family:"Baloo 2";font-weight:800;font-size:clamp(40px,12cqmin,120px);line-height:.9;color:#fff;opacity:0;animation:opIn .55s cubic-bezier(.16,.9,.3,1.05) forwards}
+  @keyframes opIn{0%{opacity:0;transform:scale(2.6);filter:blur(12px)}60%{opacity:1}80%{transform:scale(.94)}100%{opacity:1;transform:scale(1);filter:none}}
+  .opnum span{color:var(--gold);text-shadow:0 0 40px rgba(255,184,0,.8);font-size:1.25em}
+  .opcnt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none}
+  .opcnt span{position:absolute;font-family:"Baloo 2";font-weight:800;font-size:clamp(110px,42cqmin,420px);color:#fff;opacity:0;text-shadow:0 0 60px rgba(255,255,255,.75);animation:opCnt .9s cubic-bezier(.2,.9,.3,1) forwards}
+  @keyframes opCnt{0%{opacity:0;transform:scale(2.6)}22%{opacity:1;transform:scale(1)}78%{opacity:1}100%{opacity:0;transform:scale(.72)}}
+  /* ===== TOP10リキャップ ===== */
+  .recap{position:absolute;inset:0;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,#241a3e,#0a0616)}
+  .rcLabel{position:absolute;top:4.5%;left:0;right:0;text-align:center;font-family:"Mochiy Pop One";font-size:clamp(18px,4.4cqmin,40px);color:#ffd23f;text-shadow:0 3px 0 rgba(0,0,0,.25),0 0 22px rgba(255,210,63,.5);z-index:2}
+  .rcCard{position:absolute;top:50%;left:50%;width:min(56cqw,46cqh);aspect-ratio:3/4;transform:translate(-50%,-50%);border-radius:14px;overflow:hidden;border:4px solid #fff;box-shadow:0 18px 50px rgba(0,0,0,.6);opacity:0;animation:rcFlash .62s ease both}
+  .rcCard img{width:100%;height:100%;object-fit:cover}
+  .rcCard .rcRk{position:absolute;left:0;top:0;background:rgba(0,0,0,.72);color:#fff;font-family:"Baloo 2";font-weight:800;font-size:clamp(20px,5cqmin,44px);padding:2px 14px;border-bottom-right-radius:14px}
+  .rcCard .rcRk small{font-size:.5em}
+  @keyframes rcFlash{0%{opacity:0;transform:translate(-50%,-50%) scale(.55) rotate(-5deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.02) rotate(0)}82%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.18)}}
+  .rcDark{position:absolute;inset:0;background:#05020c;display:flex;align-items:center;justify-content:center;opacity:0;z-index:3;animation:rcDarkIn .7s ease forwards}
+  @keyframes rcDarkIn{to{opacity:1}}
+  .rcNext{font-family:"Mochiy Pop One";font-size:clamp(24px,6.4cqmin,60px);color:#fff;letter-spacing:2px;text-shadow:0 0 34px rgba(255,255,255,.5);animation:tmIn .6s ease .35s both}
+  /* ===== TOP3表彰台 ===== */
+  .podium{position:absolute;inset:0;overflow:hidden;background:radial-gradient(70% 55% at 50% 12%,rgba(255,240,200,.20),rgba(10,6,20,0) 58%),radial-gradient(130% 100% at 50% 55%,#221740,#070310 84%)}
+  .pdLabel{position:absolute;top:3.6%;left:0;right:0;text-align:center;font-family:"Baloo 2";font-weight:800;letter-spacing:6px;font-size:clamp(20px,5cqmin,46px);color:var(--gold);text-shadow:0 0 26px rgba(255,184,0,.6);z-index:2}
+  .pdRow{position:absolute;left:3%;right:3%;bottom:6%;display:flex;align-items:flex-end;justify-content:center;gap:2.5%}
+  .pd{flex:1;max-width:31%;display:flex;flex-direction:column;align-items:center;gap:.8vh;opacity:0;animation:pdIn .7s cubic-bezier(.2,1.25,.3,1) both}
+  @keyframes pdIn{from{opacity:0;transform:translateY(60px) scale(.75)}to{opacity:1;transform:none}}
+  .pdCv{position:relative;width:100%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+  .pdCv img{width:100%;height:100%;object-fit:cover}
+  .pdMedal{font-weight:800;font-size:clamp(14px,3.2cqmin,28px);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.7)}
+  .pdTi{font-family:"Mochiy Pop One";font-size:clamp(11px,2.4cqmin,20px);line-height:1.25;text-align:center;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.8);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .pdBlock{width:86%;border-radius:8px 8px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.08));border:2px solid rgba(255,255,255,.35);border-bottom:0}
+  .pd.gold{max-width:36%;z-index:2}
+  .pd.gold .pdCv{border-color:var(--gold);box-shadow:0 0 0 5px rgba(255,184,0,.45),0 0 54px rgba(255,184,0,.45),0 18px 50px rgba(0,0,0,.6)}
+  .pd.gold .pdBlock{height:13cqh;background:linear-gradient(180deg,rgba(255,210,63,.6),rgba(255,184,0,.16));border-color:rgba(255,220,120,.7)}
+  .pd.gold .pdMedal{color:var(--gold);font-size:clamp(17px,4cqmin,34px)}
+  .pd.silver .pdBlock{height:8.5cqh}
+  .pd.bronze .pdBlock{height:6cqh;background:linear-gradient(180deg,rgba(224,148,86,.5),rgba(224,148,86,.12));border-color:rgba(230,170,110,.55)}
   .ctl{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,.08);padding:8px 14px;border-radius:999px;max-width:98vw}
   .ctl button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 13px;cursor:pointer;background:rgba(255,255,255,.92);color:#2a1a4a}
   .ctl .prog{color:#fff;font-weight:800;font-size:13px;min-width:118px;text-align:center}
@@ -512,12 +665,13 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
     <button id="pv">⏮</button><button id="pp">⏸</button><button id="nx">⏭</button><button id="rs">↺ 最初から</button>
     <span class="prog" id="prog">—</span>
     速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(4分)</option><option value="0.6">速い</option></select>
-    <button id="p1">前半①全面</button><button id="lm">全面カバー</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">縦 9:16</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
+    <button id="p1">前半①全面</button><button id="lm">全面カバー</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="bg">背景A</button><button id="or">縦 9:16</button><button id="se">SE ON</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
   </div>
-  <div class="hint">全体約4分＝<b>前半（200→101位）を1枚ずつ高速（2倍速）</b>＋<b>後半（100→1位）はじっくり</b>。既定は<b>縦9:16・全面カバー・前半①全面</b>。<b>「前半」</b>で200→101位の見せ方を巡回（①全面ブチ抜き／②ブラー自己背景／③カード送り／④シネスコ黒帯／⑤スポットステージ）。<b>「レイアウト」</b>で後半を全面カバー→シネマ→フィード→オート→標準に切替（オートは順位が上がるほど豪華化）。<b>「タメ」</b>でTOP20の正体伏せ演出。<b>「横 16:9」</b>で横向き。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
+  <div class="hint">構成＝<b>オープニング(8秒)→前半200→101位を高速→後半100→1位→TOP10リキャップ→1位→🏆表彰台フィナーレ</b>（全体約4分半）。既定は<b>縦9:16・全面カバー・前半①全面</b>。<b>game_clips/c番号.mp4</b>を置くとそのゲームは表紙の代わりに<b>実機映像</b>が流れる（無ければ表紙）。<b>「前半」</b>で見せ方巡回、<b>「レイアウト」</b>で後半切替、<b>「タメ」</b>でTOP20の正体伏せ、<b>「SE」</b>で効果音（初回はどれかボタンを押すと音が出ます）。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
   <audio id="bgm" src="movie_bgm.mp3" loop></audio>
   <script src="movie.js"></script>
 </body></html>'''
 open("movie.html", "w", encoding="utf-8").write(HTML)
 p1n = sum(1 for g in games if g["rank"] > 100)
-print(f"movie.html + movie.js 生成（前半{p1n}作+後半100作=計{len(games)}作・5分構成・前半5案A〜E切替）")
+clips = sum(1 for g in games if g.get("clip"))
+print(f"movie.html + movie.js 生成（前半{p1n}作+後半100作=計{len(games)}作・OP/リキャップ/表彰台つき・実機クリップ{clips}本）")
