@@ -42,11 +42,13 @@ def mkgame(r, cid):
         "intro": d.get("intro",""), "genre": d.get("genre",""), "year": d.get("year",""), "plat": d.get("plat",""),
         "m": d.get("m"), "i": d.get("i"), "f": d.get("f"), "r": d.get("r"), "mu": d.get("mu")}
 games = [mkgame(r, title2cid[rank[r]]) for r in sorted(rank)]
-# Part1: ランク外（予備軍）を cid 昇順で 101〜200 位に暫定割当（最大100作）
+# ドラフトの順位が200位未満の場合のみ、残り（予備軍）を cid 昇順で200位まで埋める
 ranked_cids = {title2cid[t] for t in rank.values()}
 reserve = sorted(cid for cid in range(1, c + 1) if cid not in ranked_cids)
-for i, cid in enumerate(reserve[:100]):
-    games.append(mkgame(101 + i, cid))
+nxt = max(rank) + 1
+for cid in reserve:
+    if nxt > 200: break
+    games.append(mkgame(nxt, cid)); nxt += 1
 GAMES_JSON = json.dumps(games, ensure_ascii=False)
 
 JS = '''const GAMES = __GAMES__;

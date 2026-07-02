@@ -2,22 +2,32 @@ const GAMES = [{"id": 1, "title": "ブレス オブ ザ ワイルド", "img": "g
 const INIT = [2, 41, 1, 65, 42, 67, 24, 77, 64, 56, 57, 3, 14, 25, 37, 54, 33, 47, 6, 60, 39, 18, 52, 48, 10, 55, 98, 79, 40, 90, 78, 100, 62, 32, 29, 69, 70, 43, 51, 35, 28, 31, 22, 20, 85, 74, 17, 15, 27, 26, 95, 16, 23, 12, 59, 66, 89, 86, 71, 83, 44, 58, 87, 80, 68, 21, 97, 53, 72, 91, 61, 8, 75, 81, 63, 94, 88, 46, 76, 45, 19, 99, 82, 36, 4, 5, 49, 34, 30, 7, 9, 96, 13, 38, 73, 92, 11, 93, 84, 50, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206];
 const SIG = "2,41,1,65,42,67,24,77,64,56,57,3,14,25,37,54,33,47,6,60,39,18,52,48,10,55,98,79,40,90,78,100,62,32,29,69,70,43,51,35,28,31,22,20,85,74,17,15,27,26,95,16,23,12,59,66,89,86,71,83,44,58,87,80,68,21,97,53,72,91,61,8,75,81,63,94,88,46,76,45,19,99,82,36,4,5,49,34,30,7,9,96,13,38,73,92,11,93,84,50,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206";
 const RANKED = 100;
+const RANK2 = 200;
 const OKEY='game_edit_grid_v2';
 const $=id=>document.getElementById(id);
 let dragEl=null;
 function curOrder(){return [...document.querySelectorAll('#grid .cell')].map(r=>+r.dataset.id);}
 function placeDivider(){
-  const grid=$('grid'); const old=$('divider'); if(old) old.remove();
+  const grid=$('grid');
+  document.querySelectorAll('.divider').forEach(d=>d.remove());
   const cells=[...grid.querySelectorAll('.cell')];
   if(cells.length>RANKED && cells[RANKED]){
-    const d=document.createElement('div'); d.id='divider'; d.className='divider';
-    d.innerHTML='▼ ここから下は <b>ランク外（'+(RANKED+1)+'位〜）</b>　／　上へドラッグで TOP'+RANKED+' 入り';
+    const d=document.createElement('div'); d.className='divider';
+    d.innerHTML='▼ ここから下は <b>前半パート（'+(RANKED+1)+'〜'+RANK2+'位・動画の高速紹介）</b>　／　上へドラッグで TOP'+RANKED+' 入り';
     grid.insertBefore(d, cells[RANKED]);
   }
+  if(cells.length>RANK2 && cells[RANK2]){
+    const d2=document.createElement('div'); d2.className='divider out';
+    d2.innerHTML='▼ ここから下は <b>圏外（'+(RANK2+1)+'位〜・動画に登場しない）</b>';
+    grid.insertBefore(d2, cells[RANK2]);
+  }
 }
-function renumber(){document.querySelectorAll('#grid .cell').forEach((c,i)=>{c.querySelector('.rk').textContent=(i+1);c.classList.toggle('reserve',i>=RANKED);});placeDivider();}
-function output(){const ids=curOrder();const top=ids.slice(0,RANKED),res=ids.slice(RANKED);
-  $('out').value='新順位CID: '+top.join(',')+(res.length?'\nランク外CID: '+res.join(','):'');
+function renumber(){document.querySelectorAll('#grid .cell').forEach((c,i)=>{c.querySelector('.rk').textContent=(i+1);c.classList.toggle('mid',i>=RANKED&&i<RANK2);c.classList.toggle('reserve',i>=RANK2);});placeDivider();}
+function output(){const ids=curOrder();
+  const top=ids.slice(0,RANKED), mid=ids.slice(RANKED,RANK2), out=ids.slice(RANK2);
+  $('out').value='TOP100 CID: '+top.join(',')
+    +(mid.length?'\n前半101-200 CID: '+mid.join(','):'')
+    +(out.length?'\n圏外CID: '+out.join(','):'');
   localStorage.setItem(OKEY,JSON.stringify({sig:SIG,order:ids}));}
 function cellHTML(g){const t=g.title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   return `<div class="cell" draggable="true" data-id="${g.id}" title="${t}">`
