@@ -19,10 +19,8 @@ function tierOf(r){return r<=1?'👑 第 1 位':r<=3?'BEST 3':r<=10?'TOP 10':r<=
 const BANNERS={100:['BEST 100','100位 → 51位'],50:['BEST 50','50位 → 21位'],20:['BEST 20','20位 → 11位'],10:['TOP 10','10位 → 4位'],3:['BEST 3','表彰台'],1:['👑 No.1','頂点']};
 const TAME_MAX=20; // タメ(正体伏せ)演出の対象範囲: この順位以下で発動
 const steps=[];
-const T1=60000, T2=180000; // Part1(200→101)=1分(2倍速) / Part2(100→1)=3分 → 合計4分
-const WT=s=>{ if(s.t==='b') return 0.85; const r=s.r;
-  if(s.t==='tame') return r===1?3.0:r<=3?2.4:2.0;
-  return r===1?3.6:r<=3?2.6:r<=10?2.0:r<=20?1.5:r<=50?1.15:0.78; };
+const T1=60000; // Part1(200→101)=1分
+const G_SEC=6000; // 後半1作の尺: clip5秒+表紙1秒
 function buildSteps(){ steps.length=0;
   const has=r=>byRank[r]!=null;
   // ---- オープニング（8秒・固定尺） ----
@@ -31,14 +29,14 @@ function buildSteps(){ steps.length=0;
   const p1=[];
   for(let r=200;r>=101;r--){ if(has(r)) p1.push({t:'p1one',r}); }
   const sm=p1.length||1; p1.forEach(s=>s.base=T1/sm);
-  // ---- Part2: 100→1位（T2に正規化。リキャップは固定尺で別枠） ----
+  // ---- Part2: 100→1位（全作6秒固定＝clip5秒+表紙1秒。バナー2秒/タメ3〜4秒） ----
   const p2=[];
   for(let r=100;r>=1;r--){
-    if(r===1) p2.push({t:'recap',r:1,base:7600,fixed:true}); // 1位発表直前のTOP10リキャップ
-    if(BANNERS[r]) p2.push({t:'b',r}); if(TM && r<=TAME_MAX) p2.push({t:'tame',r}); p2.push({t:'g',r});
+    if(r===1) p2.push({t:'recap',r:1,base:7600}); // 1位発表直前のTOP10リキャップ
+    if(BANNERS[r]) p2.push({t:'b',r,base:2000});
+    if(TM && r<=TAME_MAX) p2.push({t:'tame',r,base:r===1?4000:r<=3?3500:3000});
+    p2.push({t:'g',r,base:G_SEC});
   }
-  const norm=p2.filter(s=>!s.fixed);
-  const sumW=norm.reduce((a,s)=>a+WT(s),0); norm.forEach(s=>s.base=WT(s)/sumW*T2);
   for(const s of p1) steps.push(s); for(const s of p2) steps.push(s);
   // ---- TOP3表彰台フィナーレ（12秒・固定尺） ----
   steps.push({t:'podium',r:1,base:12000});
@@ -128,8 +126,8 @@ function heartbeatLoop(){ clearTimeout(hbTimer);
   se('heart'); hbTimer=setTimeout(heartbeatLoop,840); }
 function gameHTML(g,r,d,lm){
   const rated=g.m!=null&&g.i!=null&&g.f!=null;
-  // clip→表紙の2段構成: クリップは最大5秒、スライドのラスト1秒は表紙を見せる
-  const hs=Math.max(0.8, Math.min(5, d/1000-1));
+  // clip→表紙の2段構成: クリップは最大5秒、ラスト1秒は表紙（2秒未満の短スライドは切替なし）
+  const hs=d/1000>=2 ? Math.min(5, d/1000-1) : null;
   const meta=[g.genre,g.plat,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
   const metaSp=`<span class="mg">${esc(g.genre)}</span>`+(g.plat?`<span class="mp">${esc(g.plat)}</span>`:'')+(g.year?`<span class="my">${esc(g.year)}年</span>`:'');
   if(lm===1){ // 全面カバー(案F)
