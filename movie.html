@@ -247,6 +247,8 @@
   .cvwrap video,.cineCv video,.blurcv video,.slcard video,.cscv video,.stcv video,.pdCv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
   .cineCv{position:relative}.p1one.cs .cscv{position:relative}
   .slide.full video.bg{animation:none}
+  /* clip→表紙の2段構成: hideS秒後にクリップがフェードアウトして下の表紙が見える */
+  @keyframes clipHide{to{opacity:0;visibility:hidden}}
   /* ===== オープニング ===== */
   .op{position:absolute;inset:0;overflow:hidden;background:#12092a}
   .op .bgrid{filter:blur(6px) brightness(.45) saturate(.9)}
