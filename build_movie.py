@@ -31,11 +31,14 @@ if os.path.exists("games_data.csv"):
                 "m":_n(row.get("思い入れ度")),"i":_n(row.get("衝撃度")),
                 "f":_n(row.get("面白さ")),"r":_n(row.get("ストーリー")),"mu":_n(row.get("音楽・サウンド"))}
 cid2title = {v: k for k, v in title2cid.items()}
+CLIP_META = json.load(open("clip_meta.json", encoding="utf-8")) if os.path.exists("clip_meta.json") else {}
 def mkgame(r, cid):
     d = gd.get(cid, {})
     clip = f"game_clips/c{cid}.mp4"
+    pos = (CLIP_META.get(str(cid)) or {}).get("pos")
     return {"rank": r, "title": cid2title.get(cid, "?"), "img": f"game_covers/c{cid}.jpg",
         "clip": clip if os.path.exists(clip) else None,
+        "cpos": pos if pos in ("left", "right") else None,
         "intro": d.get("intro",""), "genre": d.get("genre",""), "year": d.get("year",""), "plat": d.get("plat",""),
         "m": d.get("m"), "i": d.get("i"), "f": d.get("f"), "r": d.get("r"), "mu": d.get("mu")}
 games = [mkgame(r, title2cid[rank[r]]) for r in sorted(rank)]
@@ -140,7 +143,12 @@ function fireworks(n){ n=n||3;
   requestAnimationFrame(fr);
 }
 // ==== 実機動画クリップ: g.clip があれば <video> を重ねる（失敗時は自滅してカバー画像に戻る） ====
-const vid=(g,cls)=>g&&g.clip?`<video class="${cls||''}" src="${g.clip}" autoplay muted loop playsinline onerror="this.remove()"></video>`:'';
+// hideS(秒)指定時: その時点でフェードアウト→下の表紙画像が見える（clip→表紙の2段構成）
+// g.cpos: 縦画面での見せ位置（left/right。clip_meta.json で指定）
+const vid=(g,cls,hideS)=>{ if(!g||!g.clip) return '';
+  let st=''; if(g.cpos) st+='object-position:'+g.cpos+' center;';
+  if(hideS!=null) st+='animation:clipHide .5s ease '+hideS.toFixed(2)+'s forwards;';
+  return `<video class="${cls||''}" src="${g.clip}" autoplay muted loop playsinline${st?` style="${st}"`:''} onerror="this.remove()"></video>`; };
 // ==== SE（Web Audio 合成・素材ファイル不要） ====
 let AC=null, SEon=true;
 function actx(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} }
@@ -171,11 +179,13 @@ function heartbeatLoop(){ clearTimeout(hbTimer);
   se('heart'); hbTimer=setTimeout(heartbeatLoop,840); }
 function gameHTML(g,r,d,lm){
   const rated=g.m!=null&&g.i!=null&&g.f!=null;
+  // clip→表紙の2段構成: クリップは最大5秒、スライドのラスト1秒は表紙を見せる
+  const hs=Math.max(0.8, Math.min(5, d/1000-1));
   const meta=[g.genre,g.plat,(g.year?g.year+'年':'')].filter(Boolean).join(' ・ ');
   const metaSp=`<span class="mg">${esc(g.genre)}</span>`+(g.plat?`<span class="mp">${esc(g.plat)}</span>`:'')+(g.year?`<span class="my">${esc(g.year)}年</span>`:'');
   if(lm===1){ // 全面カバー(案F)
     const rev=(TM&&r<=TAME_MAX)?(TM===3?'<div class="curt l"></div><div class="curt r"></div>':'<div class="revflash"></div>'):'';
-    return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=TAME_MAX?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">${vid(g,'bg')}
+    return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=TAME_MAX?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">${vid(g,'bg',hs)}
       <div class="scrim"></div><div class="rkF">${r}<span>位</span></div><div class="tierF">${tierOf(r)}</div>
       <div class="botF ts${TS}"><div class="tiF">${esc(g.title)}</div><div class="metaF">${metaSp}</div><div class="introF">${esc(g.intro)}</div></div>
       ${rated?'<div class="radF">'+radar(g)+'</div>':''}${rev}</div>`;
@@ -183,12 +193,12 @@ function gameHTML(g,r,d,lm){
   if(lm===2){ // シネマ(案G)
     return `<div class="slide cine ${r===1?'no1':''}"><div class="lb t"></div><div class="lb b"></div><div class="flash"></div>
       <div class="cineWrap"><div class="cineRk">${r}<span>位</span></div>
-        <div class="cineCv"><img src="${g.img}" alt="" onerror="this.style.opacity=0">${vid(g)}</div>
+        <div class="cineCv"><img src="${g.img}" alt="" onerror="this.style.opacity=0">${vid(g,null,hs)}</div>
         <div class="cineInfo"><div class="tierC">${tierOf(r)}</div><div class="tiC">${esc(g.title)}</div><div class="metaC">${esc(meta)}</div>${rated?'<div class="radC">'+radar(g)+'</div>':''}</div>
       </div></div>`;
   }
   return `<div class="slide ${r===1?'no1':''}"><div class="rk">${r}<span class="rku">位</span></div>
-    <div class="mid"><div class="cvwrap"><div class="cvglow"></div><img class="cv" src="${g.img}" alt="" onerror="this.style.opacity=0">${vid(g,'cv')}</div></div>
+    <div class="mid"><div class="cvwrap"><div class="cvglow"></div><img class="cv" src="${g.img}" alt="" onerror="this.style.opacity=0">${vid(g,'cv',hs)}</div></div>
     <div class="info"><div class="tier">${tierOf(r)}</div><div class="ti">${esc(g.title)}</div>
       <div class="meta">${esc(meta)}</div><div class="intro">${esc(g.intro)}</div>${rated?'<div class="rwrap">'+radar(g)+'</div>':''}</div></div>`;
 }
@@ -613,6 +623,8 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .cvwrap video,.cineCv video,.blurcv video,.slcard video,.cscv video,.stcv video,.pdCv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
   .cineCv{position:relative}.p1one.cs .cscv{position:relative}
   .slide.full video.bg{animation:none}
+  /* clip→表紙の2段構成: hideS秒後にクリップがフェードアウトして下の表紙が見える */
+  @keyframes clipHide{to{opacity:0;visibility:hidden}}
   /* ===== オープニング ===== */
   .op{position:absolute;inset:0;overflow:hidden;background:#12092a}
   .op .bgrid{filter:blur(6px) brightness(.45) saturate(.9)}
