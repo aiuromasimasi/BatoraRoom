@@ -54,10 +54,6 @@ function dur(s){return s.base*mult;}
 function setProgP(p){const f=document.getElementById('pfill');if(!f)return;f.style.width=(Math.max(0,Math.min(1,p))*100).toFixed(1)+'%';const h=200*(1-Math.max(0,Math.min(1,p)));f.style.background='linear-gradient(90deg,hsl('+h.toFixed(0)+',92%,58%),hsl('+(h-22).toFixed(0)+',95%,62%))';}
 function setProg(r){ let p; if(r>100){p=((200-r)/100)*0.4;} else {p=0.4+((100-r)/99)*0.6;} setProgP(p); }
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
-function confetti(n){const w=document.createElement('div');w.className='cf';const cols=['#ff5ea8','#9b5cff','#36c5ff','#ffd23f','#3ff2c2','#ff8a3d'];
-  for(let i=0;i<n;i++){const s=document.createElement('span');s.style.left=(Math.random()*100).toFixed(1)+'%';s.style.background=cols[i%cols.length];
-    s.style.animationDelay=(Math.random()*.5).toFixed(2)+'s';s.style.animationDuration=(2+Math.random()*1.6).toFixed(2)+'s';w.appendChild(s);}
-  stage.appendChild(w);setTimeout(()=>w.remove(),4200);}
 // 常時のキラキラ演出（後半100→1位に段階適用: 51-100=控えめ/11-50=中/1-10=豪華）
 function sparkleTier(r){return r<=10?3:r<=50?2:1;}
 function sparkleHTML(r){
@@ -244,7 +240,7 @@ function render(s){
     se('shine');
     setTimeout(()=>{if(document.querySelector('.podium'))se('don',true);},dd*0.05);
     setTimeout(()=>{if(document.querySelector('.podium'))se('don',true);},dd*0.30);
-    setTimeout(()=>{if(document.querySelector('.podium')){se('fanfare');fireworks(5);confetti(120);}},dd*0.56);
+    setTimeout(()=>{if(document.querySelector('.podium')){se('fanfare');fireworks(5);}},dd*0.56);
     setProg(1); return; }
   if(s.t==='p1one'){
     if(!stage.querySelector('.p1one')){ stage.innerHTML=p1oneHTML(byRank[s.r],s.r); }
@@ -263,9 +259,8 @@ function render(s){
   stage.insertAdjacentHTML('beforeend',sparkleHTML(s.r));
   fitTitles(stage);
   se('whoosh'); se('don', s.r<=10);
-  if(s.r===1){ confetti(140); fireworks(4); se('fanfare'); }
-  else if(s.r<=3){ confetti(70); se('shine'); }
-  else if(s.r<=10) confetti(34); else if(s.r<=20) confetti(14);
+  if(s.r===1){ fireworks(4); se('fanfare'); }
+  else if(s.r<=3) se('shine');
   setProg(s.r);
 }
 function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer);
