@@ -358,10 +358,10 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .cv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
   .info{flex:1;max-width:44%;display:flex;flex-direction:column;gap:10px;animation:infin .6s ease 2s backwards}
   @keyframes infin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
-  .tier{align-self:flex-start;font-weight:800;font-size:clamp(13px,2vw,22px);background:rgba(255,255,255,.25);padding:5px 18px;border-radius:999px}
+  .tier{align-self:flex-start;font-weight:800;font-size:clamp(13px,4.8cqmin,26px);background:rgba(255,255,255,.25);padding:5px 18px;border-radius:999px}
   .ti{font-family:"Mochiy Pop One";font-size:clamp(20px,5.6cqmin,52px);line-height:1.15;text-shadow:0 3px 10px rgba(0,0,0,.35)}
-  .meta{font-weight:800;font-size:clamp(14px,2vw,26px);opacity:.95}
-  .intro{font-weight:700;font-size:clamp(13px,1.8vw,22px);line-height:1.55;opacity:.96}
+  .meta{font-weight:800;font-size:clamp(14px,5.6cqmin,30px);opacity:.95}
+  .intro{font-weight:700;font-size:clamp(13px,4.8cqmin,26px);line-height:1.55;opacity:.96}
   .rwrap{margin-top:2px}.radar{width:clamp(200px,22vw,320px)}
   .sweep{transform-origin:0 0;animation:spin 3s linear infinite}
   #frame.vert .slide{flex-direction:column;gap:1%;padding:4% 5%}
@@ -377,11 +377,11 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .slide.full .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 42%,rgba(0,0,0,.86) 100%)}
   .rkF{position:absolute;top:2.5%;left:3.5%;font-family:"Baloo 2";font-weight:800;font-size:clamp(80px,21vh,300px);line-height:.85;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.85),0 0 30px rgba(0,0,0,.5);animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
   .rkF span{font-size:.34em}
-  .tierF{position:absolute;top:4%;right:3.5%;font-weight:800;font-size:clamp(14px,2.4vw,28px);background:rgba(0,0,0,.5);padding:6px 18px;border-radius:999px;color:#fff}
+  .tierF{position:absolute;top:4%;right:3.5%;font-weight:800;font-size:clamp(14px,6cqmin,32px);background:rgba(0,0,0,.5);padding:6px 18px;border-radius:999px;color:#fff}
   .botF{position:absolute;left:3.5%;right:27%;bottom:5%;color:#fff;text-shadow:0 3px 16px rgba(0,0,0,.95);animation:infin .6s ease 2s backwards}
-  .tiF{font-family:"Mochiy Pop One";font-size:clamp(17px,4.2cqmin,40px);line-height:1.26}
-  .metaF{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(13px,1.8vw,22px);margin-top:7px}
-  .introF{font-weight:700;font-size:clamp(13px,1.8vw,22px);margin-top:6px;max-width:96%;line-height:1.55;word-break:auto-phrase;overflow-wrap:break-word}
+  .tiF{font-family:"Mochiy Pop One";font-size:clamp(18px,5.2cqmin,46px);line-height:1.26}
+  .metaF{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(13px,4.8cqmin,26px);margin-top:7px}
+  .introF{font-weight:700;font-size:clamp(13px,4.8cqmin,26px);margin-top:6px;max-width:96%;line-height:1.55;word-break:auto-phrase;overflow-wrap:break-word}
   /* 文字スタイル3案（全面カバー） */
   .botF.ts0{background:rgba(12,8,28,.52);border:1.5px solid rgba(255,255,255,.3);border-radius:18px;padding:14px 18px}
   .botF.ts0 .mg{color:#ffd23f}.botF.ts0 .my{color:#7fd7ff}.botF.ts0 .mp{color:#5cf0c8}
@@ -392,7 +392,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .botF.ts2 .mg{background:#ffd23f;color:#5a3d00}.botF.ts2 .my{background:#36c5ff;color:#06324f}.botF.ts2 .mp{background:#3ff2c2;color:#064b3a}
   .radF{position:absolute;right:2.5%;bottom:4%;background:rgba(0,0,0,.42);border-radius:18px;padding:6px;animation:infin .6s ease 2s backwards}
   .radF .radar{width:clamp(160px,18vw,260px)}
-  #frame.vert .botF{right:3.5%}#frame.vert .radF{top:13%;bottom:auto;right:3.5%}#frame.vert .radF .radar{width:clamp(120px,28vw,190px)}
+  #frame.vert .botF{right:3.5%}#frame.vert .radF{top:13%;bottom:auto;right:3.5%}#frame.vert .radF .radar{width:clamp(120px,41cqmin,230px)}
   .full.no1 .rkF{color:var(--gold);text-shadow:0 0 44px rgba(255,184,0,.95),0 4px 18px rgba(0,0,0,.8)}
   /* シネマ(案G) */
   .slide.cine{padding:0;display:flex;align-items:center;justify-content:center}
@@ -409,9 +409,9 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .cineCv img{width:100%;height:100%;object-fit:cover}
   @keyframes slidein{from{transform:translateX(80px);opacity:0}to{transform:none;opacity:1}}
   .cineInfo{max-width:34%;animation:infin .6s ease 2s backwards}
-  .tierC{display:inline-block;font-weight:800;font-size:clamp(12px,1.8vw,20px);background:rgba(255,255,255,.22);padding:4px 14px;border-radius:999px}
+  .tierC{display:inline-block;font-weight:800;font-size:clamp(12px,4.3cqmin,24px);background:rgba(255,255,255,.22);padding:4px 14px;border-radius:999px}
   .tiC{font-family:"Mochiy Pop One";font-size:clamp(17px,4.4cqmin,42px);line-height:1.16;margin-top:8px;text-shadow:0 3px 10px rgba(0,0,0,.4)}
-  .metaC{font-weight:800;font-size:clamp(13px,1.7vw,20px);margin-top:6px;opacity:.95}
+  .metaC{font-weight:800;font-size:clamp(13px,4.3cqmin,24px);margin-top:6px;opacity:.95}
   .radC .radar{width:clamp(150px,16vw,230px);margin-top:4px}
   #frame.vert .cineWrap{flex-direction:column;gap:2%}#frame.vert .cineInfo{max-width:88%;text-align:center}#frame.vert .cineCv{height:38vh}
   /* TOP10 タメ演出（案A/B/C） */
@@ -422,26 +422,26 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   @keyframes tmIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
   .tmrank{font-family:"Baloo 2";font-weight:800;line-height:.85;animation:rkin .55s cubic-bezier(.2,1.5,.3,1) backwards}
   .tmhints{display:flex;flex-direction:column;gap:1.1vh;max-width:90%}
-  .thint{font-weight:800;font-size:clamp(16px,2.6vw,34px);line-height:1.4}
+  .thint{font-weight:800;font-size:clamp(16px,7.2cqmin,40px);line-height:1.4}
   .thint .thk{opacity:.9}
-  .thint.ti3{font-weight:700;font-size:clamp(13px,1.9vw,24px);opacity:.96}
+  .thint.ti3{font-weight:700;font-size:clamp(13px,5.2cqmin,28px);opacity:.96}
   .tmradar .radar{width:clamp(160px,20vw,300px)}
   .tmA .tmbg{background:radial-gradient(120% 100% at 50% 38%,#221540,#0a0612)}
-  .tmA .tmlabel{font-family:"Mochiy Pop One";font-size:clamp(15px,2.4vw,28px);color:#ffd23f}
+  .tmA .tmlabel{font-family:"Mochiy Pop One";font-size:clamp(15px,6cqmin,32px);color:#ffd23f}
   .tmA .tmrank{font-size:clamp(70px,18vh,240px);color:#ffd23f;text-shadow:0 0 34px rgba(255,210,63,.5),0 6px 0 rgba(0,0,0,.25)}
   .tmA .thint .thk{color:#ff8ad1}
   .tmA .tmq{position:absolute;right:5%;bottom:4%;font-family:"Baloo 2";font-weight:800;font-size:clamp(120px,40vh,460px);color:rgba(255,255,255,.09);z-index:1}
   .tmB .tmbg{background:#04060a}
   .tmB .tmbg::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(54,197,255,.10) 0 1px,transparent 1px 4px)}
   .tmB .tmbg::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 50% 45%,rgba(54,197,255,.12),transparent 70%)}
-  .tmB .tmlabel{font-family:"Baloo 2";letter-spacing:3px;font-size:clamp(14px,2.2vw,26px);color:#36c5ff;text-shadow:0 0 12px rgba(54,197,255,.6)}
-  .tmB .tmrank{position:absolute;top:5%;right:5%;font-size:clamp(28px,6vw,72px);color:rgba(54,197,255,.9)}
+  .tmB .tmlabel{font-family:"Baloo 2";letter-spacing:3px;font-size:clamp(14px,5.6cqmin,30px);color:#36c5ff;text-shadow:0 0 12px rgba(54,197,255,.6)}
+  .tmB .tmrank{position:absolute;top:5%;right:5%;font-size:clamp(28px,15.5cqmin,86px);color:rgba(54,197,255,.9)}
   .tmB .tmhints{font-family:"Baloo 2"}
   .tmB .thint{color:#dff4ff;letter-spacing:.5px}
   .tmB .thint .thk{color:#36c5ff}
   .tmB .tmradar{filter:drop-shadow(0 0 10px rgba(54,197,255,.5))}
   .tmC .tmbg{background:radial-gradient(42% 60% at 50% 36%,#3a3216,#150d24 50%,#070310 82%)}
-  .tmC .tmlabel{font-family:"Mochiy Pop One";font-size:clamp(15px,2.4vw,28px);color:rgba(255,232,170,.85);letter-spacing:6px}
+  .tmC .tmlabel{font-family:"Mochiy Pop One";font-size:clamp(15px,6cqmin,32px);color:rgba(255,232,170,.85);letter-spacing:6px}
   .tmC .tmrank{font-size:clamp(64px,16vh,220px);color:var(--gold);text-shadow:0 0 44px rgba(255,184,0,.6)}
   .tmC .thint{color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.8)}
   .tmC .thint .thk{color:var(--gold)}
@@ -514,8 +514,8 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   #frame.vert .p1one.st .stcv{height:46%;top:34%}
   /* Part1 共通キャプション（紹介文/ジャンル/年・文字A/B/C対応） */
   .p1cap .cti{font-family:"Mochiy Pop One";font-size:clamp(18px,5.4cqmin,48px);line-height:1.14}
-  .p1cap .cmeta{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(12px,1.7vw,23px);margin-top:7px}
-  .p1cap .cintro{font-weight:700;font-size:clamp(12px,1.6vw,21px);line-height:1.48;margin-top:6px;opacity:.97;word-break:auto-phrase;overflow-wrap:break-word}
+  .p1cap .cmeta{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:clamp(12px,5cqmin,27px);margin-top:7px}
+  .p1cap .cintro{font-weight:700;font-size:clamp(12px,4.6cqmin,25px);line-height:1.48;margin-top:6px;opacity:.97;word-break:auto-phrase;overflow-wrap:break-word}
   .p1cap.ts0{background:rgba(12,8,28,.55);border:1.5px solid rgba(255,255,255,.3);border-radius:16px;padding:12px 16px}
   .p1cap.ts0 .mg{color:#ffd23f}.p1cap.ts0 .my{color:#7fd7ff}.p1cap.ts0 .mp{color:#5cf0c8}
   .p1cap.ts1 .cti,.p1cap.ts1 .cmeta span,.p1cap.ts1 .cintro{text-shadow:-1.5px -1.5px 0 #160d2a,1.5px -1.5px 0 #160d2a,-1.5px 1.5px 0 #160d2a,1.5px 1.5px 0 #160d2a,0 3px 10px rgba(0,0,0,.95)}
