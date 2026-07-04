@@ -123,7 +123,8 @@ function gameHTML(g,r,d,lm){
     const rev=(TM&&r<=TAME_MAX)?(TM===3?'<div class="curt l"></div><div class="curt r"></div>':'<div class="revflash"></div>'):'';
     return `<div class="slide full ${r===1?'no1':''} ${TM&&r<=TAME_MAX?'rev':''}"><img class="bg" src="${g.img}" alt="" onerror="this.style.opacity=0" style="animation-duration:${(d/1000).toFixed(1)}s">${vid(g,'bg',hs)}
       <div class="scrim"></div><div class="rkF">${r}<span>位</span></div><div class="tierF">${tierOf(r)}</div>
-      <div class="botF ts${TS}"><div class="tiF">${esc(g.title)}</div><div class="metaF">${metaSp}</div><div class="introF">${esc(g.intro)}</div></div>
+      <div class="botF titleF ts${TS}"><div class="tiF">${esc(g.title)}</div></div>
+      <div class="botF ts${TS}"><div class="metaF">${metaSp}</div><div class="introF">${esc(g.intro)}</div></div>
       ${rated?'<div class="radF">'+radar(g)+'</div>':''}${rev}</div>`;
   }
   if(lm===2){ // シネマ(案G)
@@ -165,7 +166,9 @@ function p1oneHTML(g,r){
   const cap=`<div class="cti">${ti}</div><div class="cmeta">${mt}</div>`+(intro?`<div class="cintro">${intro}</div>`:'');
   if(P1===0){ // ① 全面ブチ抜き
     return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0">${vid(g,'fbimg')}<div class="fbscrim"></div>
-      <div class="fbrk">${r}<span>位</span></div><div class="p1cap fbcap ${ts}">${cap}</div></div>`;
+      <div class="fbrk">${r}<span>位</span></div>
+      <div class="p1cap fbcap tcap ${ts}"><div class="cti">${ti}</div></div>
+      <div class="p1cap fbcap ${ts}"><div class="cmeta">${mt}</div>${intro?`<div class="cintro">${intro}</div>`:''}</div></div>`;
   }
   if(P1===1){ // ② ブラー自己背景
     return `<div class="p1one blur"><img class="bgblur" src="${src}" onerror="this.style.opacity=0"><div class="blurdark"></div>
