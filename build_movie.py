@@ -553,7 +553,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .slide.full video.bg{animation:none}
   /* SNSの中央1:1クロップ(上下21.9%カット)でもタイトルが見えるよう、タイトルは78%ラインより上に配置 */
   .botF.titleF{bottom:24cqh;right:8%}
-  .p1cap.tcap{bottom:24cqh}
+  .p1one.fb .fbcap.tcap{bottom:24cqh}
   /* clip→表紙の2段構成: hideS秒後にクリップがフェードアウトして下の表紙が見える */
   @keyframes clipHide{to{opacity:0;visibility:hidden}}
   /* ===== RESULTロール（1位→100位・3列スクロール） ===== */

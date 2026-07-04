@@ -31,9 +31,10 @@ const MODES = {
   fast:       { speed: 0.6, durationSec: 445, fps: 30, everyNth: 2, out: 'movie_fast.mp4',           label: '速い/30fps' },
   standard60: { speed: 1,   durationSec: 745, fps: 60, everyNth: 1, out: 'movie_standard_60fps.mp4', label: '標準/60fps' },
   fast60:     { speed: 0.6, durationSec: 445, fps: 60, everyNth: 1, out: 'movie_fast_60fps.mp4',     label: '速い/60fps' },
+  part1:      { speed: 1,   durationSec: 64,  fps: 60, everyNth: 1, out: 'movie_part1_200-101_60fps.mp4', label: '前半200→101位のみ/60fps', part1Only: true, maxSec: 61 },
 };
 
-async function record({ speed, durationSec, fps, everyNth, out, label }) {
+async function record({ speed, durationSec, fps, everyNth, out, label, part1Only, maxSec }) {
   const tmpDir = path.join(__dirname, `.rec_${Date.now()}`);
   mkdirSync(tmpDir, { recursive: true });
 
@@ -68,11 +69,12 @@ async function record({ speed, durationSec, fps, everyNth, out, label }) {
   ` });
 
   // 速度設定して最初から再生（SEは録画に乗らないのでそのまま）
-  await page.evaluate((s) => {
+  await page.evaluate((s, p1) => {
     mult = s;
     buildSteps();
+    if (p1) { const i = steps.findIndex(x => x.t !== 'p1one'); if (i > 0) steps.length = i; } // 前半のみ
     si = 0; playing = true; updateBtn(); step();
-  }, speed);
+  }, speed, !!part1Only);
 
   const client = await page.createCDPSession();
   const frames = [];
@@ -124,6 +126,7 @@ async function record({ speed, durationSec, fps, everyNth, out, label }) {
     const ff = spawn('ffmpeg', [
       '-y', '-f', 'concat', '-safe', '0',
       '-i', path.join(tmpDir, 'list.txt'),
+      ...(maxSec ? ['-t', String(maxSec)] : []),
       '-vf', `fps=${fps}`,
       '-vcodec', 'libx264', '-crf', '22', '-preset', 'fast',
       '-pix_fmt', 'yuv420p',
