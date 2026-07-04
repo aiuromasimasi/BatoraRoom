@@ -84,8 +84,8 @@ function buildSteps(){ steps.length=0;
     p2.push({t:'g',r,base:G_SEC});
   }
   for(const s of p1) steps.push(s); for(const s of p2) steps.push(s);
-  // ---- RESULTロール: 1位→100位を3列グリッドでスクロール（30秒）----
-  steps.push({t:'podium',r:1,base:30000});
+  // ---- RESULTロール: 99位→1位を3列グリッドでスクロール（10秒・99枚=3列×33行）----
+  steps.push({t:'podium',r:1,base:10000});
 }
 
 const stage=document.getElementById('stage');
@@ -241,7 +241,7 @@ function p1oneHTML(g,r){
 // ==== RESULTロール: 1位→100位を3列グリッドでスクロール ====
 function resultHTML(d){
   const cards=[];
-  for(let r=1;r<=100;r++){ const g=byRank[r]; if(!g)continue;
+  for(let r=99;r>=1;r--){ const g=byRank[r]; if(!g)continue;
     cards.push(`<div class="rsCard${r<=3?' top'+r:''}"><span class="rsRk">${r}<small>位</small></span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="rsTi">${esc(g.title)}</span></div>`); }
   return `<div class="podium"><div class="pdLabel">🏆 RESULT</div>
     <div class="rsWrap"><div class="rsList" style="animation-duration:${(d/1000).toFixed(1)}s">${cards.join('')}</div></div></div>`;
@@ -578,7 +578,7 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
     速度<select id="sp"><option value="1.5">ゆっくり</option><option value="1" selected>標準(約12分半)</option><option value="0.6">速い(約7分半)</option></select>
     <button id="p1">前半①全面</button><button id="lm">全面カバー</button><button id="ts">文字B</button><button id="tame">タメ案B</button><button id="or">縦 9:16</button><button id="se">SE ON</button><button id="fs">⛶ 全画面</button><button id="mu">🔇</button>
   </div>
-  <div class="hint">構成＝<b>いきなり前半200→101位の高速紹介→後半100→1位は1作6秒（実機clip5秒→表紙1秒）→🏆RESULTロール（1〜100位を3列でスクロール・30秒）</b>（全体約12分半）。既定は<b>縦9:16・全面カバー・前半①全面</b>。<b>「前半」</b>で200→101位の見せ方を巡回、<b>「レイアウト」</b>で後半切替、<b>「タメ」</b>でTOP20の正体伏せ、<b>「SE」</b>で効果音（初回はどれかボタンを押すと音が出ます）。<b>game_clips/c番号.mp4</b>を置くとそのゲームは実機映像が流れる。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
+  <div class="hint">構成＝<b>いきなり前半200→101位の高速紹介→後半100→1位は1作6秒（実機clip5秒→表紙1秒）→🏆RESULTロール（99位→1位を3列でスクロール）</b>（全体約12分）。既定は<b>縦9:16・全面カバー・前半①全面</b>。<b>「前半」</b>で200→101位の見せ方を巡回、<b>「レイアウト」</b>で後半切替、<b>「タメ」</b>でTOP20の正体伏せ、<b>「SE」</b>で効果音（初回はどれかボタンを押すと音が出ます）。<b>game_clips/c番号.mp4</b>を置くとそのゲームは実機映像が流れる。⛶全画面→画面収録で動画化。BGMは movie_bgm.mp3。</div>
   <audio id="bgm" src="movie_bgm.mp3" loop></audio>
   <script src="movie.js"></script>
 </body></html>'''

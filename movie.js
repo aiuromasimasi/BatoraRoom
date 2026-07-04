@@ -31,8 +31,8 @@ function buildSteps(){ steps.length=0;
     p2.push({t:'g',r,base:G_SEC});
   }
   for(const s of p1) steps.push(s); for(const s of p2) steps.push(s);
-  // ---- RESULTロール: 1位→100位を3列グリッドでスクロール（30秒）----
-  steps.push({t:'podium',r:1,base:30000});
+  // ---- RESULTロール: 99位→1位を3列グリッドでスクロール（10秒・99枚=3列×33行）----
+  steps.push({t:'podium',r:1,base:10000});
 }
 
 const stage=document.getElementById('stage');
@@ -188,7 +188,7 @@ function p1oneHTML(g,r){
 // ==== RESULTロール: 1位→100位を3列グリッドでスクロール ====
 function resultHTML(d){
   const cards=[];
-  for(let r=1;r<=100;r++){ const g=byRank[r]; if(!g)continue;
+  for(let r=99;r>=1;r--){ const g=byRank[r]; if(!g)continue;
     cards.push(`<div class="rsCard${r<=3?' top'+r:''}"><span class="rsRk">${r}<small>位</small></span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="rsTi">${esc(g.title)}</span></div>`); }
   return `<div class="podium"><div class="pdLabel">🏆 RESULT</div>
     <div class="rsWrap"><div class="rsList" style="animation-duration:${(d/1000).toFixed(1)}s">${cards.join('')}</div></div></div>`;

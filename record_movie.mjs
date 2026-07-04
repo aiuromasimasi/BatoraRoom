@@ -25,12 +25,12 @@ const W = 1080, H = 1920;
 // ブラウザプレビューと同じ cqmin スケールにするため logical 540×960 / DSF=2 → 物理 1080×1920
 const LW = 540, LH = 960;
 
-// 映像尺: 前半60s + 後半(100作×6s+タメ62s) + RESULTロール30s ≒ 752s (mult=1)
+// 映像尺: 前半60s + 後半(100作×6s+タメ62s) + RESULTロール10s ≒ 732s (mult=1)
 const MODES = {
-  standard:   { speed: 1,   durationSec: 765, fps: 30, everyNth: 2, out: 'movie_standard.mp4',       label: '標準/30fps' },
-  fast:       { speed: 0.6, durationSec: 460, fps: 30, everyNth: 2, out: 'movie_fast.mp4',           label: '速い/30fps' },
-  standard60: { speed: 1,   durationSec: 765, fps: 60, everyNth: 1, out: 'movie_standard_60fps.mp4', label: '標準/60fps' },
-  fast60:     { speed: 0.6, durationSec: 460, fps: 60, everyNth: 1, out: 'movie_fast_60fps.mp4',     label: '速い/60fps' },
+  standard:   { speed: 1,   durationSec: 745, fps: 30, everyNth: 2, out: 'movie_standard.mp4',       label: '標準/30fps' },
+  fast:       { speed: 0.6, durationSec: 445, fps: 30, everyNth: 2, out: 'movie_fast.mp4',           label: '速い/30fps' },
+  standard60: { speed: 1,   durationSec: 745, fps: 60, everyNth: 1, out: 'movie_standard_60fps.mp4', label: '標準/60fps' },
+  fast60:     { speed: 0.6, durationSec: 445, fps: 60, everyNth: 1, out: 'movie_fast_60fps.mp4',     label: '速い/60fps' },
 };
 
 async function record({ speed, durationSec, fps, everyNth, out, label }) {
