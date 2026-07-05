@@ -31,7 +31,7 @@ const MODES = {
   fast:       { speed: 0.6, durationSec: 445, fps: 30, everyNth: 2, out: 'movie_fast.mp4',           label: '速い/30fps' },
   standard60: { speed: 1,   durationSec: 745, fps: 60, everyNth: 1, out: 'movie_standard_60fps.mp4', label: '標準/60fps' },
   fast60:     { speed: 0.6, durationSec: 445, fps: 60, everyNth: 1, out: 'movie_fast_60fps.mp4',     label: '速い/60fps' },
-  part1:      { speed: 1,   durationSec: 64,  fps: 60, everyNth: 1, out: 'movie_part1_200-101_60fps.mp4', label: '前半200→101位のみ/60fps', part1Only: true, maxSec: 61 },
+  part1:      { speed: 1,   durationSec: 74,  fps: 60, everyNth: 1, out: 'movie_part1_200-101_60fps.mp4', label: '前半200→101位のみ+ロール/60fps', part1Only: true, maxSec: 71 },
 };
 
 async function record({ speed, durationSec, fps, everyNth, out, label, part1Only, maxSec }) {
@@ -72,7 +72,8 @@ async function record({ speed, durationSec, fps, everyNth, out, label, part1Only
   await page.evaluate((s, p1) => {
     mult = s;
     buildSteps();
-    if (p1) { const i = steps.findIndex(x => x.t !== 'p1one'); if (i > 0) steps.length = i; } // 前半のみ
+    if (p1) { P1ROLL = true; buildSteps();
+      const i = steps.findIndex(x => x.t !== 'p1one' && x.t !== 'p1roll'); if (i > 0) steps.length = i; } // 前半のみ+ロール
     si = 0; playing = true; updateBtn(); step();
   }, speed, !!part1Only);
 

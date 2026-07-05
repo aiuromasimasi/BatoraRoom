@@ -77,6 +77,7 @@ function buildSteps(){ steps.length=0;
   const p1=[];
   for(let r=200;r>=101;r--){ if(has(r)) p1.push({t:'p1one',r}); }
   const sm=p1.length||1; p1.forEach(s=>s.base=T1/sm);
+  if(P1ROLL) p1.push({t:'p1roll',r:101,base:10000}); // 200→101の3列ロール(10秒)
   // ---- Part2: 100→1位（全作6秒固定＝clip5秒+表紙1秒。タメ3〜4秒）----
   const p2=[];
   for(let r=100;r>=1;r--){
@@ -91,6 +92,7 @@ function buildSteps(){ steps.length=0;
 const stage=document.getElementById('stage');
 let si=0, playing=true, mult=1, AUTO=false, LM=1, mode=2, TS=1, TM=2, timer=null, feedRAF=null, feedStart=null;
 let P1=0; // Part1（200→101）ラッシュの見せ方
+let P1ROLL=false; // 前半のみ動画用: 101位表示後に200→101のロールを付ける
 const LMN=['標準','全面カバー','シネマ(案G)','フィード(案H)'];
 const P1N=['①全面','②ブラー','③カード','④シネスコ','⑤ステージ'];
 const TMN=['OFF','案A','案B','案C'];
@@ -241,14 +243,15 @@ function p1oneHTML(g,r){
   return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
-// ==== RESULTロール: 1位→100位を3列グリッドでスクロール ====
-function resultHTML(d){
+// ==== 3列グリッドのスクロールロール（RESULT / 前半200→101 で共用） ====
+function rollHTML(hi,lo,d,label){
   const cards=[];
-  for(let r=99;r>=1;r--){ const g=byRank[r]; if(!g)continue;
+  for(let r=hi;r>=lo;r--){ const g=byRank[r]; if(!g)continue;
     cards.push(`<div class="rsCard${r<=3?' top'+r:''}"><span class="rsRk">${r}<small>位</small></span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="rsTi">${esc(g.title)}</span></div>`); }
-  return `<div class="podium"><div class="pdLabel">🏆 RESULT</div>
+  return `<div class="podium"><div class="pdLabel">${label}</div>
     <div class="rsWrap"><div class="rsList" style="animation-duration:${(d/1000).toFixed(1)}s">${cards.join('')}</div></div></div>`;
 }
+function resultHTML(d){ return rollHTML(99,1,d,'🏆 RESULT'); }
 // タイトルが長い時は折り返しすぎ・はみ出しを避けて自動縮小（単語単位折返しはCSS側）
 function fitEl(el,maxLines){ if(!el) return; el.style.fontSize='';
   const cs=getComputedStyle(el); const lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.2;
@@ -258,6 +261,9 @@ function fitTitles(root){ if(!root) return;
   fitEl(root.querySelector('.cti'),3); fitEl(root.querySelector('.ti'),3);
   fitEl(root.querySelector('.tiF'),3); fitEl(root.querySelector('.tiC'),3); }
 function render(s){
+  if(s.t==='p1roll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,101,dd,'⚡ 200 → 101');
+    stage.insertAdjacentHTML('beforeend',sparkleHTML(50)); se('fanfare');
+    setProg(101); return; }
   if(s.t==='podium'){ const dd=dur(s); stage.innerHTML=resultHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(1));
     se('fanfare'); fireworks(4);
     setProg(1); return; }
@@ -286,6 +292,7 @@ function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout
 function updateProg(){const s=steps[si]; let t;
   if(isFeed()) t='フィード再生中';
   else if(s.t==='podium') t='RESULT';
+  else if(s.t==='p1roll') t='前半ロール(200→101)';
   else if(s.t==='p1one') t='前半 '+s.r+'位 / 残り'+Math.max(0,steps.length-1-si);
   else t=s.r+'位'+(s.t==='tame'?'(タメ)':'')+' / 残り'+Math.max(0,steps.length-1-si);
   document.getElementById('prog').textContent=t;}
