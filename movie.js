@@ -169,8 +169,8 @@ function p1oneHTML(g,r){
   if(P1===0){ // ① 全面ブチ抜き
     return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0">${vid(g,'fbimg')}<div class="fbscrim"></div>
       <div class="fbrk">${r}<span>位</span></div>
-      <div class="p1cap fbcap tcap ${ts}"><div class="cti">${ti}</div></div>
-      <div class="p1cap fbcap ${ts}"><div class="cmeta">${mt}</div>${intro?`<div class="cintro">${intro}</div>`:''}</div></div>`;
+      <div class="p1cap fbcap tcap ${ts}"><div class="cti">${ti}</div><div class="cmeta">${mt}</div></div>
+      ${intro?`<div class="p1cap fbcap ${ts}"><div class="cintro">${intro}</div></div>`:''}</div>`;
   }
   if(P1===1){ // ② ブラー自己背景
     return `<div class="p1one blur"><img class="bgblur" src="${src}" onerror="this.style.opacity=0"><div class="blurdark"></div>
