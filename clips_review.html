@@ -30,8 +30,12 @@
  .edit .in-url{flex:1;width:100%}
  .tredit .in-tidx{max-width:200px}
  .tr-open,.tr-set{font:inherit;font-size:11px;font-weight:800;border:0;border-radius:999px;padding:4px 12px;cursor:pointer;background:#36c5ff;color:#06324f}
- .tr-view{padding:0 10px 10px}
+ .tr-view,.yt-view{padding:0 10px 10px}
  .tr-view video{width:100%;border-radius:8px;background:#000}
+ .ytedit{display:flex;gap:8px;align-items:center;padding:0 10px 8px;font-size:10.5px;color:#8f7fc0}
+ .yt-open,.yt-set{font:inherit;font-size:11px;font-weight:800;border:0;border-radius:999px;padding:4px 12px;cursor:pointer;background:#ff5e5e;color:#fff}
+ .yt-holder{aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#000}
+ .yt-holder iframe{width:100%;height:100%;display:block;border:0}
  .tr-time{font-size:12px;font-weight:700;color:#ffd23f;margin-top:4px;display:flex;gap:10px;align-items:center}
  .tr-time b{font-size:16px;min-width:2em;text-align:right}
  #out{display:none;max-width:900px;margin:12px auto;width:100%}
@@ -41,8 +45,9 @@
 </style></head><body>
 <h1>🎬 実機クリップ検品・調整（144本）</h1>
 <p class="sub">サムネをタップで再生/停止。<b>開始秒</b>＝切り出し開始位置／<b>位置</b>＝縦画面で見せる場所（即プレビュー）／<b>URL差替</b>＝別動画に変更。<br>
-<b>Steam産</b>は「🎞 フル視聴」でトレーラー全編をシーク再生→<b>「⏱この秒を開始秒にセット」</b>。複数トレーラーはドロップダウンで選択（映像のみ・静止画なし）。<br>
-※フル視聴のシークは <b>file:// で開いたとき</b>に有効（python http.server 経由はRange非対応でシーク不可）。<br>
+<b>Steam産</b>は「🎞 フル視聴」でトレーラー全編をシーク再生、<b>YouTube産</b>は「▶ YouTube視聴」でその場再生——どちらもシークして<b>「⏱この秒を開始秒にセット」</b>。<br>
+※おすすめの開き方: <code>python3 serve_review.py</code> → <b>http://localhost:8899/clips_review.html</b>（SteamシークとYouTube埋め込みの両方が使える）。<br>
+　file:// で開くとYouTube埋め込みが動かない場合あり／python http.server はシーク不可（Range非対応）。<br>
 変更したカードは<b style="color:#ffd23f">金枠</b>。終わったら上の「📋 設定をエクスポート」。</p>
 <div class="bar">
   <button id="exp">📋 設定をエクスポート</button>
@@ -54,7 +59,7 @@
   <code>python3 fetch_clip_meta.py</code>（開始秒/URL/トレーラー変更分を再取得）→ <code>python3 build_movie.py</code>。<br>
   位置(左右)だけの変更なら <code>build_movie.py</code> の再実行だけでOK。チャットにそのまま貼ってもらえれば私がやります。</div></div>
 <div class="grid">
-<div class="cell" data-cid="1"><div class="media"><video src="game_clips/c1.mp4?v=1783001492" preload="metadata" muted loop playsinline
+<div class="cell" data-cid="1" data-yt="https://www.youtube.com/watch?v=1yIHLQJNvDw"><div class="media"><video src="game_clips/c1.mp4?v=1783001492" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>3位</b> <b class="cid">c1</b> ブレス オブ ザ ワイルド
@@ -66,8 +71,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=1yIHLQJNvDw"></label>
-    </div></div>
-<div class="cell" data-cid="2"><div class="media"><video src="game_clips/c2.mp4?v=1783001498" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="2" data-yt="https://www.youtube.com/watch?v=-MEo1tGalr0"><div class="media"><video src="game_clips/c2.mp4?v=1783001498" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>1位</b> <b class="cid">c2</b> ティアーズ オブ ザ キングダム
@@ -79,8 +88,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=-MEo1tGalr0"></label>
-    </div></div>
-<div class="cell" data-cid="3"><div class="media"><video src="game_clips/c3.mp4?v=1783001508" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="3" data-yt="https://www.youtube.com/watch?v=FA97vVPPYiw"><div class="media"><video src="game_clips/c3.mp4?v=1783001508" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>12位</b> <b class="cid">c3</b> ゼルダの伝説 神々のトライフォース
@@ -92,8 +105,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=FA97vVPPYiw"></label>
-    </div></div>
-<div class="cell" data-cid="4"><div class="media"><video src="game_clips/c4.mp4?v=1783001517" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="4" data-yt="https://www.youtube.com/watch?v=2IrsKZinbMU"><div class="media"><video src="game_clips/c4.mp4?v=1783001517" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>86位</b> <b class="cid">c4</b> ゼルダの伝説 夢をみる島
@@ -105,8 +122,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=2IrsKZinbMU"></label>
-    </div></div>
-<div class="cell" data-cid="5"><div class="media"><video src="game_clips/c5.mp4?v=1783001527" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="5" data-yt="https://www.youtube.com/watch?v=bT--MviXYqw"><div class="media"><video src="game_clips/c5.mp4?v=1783001527" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>88位</b> <b class="cid">c5</b> 星のカービィ ディスカバリー
@@ -118,8 +139,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=bT--MviXYqw&amp;list=PLyNPy006ABoEHZUyOMlLXtpMKevU3h1eT"></label>
-    </div></div>
-<div class="cell" data-cid="6"><div class="media"><video src="game_clips/c6.mp4?v=1782972301" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="6" data-yt="https://www.youtube.com/watch?v=ZZt30VkZbEM"><div class="media"><video src="game_clips/c6.mp4?v=1782972301" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>19位</b> <b class="cid">c6</b> スーパーマリオワールド
@@ -131,8 +156,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="7"><div class="media"><video src="game_clips/c7.mp4?v=1782972818" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="7" data-yt="https://www.youtube.com/watch?v=P3NRJWgDcGI"><div class="media"><video src="game_clips/c7.mp4?v=1782972818" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>92位</b> <b class="cid">c7</b> カエルのために鐘は鳴る
@@ -144,8 +173,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="8"><div class="media"><video src="game_clips/c8.mp4?v=1782973187" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="8" data-yt="https://www.youtube.com/watch?v=CzzvOv8Scx4"><div class="media"><video src="game_clips/c8.mp4?v=1782973187" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>72位</b> <b class="cid">c8</b> スーパーマリオ オデッセイ
@@ -157,8 +190,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="9"><div class="media"><video src="game_clips/c9.mp4?v=1782972830" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="9" data-yt="https://www.youtube.com/watch?v=YvebOKK4opU"><div class="media"><video src="game_clips/c9.mp4?v=1782972830" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>93位</b> <b class="cid">c9</b> ヨッシーストーリー
@@ -170,8 +207,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="10"><div class="media"><video src="game_clips/c10.mp4?v=1783001538" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="10" data-yt="https://www.youtube.com/watch?v=CCjavgaOubU"><div class="media"><video src="game_clips/c10.mp4?v=1783001538" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>25位</b> <b class="cid">c10</b> スーパーマリオブラザーズ2（ディスクシステム）
@@ -183,8 +224,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="11"><div class="media"><video src="game_clips/c11.mp4?v=1783001547" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="11" data-yt="https://www.youtube.com/watch?v=NNc6BLzx34M"><div class="media"><video src="game_clips/c11.mp4?v=1783001547" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>104位</b> <b class="cid">c11</b> ゼルダの伝説（初代）
@@ -196,8 +241,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="12"><div class="media"><video src="game_clips/c12.mp4?v=1783001552" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="12" data-yt="https://www.youtube.com/watch?v=JBm-RRm6-TQ"><div class="media"><video src="game_clips/c12.mp4?v=1783001552" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>54位</b> <b class="cid">c12</b> ICO
@@ -209,8 +258,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=JBm-RRm6-TQ"></label>
-    </div></div>
-<div class="cell" data-cid="13"><div class="media"><video src="game_clips/c13.mp4?v=1783004861" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="13" data-yt="https://www.youtube.com/watch?v=duAk8TdTx4o"><div class="media"><video src="game_clips/c13.mp4?v=1783004861" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>96位</b> <b class="cid">c13</b> 朧村正
@@ -222,8 +275,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="14"><div class="media"><video src="game_clips/c14.mp4?v=1783001555" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="14" data-yt="https://www.youtube.com/watch?v=HrmNIoTEKeQ"><div class="media"><video src="game_clips/c14.mp4?v=1783001555" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>13位</b> <b class="cid">c14</b> 聖剣伝説2
@@ -235,8 +292,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=HrmNIoTEKeQ&amp;list=PL7BsO4ueL6Ehlb36sDO81poTdvJ35_rGF"></label>
-    </div></div>
-<div class="cell" data-cid="15" data-steam="1"><div class="media"><video src="game_clips/c15.mp4?v=1783004875" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="15" data-steam="1" data-yt="https://www.youtube.com/watch?v=pd7478Y_Gzg"><div class="media"><video src="game_clips/c15.mp4?v=1783004875" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>49位</b> <b class="cid">c15</b> LIVE A LIVE
@@ -252,8 +313,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="16"><div class="media"><video src="game_clips/c16.mp4?v=1782972549" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="16" data-yt="https://www.youtube.com/watch?v=uMIjdkld-b8"><div class="media"><video src="game_clips/c16.mp4?v=1782972549" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>52位</b> <b class="cid">c16</b> スーパーマリオRPG
@@ -265,8 +330,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="17"><div class="media"><video src="game_clips/c17.mp4?v=1782972522" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="17" data-yt="https://www.youtube.com/watch?v=vfxtzEEduMk"><div class="media"><video src="game_clips/c17.mp4?v=1782972522" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>45位</b> <b class="cid">c17</b> 魔界塔士Sa・Ga2 秘宝伝説
@@ -278,8 +347,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="18"><div class="media"><video src="game_clips/c18.mp4?v=1782972321" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="18" data-yt="https://www.youtube.com/watch?v=uuz9N92thDs"><div class="media"><video src="game_clips/c18.mp4?v=1782972321" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>22位</b> <b class="cid">c18</b> ドラゴンクエスト3
@@ -291,8 +364,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="19"><div class="media"><video src="game_clips/c19.mp4?v=1782972768" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="19" data-yt="https://www.youtube.com/watch?v=iNUEKDA_qug"><div class="media"><video src="game_clips/c19.mp4?v=1782972768" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>81位</b> <b class="cid">c19</b> ドラゴンクエスト4
@@ -304,8 +381,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="20"><div class="media"><video src="game_clips/c20.mp4?v=1782972496" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="20" data-yt="https://www.youtube.com/watch?v=LqyNTlDIj4Y"><div class="media"><video src="game_clips/c20.mp4?v=1782972496" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>47位</b> <b class="cid">c20</b> ドラゴンクエスト5
@@ -317,8 +398,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="21"><div class="media"><video src="game_clips/c21.mp4?v=1783001577" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="21" data-yt="https://www.youtube.com/watch?v=t5Eb_oB9vuM"><div class="media"><video src="game_clips/c21.mp4?v=1783001577" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>66位</b> <b class="cid">c21</b> ドラゴンクエスト10
@@ -330,8 +415,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=t5Eb_oB9vuM"></label>
-    </div></div>
-<div class="cell" data-cid="22"><div class="media"><video src="game_clips/c22.mp4?v=1783001580" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="22" data-yt="https://www.youtube.com/watch?v=Edor_TJzcSQ"><div class="media"><video src="game_clips/c22.mp4?v=1783001580" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>41位</b> <b class="cid">c22</b> ファイナルファンタジー3
@@ -343,7 +432,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=Edor_TJzcSQ"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="23" data-steam="1"><div class="media"><video src="game_clips/c23.mp4?v=1783001582" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -360,7 +453,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="24" data-steam="1"><div class="media"><video src="game_clips/c24.mp4?v=1783001583" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -377,7 +474,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="25" data-steam="1"><div class="media"><video src="game_clips/c25.mp4?v=1783001584" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -394,8 +495,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="26"><div class="media"><video src="game_clips/c26.mp4?v=1783001590" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="26" data-yt="https://www.youtube.com/watch?v=NdjEsJH6mOw"><div class="media"><video src="game_clips/c26.mp4?v=1783001590" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>50位</b> <b class="cid">c26</b> ファイナルファンタジー7
@@ -407,7 +512,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="27" data-steam="1"><div class="media"><video src="game_clips/c27.mp4?v=1783001591" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -424,8 +533,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="28"><div class="media"><video src="game_clips/c28.mp4?v=1783004881" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="28" data-yt="https://youtu.be/_PzsIh3oXBU"><div class="media"><video src="game_clips/c28.mp4?v=1783004881" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>39位</b> <b class="cid">c28</b> 真・女神転生
@@ -437,8 +550,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/_PzsIh3oXBU?si=n5z5UOXCtwPphiQ4"></label>
-    </div></div>
-<div class="cell" data-cid="29"><div class="media"><video src="game_clips/c29.mp4?v=1783001604" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="29" data-yt="https://www.youtube.com/watch?v=TgIcomBQle4"><div class="media"><video src="game_clips/c29.mp4?v=1783001604" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>36位</b> <b class="cid">c29</b> 真・女神転生II
@@ -450,7 +567,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/TgIcomBQle4?si=59kCNNyVRl0yCsoZ&amp;t=548"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="30" data-steam="1"><div class="media"><video src="game_clips/c30.mp4?v=1783004141" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -467,8 +588,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="31"><div class="media"><video src="game_clips/c31.mp4?v=1783004900" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="31" data-yt="https://youtu.be/rUhG2FcwY3M"><div class="media"><video src="game_clips/c31.mp4?v=1783004900" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>40位</b> <b class="cid">c31</b> デビルサマナー
@@ -480,8 +605,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/rUhG2FcwY3M?si=E76wtWzxSBCVEd-L&amp;t=585"></label>
-    </div></div>
-<div class="cell" data-cid="32"><div class="media"><video src="game_clips/c32.mp4?v=1783001631" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="32" data-yt="https://www.youtube.com/watch?v=6VvBSKt7MaE"><div class="media"><video src="game_clips/c32.mp4?v=1783001631" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>32位</b> <b class="cid">c32</b> 英雄伝説3 白き魔女
@@ -493,7 +622,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/6VvBSKt7MaE?si=15iyBXqzUA2lfRre&amp;t=1571"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="33" data-steam="1"><div class="media"><video src="game_clips/c33.mp4?v=1783001633" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -510,7 +643,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="34" data-steam="1"><div class="media"><video src="game_clips/c34.mp4?v=1783001634" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -527,8 +664,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="35"><div class="media"><video src="game_clips/c35.mp4?v=1782972468" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="35" data-yt="https://www.youtube.com/watch?v=6hdTV-3VeI0"><div class="media"><video src="game_clips/c35.mp4?v=1782972468" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>48位</b> <b class="cid">c35</b> トルネコの大冒険 不思議のダンジョン
@@ -540,8 +681,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="36"><div class="media"><video src="game_clips/c36.mp4?v=1782972791" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="36" data-yt="https://www.youtube.com/watch?v=THMRXXnolE0"><div class="media"><video src="game_clips/c36.mp4?v=1782972791" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>85位</b> <b class="cid">c36</b> 不思議のダンジョン 風来のシレン
@@ -553,7 +698,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="37" data-steam="1"><div class="media"><video src="game_clips/c37.mp4?v=1783001636" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -570,8 +719,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="38"><div class="media"><video src="game_clips/c38.mp4?v=1782972888" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="38" data-yt="https://www.youtube.com/watch?v=YiNwsZuT3uQ"><div class="media"><video src="game_clips/c38.mp4?v=1782972888" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>97位</b> <b class="cid">c38</b> 弟切草
@@ -583,7 +736,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="39" data-steam="1"><div class="media"><video src="game_clips/c39.mp4?v=1783001637" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -600,7 +757,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="40" data-steam="1"><div class="media"><video src="game_clips/c40.mp4?v=1783001638" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -617,8 +778,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="41" data-steam="1"><div class="media"><video src="game_clips/c41.mp4?v=1783004171" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="41" data-steam="1" data-yt="https://youtu.be/vYV5rPsPmkg"><div class="media"><video src="game_clips/c41.mp4?v=1783004171" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>2位</b> <b class="cid">c41</b> うみねこのなく頃に
@@ -634,7 +799,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="42" data-steam="1"><div class="media"><video src="game_clips/c42.mp4?v=1783001664" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -651,8 +820,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="43" data-steam="1"><div class="media"><video src="game_clips/c43.mp4?v=1783001668" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="43" data-steam="1" data-yt="https://www.youtube.com/watch?v=neHSqUDlRwI"><div class="media"><video src="game_clips/c43.mp4?v=1783001668" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>38位</b> <b class="cid">c43</b> STEINS;GATE
@@ -668,7 +841,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="44" data-steam="1"><div class="media"><video src="game_clips/c44.mp4?v=1783001669" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -685,7 +862,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="45" data-steam="1"><div class="media"><video src="game_clips/c45.mp4?v=1782963931" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -702,7 +883,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="46" data-steam="1"><div class="media"><video src="game_clips/c46.mp4?v=1783001671" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -719,8 +904,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="47"><div class="media"><video src="game_clips/c47.mp4?v=1782972291" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="47" data-yt="https://www.youtube.com/watch?v=3U8ZVul2UsQ"><div class="media"><video src="game_clips/c47.mp4?v=1782972291" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>18位</b> <b class="cid">c47</b> スウィートホーム
@@ -732,8 +921,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="48"><div class="media"><video src="game_clips/c48.mp4?v=1783001679" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="48" data-yt="https://www.youtube.com/watch?v=nlXm8_UKgXs"><div class="media"><video src="game_clips/c48.mp4?v=1783001679" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>24位</b> <b class="cid">c48</b> 街 〜運命の交差点〜
@@ -745,7 +938,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/nlXm8_UKgXs?si=wAJNmGV3XYz6HlPo&amp;t=1823"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="49" data-steam="1"><div class="media"><video src="game_clips/c49.mp4?v=1783001681" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -762,7 +959,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="50" data-steam="1"><div class="media"><video src="game_clips/c50.mp4?v=1783001682" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -779,8 +980,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="51"><div class="media"><video src="game_clips/c51.mp4?v=1783001686" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="51" data-yt="https://www.youtube.com/watch?v=vrOcqetSVEs"><div class="media"><video src="game_clips/c51.mp4?v=1783001686" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>35位</b> <b class="cid">c51</b> AIR
@@ -792,7 +997,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/vrOcqetSVEs?si=EnXWf9ymMqT_z19r&amp;t=155"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="52" data-steam="1"><div class="media"><video src="game_clips/c52.mp4?v=1783001687" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -809,8 +1018,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="53"><div class="media"><video src="game_clips/c53.mp4?v=1783004176" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="53" data-yt="https://youtu.be/LeDp7f57yA0"><div class="media"><video src="game_clips/c53.mp4?v=1783004176" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>68位</b> <b class="cid">c53</b> 雫
@@ -822,8 +1035,12 @@
         <option value="left" selected>左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/LeDp7f57yA0?si=56JnOp1i6B-cSaIE&amp;t=3545"></label>
-    </div></div>
-<div class="cell" data-cid="54"><div class="media"><video src="game_clips/c54.mp4?v=1783004903" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="54" data-yt="https://www.youtube.com/watch?v=qFJ50haX9Js"><div class="media"><video src="game_clips/c54.mp4?v=1783004903" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>16位</b> <b class="cid">c54</b> 痕
@@ -835,8 +1052,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=qFJ50haX9Js&amp;list=PLdqMrHS5mwVQiSzD3K9W9ZBoS49dVaXMR"></label>
-    </div></div>
-<div class="cell" data-cid="55"><div class="media"><video src="game_clips/c55.mp4?v=1783001702" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="55" data-yt="https://www.youtube.com/watch?v=glJUmRaUfZw"><div class="media"><video src="game_clips/c55.mp4?v=1783001702" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>26位</b> <b class="cid">c55</b> ブランディッシュ3
@@ -848,8 +1069,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/glJUmRaUfZw?si=_H3KO6i8MP4zzepK&amp;t=33"></label>
-    </div></div>
-<div class="cell" data-cid="56"><div class="media"><video src="game_clips/c56.mp4?v=1783006111" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="56" data-yt="https://youtu.be/f8dcUwgu5_s"><div class="media"><video src="game_clips/c56.mp4?v=1783006111" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>10位</b> <b class="cid">c56</b> レイディアント シルバーガン
@@ -861,8 +1086,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/f8dcUwgu5_s?si=g8rPppqGhSdmM1WF&amp;t=995"></label>
-    </div></div>
-<div class="cell" data-cid="57"><div class="media"><video src="game_clips/c57.mp4?v=1783002058" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="57" data-yt="https://youtu.be/_LDGr3zUW0k"><div class="media"><video src="game_clips/c57.mp4?v=1783002058" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>11位</b> <b class="cid">c57</b> 怒首領蜂
@@ -874,8 +1103,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/_LDGr3zUW0k?si=Xa7Bsuc2Xps2GYVE&amp;t=3243"></label>
-    </div></div>
-<div class="cell" data-cid="58"><div class="media"><video src="game_clips/c58.mp4?v=1782972620" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="58" data-yt="https://www.youtube.com/watch?v=xvpZS_CSTNg"><div class="media"><video src="game_clips/c58.mp4?v=1782972620" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>62位</b> <b class="cid">c58</b> グラディウスII
@@ -887,8 +1120,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="59"><div class="media"><video src="game_clips/c59.mp4?v=1782972573" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="59" data-yt="https://www.youtube.com/watch?v=lgjLRp-H52w"><div class="media"><video src="game_clips/c59.mp4?v=1782972573" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>55位</b> <b class="cid">c59</b> グラディウスIII
@@ -900,8 +1137,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="60"><div class="media"><video src="game_clips/c60.mp4?v=1783001743" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="60" data-yt="https://www.youtube.com/watch?v=iTu3TJmrlJA"><div class="media"><video src="game_clips/c60.mp4?v=1783001743" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>20位</b> <b class="cid">c60</b> グラディウス外伝
@@ -913,7 +1154,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="61" data-steam="1"><div class="media"><video src="game_clips/c61.mp4?v=1783001744" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -930,7 +1175,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="62" data-steam="1"><div class="media"><video src="game_clips/c62.mp4?v=1783004905" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -947,7 +1196,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="63" data-steam="1"><div class="media"><video src="game_clips/c63.mp4?v=1782963920" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -964,7 +1217,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="64" data-steam="1"><div class="media"><video src="game_clips/c64.mp4?v=1783001748" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -981,8 +1238,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="65"><div class="media"><video src="game_clips/c65.mp4?v=1782973003" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="65" data-yt="https://www.youtube.com/watch?v=ZAtJKd1qHzg"><div class="media"><video src="game_clips/c65.mp4?v=1782973003" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>4位</b> <b class="cid">c65</b> UNREAL
@@ -994,8 +1255,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="66"><div class="media"><video src="game_clips/c66.mp4?v=1782972583" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="66" data-yt="https://www.youtube.com/watch?v=4vHZcZJTegQ"><div class="media"><video src="game_clips/c66.mp4?v=1782972583" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>56位</b> <b class="cid">c66</b> Unreal Tournament
@@ -1007,7 +1272,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="67" data-steam="1"><div class="media"><video src="game_clips/c67.mp4?v=1783001750" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1024,8 +1293,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="68"><div class="media"><video src="game_clips/c68.mp4?v=1782972648" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="68" data-yt="https://www.youtube.com/watch?v=TcXyJadoxIU"><div class="media"><video src="game_clips/c68.mp4?v=1782972648" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>65位</b> <b class="cid">c68</b> WarCraft III
@@ -1037,8 +1310,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="69"><div class="media"><video src="game_clips/c69.mp4?v=1783001768" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="69" data-yt="https://www.youtube.com/watch?v=pfZjdIuk6l4"><div class="media"><video src="game_clips/c69.mp4?v=1783001768" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>34位</b> <b class="cid">c69</b> StarCraft
@@ -1050,7 +1327,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/pfZjdIuk6l4?si=bQZpuGb2zaDtf0w9&amp;t=2411"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="70" data-steam="1"><div class="media"><video src="game_clips/c70.mp4?v=1783001770" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1067,7 +1348,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="71" data-steam="1"><div class="media"><video src="game_clips/c71.mp4?v=1783001771" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1084,8 +1369,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="72"><div class="media"><video src="game_clips/c72.mp4?v=1783001783" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="72" data-yt="https://www.youtube.com/watch?v=DWeZtndpamE"><div class="media"><video src="game_clips/c72.mp4?v=1783001783" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>69位</b> <b class="cid">c72</b> ウルティマオンライン
@@ -1097,7 +1386,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/DWeZtndpamE?si=KIMBIAouK0Eat__A&amp;t=1029"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="73" data-steam="1"><div class="media"><video src="game_clips/c73.mp4?v=1783004907" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1114,8 +1407,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="74"><div class="media"><video src="game_clips/c74.mp4?v=1782973110" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="74" data-yt="https://www.youtube.com/watch?v=HqPeuQj2BP8"><div class="media"><video src="game_clips/c74.mp4?v=1782973110" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>44位</b> <b class="cid">c74</b> PAINKILLER
@@ -1127,8 +1424,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="75"><div class="media"><video src="game_clips/c75.mp4?v=1782973071" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="75" data-yt="https://www.youtube.com/watch?v=8IFb_FtdDzU"><div class="media"><video src="game_clips/c75.mp4?v=1782973071" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>73位</b> <b class="cid">c75</b> 終ノ空
@@ -1140,8 +1441,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="76"><div class="media"><video src="game_clips/c76.mp4?v=1782972764" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="76" data-yt="https://www.youtube.com/watch?v=CzNqlkAP-AQ"><div class="media"><video src="game_clips/c76.mp4?v=1782972764" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>79位</b> <b class="cid">c76</b> マインクラフト
@@ -1153,8 +1458,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="77"><div class="media"><video src="game_clips/c77.mp4?v=1783001787" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="77" data-yt="https://www.youtube.com/watch?v=yulmXhq8xuQ"><div class="media"><video src="game_clips/c77.mp4?v=1783001787" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>8位</b> <b class="cid">c77</b> テトリス グランドマスター2 THE ABSOLUTE PLUS
@@ -1166,7 +1475,11 @@
         <option value="left" selected>左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/yulmXhq8xuQ?si=WtPsVUET1OHURKnh"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="78" data-steam="1"><div class="media"><video src="game_clips/c78.mp4?v=1783001789" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1183,8 +1496,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="79"><div class="media"><video src="game_clips/c79.mp4?v=1782972386" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="79" data-yt="https://www.youtube.com/watch?v=s4WLjY8vn8E"><div class="media"><video src="game_clips/c79.mp4?v=1782972386" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>29位</b> <b class="cid">c79</b> スーパーストリートファイターII X
@@ -1196,8 +1513,12 @@
         <option value="left" selected>左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="80"><div class="media"><video src="game_clips/c80.mp4?v=1782972637" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="80" data-yt="https://www.youtube.com/watch?v=UbebO0RpsOk"><div class="media"><video src="game_clips/c80.mp4?v=1782972637" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>64位</b> <b class="cid">c80</b> バーチャファイター2
@@ -1209,8 +1530,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="81"><div class="media"><video src="game_clips/c81.mp4?v=1782972747" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="81" data-yt="https://www.youtube.com/watch?v=spHPxqqMYNM"><div class="media"><video src="game_clips/c81.mp4?v=1782972747" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>74位</b> <b class="cid">c81</b> 鉄拳3
@@ -1222,7 +1547,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="82" data-steam="1"><div class="media"><video src="game_clips/c82.mp4?v=1783001790" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1239,8 +1568,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="83"><div class="media"><video src="game_clips/c83.mp4?v=1782972605" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="83" data-yt="https://www.youtube.com/watch?v=EoT-EhuGJNE"><div class="media"><video src="game_clips/c83.mp4?v=1782972605" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>60位</b> <b class="cid">c83</b> ストリートファイターIII 3rd STRIKE
@@ -1252,7 +1585,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="84" data-steam="1"><div class="media"><video src="game_clips/c84.mp4?v=1783001792" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1269,8 +1606,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="85"><div class="media"><video src="game_clips/c85.mp4?v=1783001797" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="85" data-yt="https://www.youtube.com/watch?v=lDmQjzZm_R0"><div class="media"><video src="game_clips/c85.mp4?v=1783001797" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>42位</b> <b class="cid">c85</b> 将棋ウォーズ
@@ -1282,8 +1623,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/lDmQjzZm_R0?si=cr73QsDJhW3u7M0j&amp;t=17"></label>
-    </div></div>
-<div class="cell" data-cid="86"><div class="media"><video src="game_clips/c86.mp4?v=1783001806" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="86" data-yt="https://www.youtube.com/watch?v=3LNb-5Y8e68"><div class="media"><video src="game_clips/c86.mp4?v=1783001806" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>58位</b> <b class="cid">c86</b> DDR（Dance Dance Revolution）
@@ -1295,8 +1640,12 @@
         <option value="left" selected>左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/3LNb-5Y8e68?si=3AfKzwO4sv-RjLlc"></label>
-    </div></div>
-<div class="cell" data-cid="87"><div class="media"><video src="game_clips/c87.mp4?v=1782972625" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="87" data-yt="https://www.youtube.com/watch?v=6rDRv6766GQ"><div class="media"><video src="game_clips/c87.mp4?v=1782972625" preload="metadata" muted loop playsinline
       style="object-position:left center"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>63位</b> <b class="cid">c87</b> beatmania IIDX
@@ -1308,7 +1657,11 @@
         <option value="left" selected>左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="88" data-steam="1"><div class="media"><video src="game_clips/c88.mp4?v=1783004908" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1325,8 +1678,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="89" data-steam="1"><div class="media"><video src="game_clips/c89.mp4?v=1783001834" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="89" data-steam="1" data-yt="https://www.youtube.com/watch?v=FTPc0ZaHqKk"><div class="media"><video src="game_clips/c89.mp4?v=1783001834" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>57位</b> <b class="cid">c89</b> God of War
@@ -1342,8 +1699,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="90"><div class="media"><video src="game_clips/c90.mp4?v=1782972401" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="90" data-yt="https://www.youtube.com/watch?v=Tk-kIeer_N8"><div class="media"><video src="game_clips/c90.mp4?v=1782972401" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>31位</b> <b class="cid">c90</b> ロックマン2
@@ -1355,7 +1716,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="91" data-steam="1"><div class="media"><video src="game_clips/c91.mp4?v=1783001835" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1372,7 +1737,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="92" data-steam="1"><div class="media"><video src="game_clips/c92.mp4?v=1783001837" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1389,7 +1758,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="93" data-steam="1"><div class="media"><video src="game_clips/c93.mp4?v=1783001838" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1406,7 +1779,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="94" data-steam="1"><div class="media"><video src="game_clips/c94.mp4?v=1783001840" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1423,8 +1800,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="95"><div class="media"><video src="game_clips/c95.mp4?v=1783001852" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="95" data-yt="https://www.youtube.com/watch?v=CHZiDQTgoTY"><div class="media"><video src="game_clips/c95.mp4?v=1783001852" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>51位</b> <b class="cid">c95</b> 悪魔城ドラキュラX 月下の夜想曲
@@ -1436,8 +1817,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="96"><div class="media"><video src="game_clips/c96.mp4?v=1782990791" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="96" data-yt="https://www.youtube.com/watch?v=B3oWNm563H4"><div class="media"><video src="game_clips/c96.mp4?v=1782990791" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>94位</b> <b class="cid">c96</b> レッドアリーマー（魔界村外伝）
@@ -1449,8 +1834,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://youtu.be/B3oWNm563H4?si=g-hWqS6obqD4Juae"></label>
-    </div></div>
-<div class="cell" data-cid="97"><div class="media"><video src="game_clips/c97.mp4?v=1783001862" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="97" data-yt="https://www.youtube.com/watch?v=xEWKiY30t8U"><div class="media"><video src="game_clips/c97.mp4?v=1783001862" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>67位</b> <b class="cid">c97</b> コナミワイワイワールド
@@ -1462,8 +1851,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="98"><div class="media"><video src="game_clips/c98.mp4?v=1783001871" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="98" data-yt="https://www.youtube.com/watch?v=eFxH6-g8FGQ"><div class="media"><video src="game_clips/c98.mp4?v=1783001871" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>27位</b> <b class="cid">c98</b> NiGHTS into dreams...
@@ -1475,8 +1868,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="99"><div class="media"><video src="game_clips/c99.mp4?v=1782972780" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="99" data-yt="https://www.youtube.com/watch?v=PhMUtjrcmUM"><div class="media"><video src="game_clips/c99.mp4?v=1782972780" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>82位</b> <b class="cid">c99</b> デイトナUSA
@@ -1488,8 +1885,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="100"><div class="media"><video src="game_clips/c100.mp4?v=1782973085" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="100" data-yt="https://www.youtube.com/watch?v=IshGEqHVcKk"><div class="media"><video src="game_clips/c100.mp4?v=1782973085" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>28位</b> <b class="cid">c100</b> セガラリー
@@ -1501,8 +1902,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="101"><div class="media"><video src="game_clips/c101.mp4?v=1783508918" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="101" data-yt="https://www.youtube.com/watch?v=ej9pX38mhq0"><div class="media"><video src="game_clips/c101.mp4?v=1783508918" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>111位</b> <b class="cid">c101</b> 魍魎戦記MADARA2
@@ -1514,8 +1919,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=ej9pX38mhq0"></label>
-    </div></div>
-<div class="cell" data-cid="102"><div class="media"><video src="game_clips/c102.mp4?v=1783508831" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="102" data-yt="https://www.youtube.com/watch?v=14oR860xWR0"><div class="media"><video src="game_clips/c102.mp4?v=1783508831" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>106位</b> <b class="cid">c102</b> 天外魔境II 卍MARU
@@ -1527,8 +1936,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=14oR860xWR0"></label>
-    </div></div>
-<div class="cell" data-cid="103"><div class="media"><video src="game_clips/c103.mp4?v=1783508803" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="103" data-yt="https://www.youtube.com/watch?v=FJCQMmI7P3U"><div class="media"><video src="game_clips/c103.mp4?v=1783508803" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>103位</b> <b class="cid">c103</b> スターソルジャー
@@ -1540,8 +1953,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=FJCQMmI7P3U"></label>
-    </div></div>
-<div class="cell" data-cid="104"><div class="media"><video src="game_clips/c104.mp4?v=1783508953" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="104" data-yt="https://www.youtube.com/watch?v=0VI9MzpBtKk"><div class="media"><video src="game_clips/c104.mp4?v=1783508953" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>113位</b> <b class="cid">c104</b> 風の伝説ザナドゥ
@@ -1553,8 +1970,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=0VI9MzpBtKk"></label>
-    </div></div>
-<div class="cell" data-cid="105"><div class="media"><video src="game_clips/c105.mp4?v=1783508865" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="105" data-yt="https://www.youtube.com/watch?v=t7dNKDmR4nM"><div class="media"><video src="game_clips/c105.mp4?v=1783508865" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>108位</b> <b class="cid">c105</b> レイストーム
@@ -1566,8 +1987,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=t7dNKDmR4nM"></label>
-    </div></div>
-<div class="cell" data-cid="106"><div class="media"><video src="game_clips/c106.mp4?v=1783508881" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="106" data-yt="https://www.youtube.com/watch?v=tODaA2OInDI"><div class="media"><video src="game_clips/c106.mp4?v=1783508881" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>109位</b> <b class="cid">c106</b> ダライアス外伝
@@ -1579,8 +2004,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=tODaA2OInDI"></label>
-    </div></div>
-<div class="cell" data-cid="107"><div class="media"><video src="game_clips/c107.mp4?v=1783508894" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="107" data-yt="https://www.youtube.com/watch?v=NyzezFfGAFk"><div class="media"><video src="game_clips/c107.mp4?v=1783508894" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>110位</b> <b class="cid">c107</b> ファンタジーゾーン
@@ -1592,8 +2021,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=NyzezFfGAFk"></label>
-    </div></div>
-<div class="cell" data-cid="108"><div class="media"><video src="game_clips/c108.mp4?v=1783509970" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="108" data-yt="https://www.youtube.com/watch?v=n4fQhVTWn54"><div class="media"><video src="game_clips/c108.mp4?v=1783509970" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>133位</b> <b class="cid">c108</b> moon
@@ -1605,8 +2038,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=n4fQhVTWn54"></label>
-    </div></div>
-<div class="cell" data-cid="109"><div class="media"><video src="game_clips/c109.mp4?v=1783508774" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="109" data-yt="https://www.youtube.com/watch?v=TXl5M1z9qro"><div class="media"><video src="game_clips/c109.mp4?v=1783508774" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>101位</b> <b class="cid">c109</b> ガンバード
@@ -1618,8 +2055,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=TXl5M1z9qro"></label>
-    </div></div>
-<div class="cell" data-cid="110"><div class="media"><video src="game_clips/c110.mp4?v=1783509162" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="110" data-yt="https://www.youtube.com/watch?v=ylhhaLHZotw"><div class="media"><video src="game_clips/c110.mp4?v=1783509162" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>130位</b> <b class="cid">c110</b> ストライカーズ1945
@@ -1631,8 +2072,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=ylhhaLHZotw"></label>
-    </div></div>
-<div class="cell" data-cid="111"><div class="media"><video src="game_clips/c111.mp4?v=1783508934" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="111" data-yt="https://www.youtube.com/watch?v=WdvU08Ka0qg"><div class="media"><video src="game_clips/c111.mp4?v=1783508934" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>112位</b> <b class="cid">c111</b> 餓狼伝説スペシャル
@@ -1644,8 +2089,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=WdvU08Ka0qg"></label>
-    </div></div>
-<div class="cell" data-cid="112"><div class="media"><video src="game_clips/c112.mp4?v=1783508969" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="112" data-yt="https://www.youtube.com/watch?v=phisUZvhUjw"><div class="media"><video src="game_clips/c112.mp4?v=1783508969" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>114位</b> <b class="cid">c112</b> クロックタワー
@@ -1657,8 +2106,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=phisUZvhUjw"></label>
-    </div></div>
-<div class="cell" data-cid="113"><div class="media"><video src="game_clips/c113.mp4?v=1783007631" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="113" data-yt="https://www.youtube.com/watch?v=QzZnBRcdFuM"><div class="media"><video src="game_clips/c113.mp4?v=1783007631" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>84位</b> <b class="cid">c113</b> クロックタワー ゴーストヘッド
@@ -1670,8 +2123,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="114"><div class="media"><video src="game_clips/c114.mp4?v=1783508983" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="114" data-yt="https://www.youtube.com/watch?v=KcA7EnIonZ8"><div class="media"><video src="game_clips/c114.mp4?v=1783508983" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>115位</b> <b class="cid">c114</b> 魔界塔士Sa・Ga
@@ -1683,8 +2140,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=KcA7EnIonZ8"></label>
-    </div></div>
-<div class="cell" data-cid="115"><div class="media"><video src="game_clips/c115.mp4?v=1783509003" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="115" data-yt="https://www.youtube.com/watch?v=BSN3zAkOhDo"><div class="media"><video src="game_clips/c115.mp4?v=1783509003" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>117位</b> <b class="cid">c115</b> ONI
@@ -1696,8 +2157,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=BSN3zAkOhDo"></label>
-    </div></div>
-<div class="cell" data-cid="117"><div class="media"><video src="game_clips/c117.mp4?v=1783007644" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="117" data-yt="https://www.youtube.com/watch?v=H8WRMA1T5os"><div class="media"><video src="game_clips/c117.mp4?v=1783007644" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>95位</b> <b class="cid">c117</b> スーパーマリオブラザーズ3
@@ -1709,8 +2174,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
-<div class="cell" data-cid="118"><div class="media"><video src="game_clips/c118.mp4?v=1783509027" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="118" data-yt="https://www.youtube.com/watch?v=cO1pN957yYw"><div class="media"><video src="game_clips/c118.mp4?v=1783509027" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>120位</b> <b class="cid">c118</b> カービィのピンボール
@@ -1722,8 +2191,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=cO1pN957yYw"></label>
-    </div></div>
-<div class="cell" data-cid="119"><div class="media"><video src="game_clips/c119.mp4?v=1783509041" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="119" data-yt="https://www.youtube.com/watch?v=RELUkDp_Fa0"><div class="media"><video src="game_clips/c119.mp4?v=1783509041" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>121位</b> <b class="cid">c119</b> ビックリマンワールド
@@ -1735,8 +2208,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=RELUkDp_Fa0"></label>
-    </div></div>
-<div class="cell" data-cid="120"><div class="media"><video src="game_clips/c120.mp4?v=1783509065" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="120" data-yt="https://www.youtube.com/watch?v=bhhm62p-w3c"><div class="media"><video src="game_clips/c120.mp4?v=1783509065" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>122位</b> <b class="cid">c120</b> ONI V 隠忍を継ぐ者
@@ -1748,8 +2225,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=bhhm62p-w3c"></label>
-    </div></div>
-<div class="cell" data-cid="121"><div class="media"><video src="game_clips/c121.mp4?v=1783509079" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="121" data-yt="https://www.youtube.com/watch?v=sVbhuJ59oeg"><div class="media"><video src="game_clips/c121.mp4?v=1783509079" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>123位</b> <b class="cid">c121</b> F-ZERO
@@ -1761,7 +2242,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=sVbhuJ59oeg"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="122" data-steam="1"><div class="media"><video src="game_clips/c122.mp4?v=1783509084" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1778,8 +2263,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="123"><div class="media"><video src="game_clips/c123.mp4?v=1783007655" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="123" data-yt="https://www.youtube.com/watch?v=0BJQDoZ_o18"><div class="media"><video src="game_clips/c123.mp4?v=1783007655" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>87位</b> <b class="cid">c123</b> ドラゴンクエスト2
@@ -1791,7 +2280,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value=""></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="125" data-steam="1"><div class="media"><video src="game_clips/c125.mp4?v=1783509086" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1808,8 +2301,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="126"><div class="media"><video src="game_clips/c126.mp4?v=1783509133" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="126" data-yt="https://www.youtube.com/watch?v=SzzYgz-rzC0"><div class="media"><video src="game_clips/c126.mp4?v=1783509133" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>128位</b> <b class="cid">c126</b> 風の伝説ザナドゥII
@@ -1821,8 +2318,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=SzzYgz-rzC0"></label>
-    </div></div>
-<div class="cell" data-cid="131"><div class="media"><video src="game_clips/c131.mp4?v=1783509174" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="131" data-yt="https://www.youtube.com/watch?v=LWF5fsiZJ9E"><div class="media"><video src="game_clips/c131.mp4?v=1783509174" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>131位</b> <b class="cid">c131</b> 桃太郎電鉄ワールド
@@ -1834,7 +2335,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=LWF5fsiZJ9E"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="132" data-steam="1"><div class="media"><video src="game_clips/c132.mp4?v=1783509183" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1851,8 +2356,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="135"><div class="media"><video src="game_clips/c135.mp4?v=1783509344" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="135" data-yt="https://www.youtube.com/watch?v=kRZnmy6WYuA"><div class="media"><video src="game_clips/c135.mp4?v=1783509344" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>136位</b> <b class="cid">c135</b> ディアブロIII
@@ -1864,8 +2373,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=kRZnmy6WYuA"></label>
-    </div></div>
-<div class="cell" data-cid="136"><div class="media"><video src="game_clips/c136.mp4?v=1783509223" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="136" data-yt="https://www.youtube.com/watch?v=0Ek5c3sQygs"><div class="media"><video src="game_clips/c136.mp4?v=1783509223" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>138位</b> <b class="cid">c136</b> サイレントヒルf
@@ -1877,7 +2390,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=0Ek5c3sQygs"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="137" data-steam="1"><div class="media"><video src="game_clips/c137.mp4?v=1783509213" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1894,7 +2411,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="140" data-steam="1"><div class="media"><video src="game_clips/c140.mp4?v=1783509224" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1911,7 +2432,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="141" data-steam="1"><div class="media"><video src="game_clips/c141.mp4?v=1783509229" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1928,7 +2453,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="143" data-steam="1"><div class="media"><video src="game_clips/c143.mp4?v=1783509245" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1945,7 +2474,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="144" data-steam="1"><div class="media"><video src="game_clips/c144.mp4?v=1783509247" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1962,7 +2495,11 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="145" data-steam="1"><div class="media"><video src="game_clips/c145.mp4?v=1783509257" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -1979,8 +2516,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="147"><div class="media"><video src="game_clips/c147.mp4?v=1783509265" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="147" data-yt="https://www.youtube.com/watch?v=HYyKIhHXzBY"><div class="media"><video src="game_clips/c147.mp4?v=1783509265" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>145位</b> <b class="cid">c147</b> 雀魂 -じゃんたま-
@@ -1992,7 +2533,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=HYyKIhHXzBY"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="148" data-steam="1"><div class="media"><video src="game_clips/c148.mp4?v=1783509266" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -2009,8 +2554,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="150"><div class="media"><video src="game_clips/c150.mp4?v=1783509148" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="150" data-yt="https://www.youtube.com/watch?v=IYvPh6RNZko"><div class="media"><video src="game_clips/c150.mp4?v=1783509148" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>129位</b> <b class="cid">c150</b> Jelly Defense
@@ -2022,8 +2571,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=IYvPh6RNZko"></label>
-    </div></div>
-<div class="cell" data-cid="151"><div class="media"><video src="game_clips/c151.mp4?v=1783508849" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="151" data-yt="https://www.youtube.com/watch?v=iqW2-FYsNL0"><div class="media"><video src="game_clips/c151.mp4?v=1783508849" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>107位</b> <b class="cid">c151</b> 海腹川背
@@ -2035,8 +2588,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=iqW2-FYsNL0"></label>
-    </div></div>
-<div class="cell" data-cid="158" data-steam="1"><div class="media"><video src="game_clips/c158.mp4?v=1783521901" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="158" data-steam="1" data-yt="https://www.youtube.com/watch?v=ZcY8Nr3MAAg"><div class="media"><video src="game_clips/c158.mp4?v=1783521901" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>116位</b> <b class="cid">c158</b> 零式
@@ -2052,8 +2609,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="159"><div class="media"><video src="game_clips/c159.mp4?v=1783509243" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="159" data-yt="https://www.youtube.com/watch?v=TVLoCF7-g0U"><div class="media"><video src="game_clips/c159.mp4?v=1783509243" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>141位</b> <b class="cid">c159</b> 無人島物語
@@ -2065,7 +2626,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=TVLoCF7-g0U"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 <div class="cell" data-cid="160" data-steam="1"><div class="media"><video src="game_clips/c160.mp4?v=1783521906" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
@@ -2082,8 +2647,12 @@
       <button type="button" class="tr-open">🎞 フル視聴</button></div>
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
-        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div></div>
-<div class="cell" data-cid="162"><div class="media"><video src="game_clips/c162.mp4?v=1783521921" preload="metadata" muted loop playsinline
+        <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="162" data-yt="https://www.youtube.com/watch?v=mVvdrd5Rrxk"><div class="media"><video src="game_clips/c162.mp4?v=1783521921" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>118位</b> <b class="cid">c162</b> 幽☆遊☆白書 闇勝負!!暗黒武術会
@@ -2095,8 +2664,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=mVvdrd5Rrxk"></label>
-    </div></div>
-<div class="cell" data-cid="180"><div class="media"><video src="game_clips/c180.mp4?v=1783521936" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="180" data-yt="https://www.youtube.com/watch?v=onzy6FH-8oU"><div class="media"><video src="game_clips/c180.mp4?v=1783521936" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>126位</b> <b class="cid">c180</b> 家族計画
@@ -2108,8 +2681,12 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=onzy6FH-8oU"></label>
-    </div></div>
-<div class="cell" data-cid="202"><div class="media"><video src="game_clips/c202.mp4?v=1783508788" preload="metadata" muted loop playsinline
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
+<div class="cell" data-cid="202" data-yt="https://www.youtube.com/watch?v=AJL7rw4ae9I"><div class="media"><video src="game_clips/c202.mp4?v=1783508788" preload="metadata" muted loop playsinline
       style=""
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>102位</b> <b class="cid">c202</b> ファイナルファンタジー7 リメイク
@@ -2121,7 +2698,11 @@
         <option value="left">左寄せ</option>
         <option value="right">右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="(出典のまま)" value="https://www.youtube.com/watch?v=AJL7rw4ae9I"></label>
-    </div></div>
+    </div><div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div></div>
 </div>
 <script>
 const TR = {"15": {"appid": 2014380, "game": "ライブアライブ", "movies": [{"i": 0, "name": "PEGI EN - post launch trailer", "file": "game_trailers/c15_t0.mp4", "dur": 36}, {"i": 1, "name": "JP - Launch (Actually pre-purchase)", "file": "game_trailers/c15_t1.mp4", "dur": 84}]}, "23": {"appid": 1173800, "game": "FINAL FANTASY IV", "movies": [{"i": 0, "name": "JP FFIV Launch Trailer", "file": "game_trailers/c23_t0.mp4", "dur": 45}, {"i": 1, "name": "JP - Out Now trailer", "file": "game_trailers/c23_t1.mp4", "dur": 109}, {"i": 2, "name": "PEGI EN - trailer", "file": "game_trailers/c23_t2.mp4", "dur": 85}]}, "24": {"appid": 1173810, "game": "FINAL FANTASY V", "movies": [{"i": 0, "name": "JP Launch", "file": "game_trailers/c24_t0.mp4", "dur": 45}, {"i": 1, "name": "JP - Out Now trailer", "file": "game_trailers/c24_t1.mp4", "dur": 109}, {"i": 2, "name": "PEGI EN - trailer", "file": "game_trailers/c24_t2.mp4", "dur": 85}]}, "25": {"appid": 1173820, "game": "FINAL FANTASY VI", "movies": [{"i": 0, "name": "JP- Launch", "file": "game_trailers/c25_t0.mp4", "dur": 65}, {"i": 1, "name": "JP - Out Now trailer", "file": "game_trailers/c25_t1.mp4", "dur": 109}, {"i": 2, "name": "PEGI EN - trailer", "file": "game_trailers/c25_t2.mp4", "dur": 85}]}, "27": {"appid": 524220, "game": "NieR:Automata™", "movies": [{"i": 0, "name": "PEGI EN Nier GOTY", "file": "game_trailers/c27_t0.mp4", "dur": 112}, {"i": 1, "name": "PEGI NieR Gameplay", "file": "game_trailers/c27_t1.mp4", "dur": 37}, {"i": 2, "name": "Nier Attract Trailer Unrated EN", "file": "game_trailers/c27_t2.mp4", "dur": 123}]}, "30": {"appid": 1413480, "game": "真・女神転生III NOCTURNE HD REMASTER", "movies": [{"i": 0, "name": "Announcement Trailer JP", "file": "game_trailers/c30_t0.mp4", "dur": 160}]}, "33": {"appid": 613830, "game": "クロノ・トリガー", "movies": [{"i": 0, "name": "CERO JP Launch Trailer Limited Edition", "file": "game_trailers/c33_t0.mp4", "dur": 150}]}, "34": {"appid": 606370, "game": "ロマンシング サガ2", "movies": [{"i": 0, "name": "PEGI EN Rom.SaGa2 Launch Trailer", "file": "game_trailers/c34_t0.mp4", "dur": 121}, {"i": 1, "name": "Unrated EN Short Rom SaGa 2 Announce trailer", "file": "game_trailers/c34_t1.mp4", "dur": 35}]}, "37": {"appid": 2612660, "game": "かまいたちの夜×3", "movies": [{"i": 0, "name": "かまいたちの夜×3 アナウンストレーラー", "file": "game_trailers/c37_t0.mp4", "dur": 199}]}, "39": {"appid": 413410, "game": "ダンガンロンパ 希望の学園と絶望の高校生", "movies": [{"i": 0, "name": "Launch Trailer", "file": "game_trailers/c39_t0.mp4", "dur": 186}, {"i": 1, "name": "Announcement Trailer", "file": "game_trailers/c39_t1.mp4", "dur": 100}]}, "40": {"appid": 413420, "game": "スーパーダンガンロンパ2 さよなら絶望学園", "movies": [{"i": 0, "name": "Announcement Trailer", "file": "game_trailers/c40_t0.mp4", "dur": 106}, {"i": 1, "name": "Launch Trailer", "file": "game_trailers/c40_t1.mp4", "dur": 211}]}, "41": {"appid": 406550, "game": "うみねこのなく頃に", "movies": [{"i": 0, "name": "Gameplay Video", "file": "game_trailers/c41_t0.mp4", "dur": 585}]}, "42": {"appid": 2491040, "game": "ひぐらしのなく頃に 奉+", "movies": [{"i": 0, "name": "OP Video", "file": "game_trailers/c42_t0.mp4", "dur": 95}, {"i": 1, "name": "Gameplay PV", "file": "game_trailers/c42_t1.mp4", "dur": 104}]}, "43": {"appid": 412830, "game": "STEINS;GATE", "movies": [{"i": 0, "name": "STEINSGATEPV_Sep2016", "file": "game_trailers/c43_t0.mp4", "dur": 116}, {"i": 1, "name": "STEINSGATEOP1_Apr13rd2016", "file": "game_trailers/c43_t1.mp4", "dur": 115}, {"i": 2, "name": "STEINSGATEOP2_Apr13rd2016", "file": "game_trailers/c43_t2.mp4", "dur": 111}]}, "44": {"appid": 648100, "game": "レイジングループ", "movies": [{"i": 0, "name": "レイジングループPV", "file": "game_trailers/c44_t0.mp4", "dur": 124}]}, "45": {"appid": 2067780, "game": "キミガシネ -多数決デスゲーム-", "movies": [{"i": 0, "name": "Main Trailer_JA", "file": "game_trailers/c45_t0.mp4", "dur": 101}]}, "46": {"appid": 2089600, "game": "都市伝説解体センター", "movies": [{"i": 0, "name": "都市伝説解体センター ローンチトレーラー", "file": "game_trailers/c46_t0.mp4", "dur": 103}, {"i": 1, "name": "都市伝説解体センター　第一話「闇から覗く目」予告動画", "file": "game_trailers/c46_t1.mp4", "dur": 32}, {"i": 2, "name": "都市传说解体中心 第一话《在黑暗中窥视的眼睛》预告", "file": "game_trailers/c46_t2.mp4", "dur": 32}]}, "49": {"appid": 447530, "game": "VA-11 Hall-A: Cyberpunk Bartender Action", "movies": [{"i": 0, "name": "Japanese Final Trailer", "file": "game_trailers/c49_t0.mp4", "dur": 142}]}, "50": {"appid": 3101040, "game": "魔法少女ノ魔女裁判", "movies": [{"i": 0, "name": "オープニングムービー", "file": "game_trailers/c50_t0.mp4", "dur": 103}, {"i": 1, "name": "Teaser PV1「みんな死ねばいい編」", "file": "game_trailers/c50_t1.mp4", "dur": 53}]}, "52": {"appid": 2850310, "game": "Kanon", "movies": [{"i": 0, "name": "Kanon 日本語", "file": "game_trailers/c52_t0.mp4", "dur": 154}]}, "61": {"appid": 937580, "game": "東方紺珠伝 ～ Legacy of Lunatic Kingdom.", "movies": [{"i": 0, "name": "予告", "file": "game_trailers/c61_t0.mp4", "dur": 98}]}, "62": {"appid": 1640160, "game": "GダライアスHD", "movies": [{"i": 0, "name": "G-Darius PV", "file": "game_trailers/c62_t0.mp4", "dur": 165}]}, "63": {"appid": 253750, "game": "Ikaruga", "movies": [{"i": 0, "name": "Ikaruga Game Play", "file": "game_trailers/c63_t0.mp4", "dur": 29}, {"i": 1, "name": "Ikaruga Tutorial", "file": "game_trailers/c63_t1.mp4", "dur": 97}]}, "64": {"appid": 2320, "game": "Quake II", "movies": [{"i": 0, "name": "Enhanced Launch EN", "file": "game_trailers/c64_t0.mp4", "dur": 108}]}, "67": {"appid": 2536520, "game": "「ディアブロ II リザレクテッド」 – 「獄炎エディション」", "movies": [{"i": 0, "name": "Diablo® II: Resurrected™ – Reign of the Warlock - Gameplay Launch Trailer (jaJP)", "file": "game_trailers/c67_t0.mp4", "dur": 102}, {"i": 1, "name": "Diablo® II: Resurrected™ – Reign of the Warlock - Cinematic Trailer (jaJP)", "file": "game_trailers/c67_t1.mp4", "dur": 152}]}, "70": {"appid": 500, "game": "Left 4 Dead", "movies": [{"i": 0, "name": "Left 4 Dead TV Spot 1", "file": "game_trailers/c70_t0.mp4", "dur": 30}, {"i": 1, "name": "Left 4 Dead Intro (English)", "file": "game_trailers/c70_t1.mp4", "dur": 280}, {"i": 2, "name": "Left 4 Dead TV Spot 2", "file": "game_trailers/c70_t2.mp4", "dur": 30}, {"i": 3, "name": "Left 4 Dead - The Sacrifice Trailer", "file": "game_trailers/c70_t3.mp4", "dur": 67}]}, "71": {"appid": 3654560, "game": "Plants vs. Zombies™: 植え替え版", "movies": [{"i": 0, "name": "Plants vs. Zombies: Replanted - Official Launch Trailer", "file": "game_trailers/c71_t0.mp4", "dur": 86}]}, "73": {"appid": 646570, "game": "Slay the Spire", "movies": [{"i": 0, "name": "Launch Trailer", "file": "game_trailers/c73_t0.mp4", "dur": 96}]}, "78": {"appid": 3328480, "game": "TETRIS® THE GRAND MASTER 4 -ABSOLUTE EYE-", "movies": [{"i": 0, "name": "Marathon", "file": "game_trailers/c78_t0.mp4", "dur": 66}, {"i": 1, "name": "Konoha", "file": "game_trailers/c78_t1.mp4", "dur": 54}, {"i": 2, "name": "Normal", "file": "game_trailers/c78_t2.mp4", "dur": 111}, {"i": 3, "name": "Master", "file": "game_trailers/c78_t3.mp4", "dur": 152}, {"i": 4, "name": "Asuka", "file": "game_trailers/c78_t4.mp4", "dur": 70}]}, "82": {"appid": 222420, "game": "THE KING OF FIGHTERS '98 ULTIMATE MATCH FINAL EDITION", "movies": [{"i": 0, "name": "THE KING OF FIGHTERS '98 ULTIMATE MATCH FINAL EDITION TRAILER", "file": "game_trailers/c82_t0.mp4", "dur": 64}]}, "84": {"appid": 1282210, "game": "DEEMO -Reborn-", "movies": [{"i": 0, "name": "Trailer", "file": "game_trailers/c84_t0.mp4", "dur": 139}]}, "88": {"appid": 1426210, "game": "It Takes Two", "movies": [{"i": 0, "name": "Official Trailer", "file": "game_trailers/c88_t0.mp4", "dur": 167}, {"i": 1, "name": "#5", "file": "game_trailers/c88_t1.mp4", "dur": 148}, {"i": 2, "name": "Friends Pass", "file": "game_trailers/c88_t2.mp4", "dur": 36}, {"i": 3, "name": "Reveal", "file": "game_trailers/c88_t3.mp4", "dur": 162}]}, "89": {"appid": 1593500, "game": "God of War", "movies": [{"i": 0, "name": "Features Trailer", "file": "game_trailers/c89_t0.mp4", "dur": 95}, {"i": 1, "name": "Announce Trailer JP", "file": "game_trailers/c89_t1.mp4", "dur": 175}]}, "91": {"appid": 391540, "game": "Undertale", "movies": [{"i": 0, "name": "UNDERTALE Japanese Trailer", "file": "game_trailers/c91_t0.mp4", "dur": 75}]}, "92": {"appid": 268910, "game": "Cuphead", "movies": [{"i": 0, "name": "Cuphead: The Delicious Last Course - Launch Trailer", "file": "game_trailers/c92_t0.mp4", "dur": 28}, {"i": 1, "name": "Cuphead Launch Trailer", "file": "game_trailers/c92_t1.mp4", "dur": 56}, {"i": 2, "name": "Cuphead Announcement Trailer", "file": "game_trailers/c92_t2.mp4", "dur": 50}]}, "93": {"appid": 1509960, "game": "PICO PARK", "movies": [{"i": 0, "name": "trailer", "file": "game_trailers/c93_t0.mp4", "dur": 144}]}, "94": {"appid": 1868140, "game": "デイヴ・ザ・ダイバー", "movies": [{"i": 0, "name": "DAVE THE DIVER_DIVE IN NOW Trailer", "file": "game_trailers/c94_t0.mp4", "dur": 96}, {"i": 1, "name": "DAVE THE DIVER_Accolades Trailer_NOW Available", "file": "game_trailers/c94_t1.mp4", "dur": 62}]}, "122": {"appid": 1096900, "game": "RPGツクールMZ", "movies": [{"i": 0, "name": "PV1_JA_GGGedition", "file": "game_trailers/c122_t0.mp4", "dur": 51}, {"i": 1, "name": "PV0_JA_GGGedition", "file": "game_trailers/c122_t1.mp4", "dur": 48}, {"i": 2, "name": "TPB", "file": "game_trailers/c122_t2.mp4", "dur": 222}]}, "125": {"appid": 924980, "game": "聖剣伝説3 TRIALS of MANA", "movies": [{"i": 0, "name": "PEGI EN - launch trailer", "file": "game_trailers/c125_t0.mp4", "dur": 62}, {"i": 1, "name": "PEGI EN Gameplay Trailer ToM", "file": "game_trailers/c125_t1.mp4", "dur": 234}, {"i": 2, "name": "PEGI EN Character Trailer 3 ToM", "file": "game_trailers/c125_t2.mp4", "dur": 99}, {"i": 3, "name": "PEGI EN Character Trailer 2 ToM", "file": "game_trailers/c125_t3.mp4", "dur": 115}, {"i": 4, "name": "PEGI EN Character Trailer ToM", "file": "game_trailers/c125_t4.mp4", "dur": 99}]}, "132": {"appid": 939520, "game": "HELLGATE: London", "movies": [{"i": 0, "name": "Cinematic trailer", "file": "game_trailers/c132_t0.mp4", "dur": 96}, {"i": 1, "name": "Gameplay", "file": "game_trailers/c132_t1.mp4", "dur": 44}, {"i": 2, "name": "Hellgate  Game Story", "file": "game_trailers/c132_t2.mp4", "dur": 357}]}, "137": {"appid": 3023190, "game": "みんなで推理", "movies": [{"i": 0, "name": "Deduce Together", "file": "game_trailers/c137_t0.mp4", "dur": 35}, {"i": 1, "name": "みんなで推理", "file": "game_trailers/c137_t1.mp4", "dur": 99}]}, "140": {"appid": 550, "game": "Left 4 Dead 2", "movies": [{"i": 0, "name": "Left 4 Dead - The Sacrifice Trailer", "file": "game_trailers/c140_t0.mp4", "dur": 67}, {"i": 1, "name": "Left 4 Dead 2 - TV Spot 2", "file": "game_trailers/c140_t1.mp4", "dur": 32}, {"i": 2, "name": "Left 4 Dead 2 Teaser", "file": "game_trailers/c140_t2.mp4", "dur": 76}]}, "141": {"appid": 41014, "game": "Serious Sam HD: The Second Encounter", "movies": [{"i": 0, "name": "Serious Sam HD: The Second Encounter - House of Sam Video", "file": "game_trailers/c141_t0.mp4", "dur": 134}]}, "143": {"appid": 582500, "game": "We Were Here", "movies": [{"i": 0, "name": "We Were Here Trailer", "file": "game_trailers/c143_t0.mp4", "dur": 88}]}, "144": {"appid": 1801110, "game": "違う冬のぼくら(BOKURA)", "movies": [{"i": 0, "name": "PV_JP", "file": "game_trailers/c144_t0.mp4", "dur": 97}]}, "145": {"appid": 2023000, "game": "Batsugun", "movies": [{"i": 0, "name": "General", "file": "game_trailers/c145_t0.mp4", "dur": 35}, {"i": 1, "name": "Gameplay", "file": "game_trailers/c145_t1.mp4", "dur": 23}]}, "148": {"appid": 620, "game": "Portal 2", "movies": [{"i": 0, "name": "Portal 2 E3 Demo (Excursion Funnels)", "file": "game_trailers/c148_t0.mp4", "dur": 106}, {"i": 1, "name": "Portal 2 Remix Trailer", "file": "game_trailers/c148_t1.mp4", "dur": 76}, {"i": 2, "name": "Portal 2 - Perpetual Testing Initiative", "file": "game_trailers/c148_t2.mp4", "dur": 104}, {"i": 3, "name": "Portal 2 Co-op Trailer", "file": "game_trailers/c148_t3.mp4", "dur": 116}, {"i": 4, "name": "Portal 2 Teaser", "file": "game_trailers/c148_t4.mp4", "dur": 58}]}, "158": {"appid": 340170, "game": "ファイナルファンタジー 零式", "movies": [{"i": 0, "name": "FF Type 0 Launch Trailer PEGI ENG", "file": "game_trailers/c158_t0.mp4", "dur": 108}]}, "160": {"appid": 1393370, "game": "アクトレイザー・ルネサンス", "movies": [{"i": 0, "name": "PEGI EN Launch Actraiser", "file": "game_trailers/c160_t0.mp4", "dur": 165}]}};
@@ -2166,7 +2747,42 @@ document.querySelectorAll('.cell').forEach(c=>{
     tv.addEventListener('timeupdate',showT); tv.addEventListener('seeked',showT); tv.addEventListener('pause',showT);
     c.querySelector('.tr-set').onclick=()=>{ const st=c.querySelector('.in-start');
       st.value=Math.floor(tv.currentTime); st.dispatchEvent(new Event('input')); }; }
+  // ---- YouTube その場視聴（IFrame API）----
+  const yopen=c.querySelector('.yt-open');
+  if(yopen) yopen.onclick=async()=>{
+    const v=c.querySelector('.yt-view');
+    if(!v.hidden){ v.hidden=true; yopen.textContent='▶ YouTube視聴';
+      if(c._yt&&c._yt.pauseVideo)try{c._yt.pauseVideo();}catch(e){} return; }
+    const url=c.querySelector('.in-url').value.trim()||c.dataset.yt||'';
+    const id=ytId(url);
+    if(!id){ alert('YouTube URLが見つかりません。URL差替欄に入れてから押してください'); return; }
+    v.hidden=false; yopen.textContent='▶ 閉じる';
+    const YT=await loadYT();
+    const start=Math.max(0,+(c.querySelector('.in-start').value||0));
+    if(c._yt&&c._ytid===id){ try{c._yt.playVideo();}catch(e){} return; }
+    if(c._yt){ try{c._yt.destroy();}catch(e){} c._yt=null; }
+    const holder=v.querySelector('.yt-holder'); holder.innerHTML='<div></div>';
+    c._ytid=id;
+    c._yt=new YT.Player(holder.firstChild,{videoId:id,playerVars:{start:start,rel:0,playsinline:1},
+      events:{onReady:e=>{try{e.target.playVideo();}catch(_){}}}});
+    if(!c._ytTimer)c._ytTimer=setInterval(()=>{ const p=c._yt;
+      if(p&&p.getCurrentTime)try{c.querySelector('.yt-cur').textContent=Math.floor(p.getCurrentTime());}catch(e){} },250);
+  };
+  const yset=c.querySelector('.yt-set');
+  if(yset) yset.onclick=()=>{ const p=c._yt; if(!p||!p.getCurrentTime)return;
+    const st=c.querySelector('.in-start');
+    try{ st.value=Math.floor(p.getCurrentTime()); st.dispatchEvent(new Event('input')); }catch(e){} };
 });
+// YouTube IFrame API を遅延ロード（最初の「YouTube視聴」クリック時のみ）
+let _ytReady=null;
+function loadYT(){ if(_ytReady)return _ytReady;
+  _ytReady=new Promise(res=>{ if(window.YT&&window.YT.Player)return res(window.YT);
+    window.onYouTubeIframeAPIReady=()=>res(window.YT);
+    const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api';
+    document.head.appendChild(s); });
+  return _ytReady; }
+function ytId(u){ const m=(u||'').match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m?m[1]:null; }
 try{ const sv=JSON.parse(localStorage.getItem(LS)||'{}');
   for(const cid in sv){ const c=document.querySelector(`.cell[data-cid="${cid}"]`); if(!c)continue;
     if(sv[cid].start!=null)c.querySelector('.in-start').value=sv[cid].start;

@@ -51,7 +51,13 @@ for cid, path in clips:
     <div class="tr-view" hidden><video class="tr-video" controls preload="metadata" playsinline></video>
       <div class="tr-time">現在 <b class="tr-cur">0</b> 秒
         <button type="button" class="tr-set">⏱ この秒を開始秒にセット</button></div></div>'''
-    cells.append(f'''<div class="cell" data-cid="{cid}"{' data-steam="1"' if tr else ''}><div class="media"><video src="{path}?v={os.path.getmtime(path):.0f}" preload="metadata" muted loop playsinline
+    # YouTube産（またはURL差替）: その場で埋め込み視聴→⏱開始秒セット
+    yt_ui = f'''<div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div>'''
+    cells.append(f'''<div class="cell" data-cid="{cid}"{' data-steam="1"' if tr else ''}{f' data-yt="{esc(src.get("url",""))}"' if src else ''}><div class="media"><video src="{path}?v={os.path.getmtime(path):.0f}" preload="metadata" muted loop playsinline
       style="{f'object-position:{pos} center' if pos else ''}"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
     <div class="cap"><b>{"?" if r is None else str(r)+"位"}</b> <b class="cid">c{cid}</b> {esc(t)}
@@ -63,7 +69,7 @@ for cid, path in clips:
         <option value="left"{' selected' if pos=='left' else ''}>左寄せ</option>
         <option value="right"{' selected' if pos=='right' else ''}>右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="{'(YouTubeに変える場合のみ)' if tr else '(出典のまま)'}" value="{esc(mt.get('url',''))}"></label>
-    </div>{tr_ui}</div>''')
+    </div>{tr_ui}{yt_ui}</div>''')
 
 TR_JSON = json.dumps(trailers, ensure_ascii=False)
 
@@ -99,8 +105,12 @@ HTML = f'''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
  .edit .in-url{{flex:1;width:100%}}
  .tredit .in-tidx{{max-width:200px}}
  .tr-open,.tr-set{{font:inherit;font-size:11px;font-weight:800;border:0;border-radius:999px;padding:4px 12px;cursor:pointer;background:#36c5ff;color:#06324f}}
- .tr-view{{padding:0 10px 10px}}
+ .tr-view,.yt-view{{padding:0 10px 10px}}
  .tr-view video{{width:100%;border-radius:8px;background:#000}}
+ .ytedit{{display:flex;gap:8px;align-items:center;padding:0 10px 8px;font-size:10.5px;color:#8f7fc0}}
+ .yt-open,.yt-set{{font:inherit;font-size:11px;font-weight:800;border:0;border-radius:999px;padding:4px 12px;cursor:pointer;background:#ff5e5e;color:#fff}}
+ .yt-holder{{aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#000}}
+ .yt-holder iframe{{width:100%;height:100%;display:block;border:0}}
  .tr-time{{font-size:12px;font-weight:700;color:#ffd23f;margin-top:4px;display:flex;gap:10px;align-items:center}}
  .tr-time b{{font-size:16px;min-width:2em;text-align:right}}
  #out{{display:none;max-width:900px;margin:12px auto;width:100%}}
@@ -110,8 +120,9 @@ HTML = f'''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
 </style></head><body>
 <h1>🎬 実機クリップ検品・調整（{len(cells)}本）</h1>
 <p class="sub">サムネをタップで再生/停止。<b>開始秒</b>＝切り出し開始位置／<b>位置</b>＝縦画面で見せる場所（即プレビュー）／<b>URL差替</b>＝別動画に変更。<br>
-<b>Steam産</b>は「🎞 フル視聴」でトレーラー全編をシーク再生→<b>「⏱この秒を開始秒にセット」</b>。複数トレーラーはドロップダウンで選択（映像のみ・静止画なし）。<br>
-※フル視聴のシークは <b>file:// で開いたとき</b>に有効（python http.server 経由はRange非対応でシーク不可）。<br>
+<b>Steam産</b>は「🎞 フル視聴」でトレーラー全編をシーク再生、<b>YouTube産</b>は「▶ YouTube視聴」でその場再生——どちらもシークして<b>「⏱この秒を開始秒にセット」</b>。<br>
+※おすすめの開き方: <code>python3 serve_review.py</code> → <b>http://localhost:8899/clips_review.html</b>（SteamシークとYouTube埋め込みの両方が使える）。<br>
+　file:// で開くとYouTube埋め込みが動かない場合あり／python http.server はシーク不可（Range非対応）。<br>
 変更したカードは<b style="color:#ffd23f">金枠</b>。終わったら上の「📋 設定をエクスポート」。</p>
 <div class="bar">
   <button id="exp">📋 設定をエクスポート</button>
@@ -168,7 +179,42 @@ document.querySelectorAll('.cell').forEach(c=>{{
     tv.addEventListener('timeupdate',showT); tv.addEventListener('seeked',showT); tv.addEventListener('pause',showT);
     c.querySelector('.tr-set').onclick=()=>{{ const st=c.querySelector('.in-start');
       st.value=Math.floor(tv.currentTime); st.dispatchEvent(new Event('input')); }}; }}
+  // ---- YouTube その場視聴（IFrame API）----
+  const yopen=c.querySelector('.yt-open');
+  if(yopen) yopen.onclick=async()=>{{
+    const v=c.querySelector('.yt-view');
+    if(!v.hidden){{ v.hidden=true; yopen.textContent='▶ YouTube視聴';
+      if(c._yt&&c._yt.pauseVideo)try{{c._yt.pauseVideo();}}catch(e){{}} return; }}
+    const url=c.querySelector('.in-url').value.trim()||c.dataset.yt||'';
+    const id=ytId(url);
+    if(!id){{ alert('YouTube URLが見つかりません。URL差替欄に入れてから押してください'); return; }}
+    v.hidden=false; yopen.textContent='▶ 閉じる';
+    const YT=await loadYT();
+    const start=Math.max(0,+(c.querySelector('.in-start').value||0));
+    if(c._yt&&c._ytid===id){{ try{{c._yt.playVideo();}}catch(e){{}} return; }}
+    if(c._yt){{ try{{c._yt.destroy();}}catch(e){{}} c._yt=null; }}
+    const holder=v.querySelector('.yt-holder'); holder.innerHTML='<div></div>';
+    c._ytid=id;
+    c._yt=new YT.Player(holder.firstChild,{{videoId:id,playerVars:{{start:start,rel:0,playsinline:1}},
+      events:{{onReady:e=>{{try{{e.target.playVideo();}}catch(_){{}}}}}}}});
+    if(!c._ytTimer)c._ytTimer=setInterval(()=>{{ const p=c._yt;
+      if(p&&p.getCurrentTime)try{{c.querySelector('.yt-cur').textContent=Math.floor(p.getCurrentTime());}}catch(e){{}} }},250);
+  }};
+  const yset=c.querySelector('.yt-set');
+  if(yset) yset.onclick=()=>{{ const p=c._yt; if(!p||!p.getCurrentTime)return;
+    const st=c.querySelector('.in-start');
+    try{{ st.value=Math.floor(p.getCurrentTime()); st.dispatchEvent(new Event('input')); }}catch(e){{}} }};
 }});
+// YouTube IFrame API を遅延ロード（最初の「YouTube視聴」クリック時のみ）
+let _ytReady=null;
+function loadYT(){{ if(_ytReady)return _ytReady;
+  _ytReady=new Promise(res=>{{ if(window.YT&&window.YT.Player)return res(window.YT);
+    window.onYouTubeIframeAPIReady=()=>res(window.YT);
+    const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api';
+    document.head.appendChild(s); }});
+  return _ytReady; }}
+function ytId(u){{ const m=(u||'').match(/(?:v=|youtu\\.be\\/|shorts\\/|embed\\/)([A-Za-z0-9_-]{{11}})/);
+  return m?m[1]:null; }}
 try{{ const sv=JSON.parse(localStorage.getItem(LS)||'{{}}');
   for(const cid in sv){{ const c=document.querySelector(`.cell[data-cid="${{cid}}"]`); if(!c)continue;
     if(sv[cid].start!=null)c.querySelector('.in-start').value=sv[cid].start;
