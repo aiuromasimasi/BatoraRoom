@@ -129,7 +129,9 @@ async function record({ speed, fps, everyNth, out, label, part1Only }) {
   let concat = '';
   for (let i = 0; i < frames.length; i++) {
     const nextTs = i < frames.length - 1 ? frames[i + 1].ts : frames[i].ts + 1 / fps;
-    const dur = Math.max(0.01, nextTs - frames[i].ts);
+    // フロアは1ms。10msにするとバースト到着（間隔<10ms）のフレームが水増しされ、
+    // 長尺で累積 +数秒〜十数秒のズレになる
+    const dur = Math.max(0.001, nextTs - frames[i].ts);
     concat += `file '${frames[i].path}'\nduration ${dur.toFixed(5)}\n`;
   }
   concat += `file '${frames[frames.length - 1].path}'\n`;
