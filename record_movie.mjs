@@ -80,9 +80,9 @@ async function record({ speed, fps, everyNth, out, label, part1Only }) {
     return steps.reduce((a, x) => a + x.base, 0) * mult / 1000;
   }, speed, !!part1Only);
 
-  const maxSec = Math.ceil(totalSec);          // 出力MP4の尺（末尾の静止を切り落とす）
-  const durationSec = maxSec + 3;              // 録画待機（バッファ3秒）
-  console.log(`  映像尺: ${totalSec.toFixed(1)}秒 → ${durationSec}秒録画`);
+  // setTimeoutの累積ドリフトで実再生は名目尺より数%長くなるため、
+  // 固定時間待ちではなく「最終ステップ終了(playing=false)」をポーリングして録画を止める
+  console.log(`  名目尺: ${totalSec.toFixed(1)}秒（実再生はドリフトで少し延びる）`);
 
   const client = await page.createCDPSession();
   const frames = [];
@@ -100,14 +100,20 @@ async function record({ speed, fps, everyNth, out, label, part1Only }) {
     format: 'jpeg', quality: 88, maxWidth: W, maxHeight: H, everyNthFrame: everyNth,
   });
 
-  console.log(`  録画中... (${durationSec}秒待機)`);
-  process.stdout.write('  [');
-  const TICK = durationSec / 40;
-  for (let i = 0; i < 40; i++) {
-    await new Promise(r => setTimeout(r, TICK * 1000));
-    process.stdout.write('█');
+  console.log('  録画中...（再生完了を監視）');
+  const hardLimitMs = (totalSec + 120) * 1000; // セーフティ上限
+  const t0 = Date.now();
+  let lastLog = 0;
+  while (true) {
+    await new Promise(r => setTimeout(r, 2000));
+    const st = await page.evaluate(() => ({ si, n: steps.length, playing })).catch(() => null);
+    if (!st) break;
+    const el = (Date.now() - t0) / 1000;
+    if (el - lastLog >= 30) { console.log(`    ${el.toFixed(0)}s: step ${st.si + 1}/${st.n}`); lastLog = el; }
+    if (!st.playing && st.si >= st.n - 1) { console.log(`    再生完了 (${el.toFixed(1)}秒)`); break; }
+    if (Date.now() - t0 > hardLimitMs) { console.log('    セーフティ上限に到達'); break; }
   }
-  process.stdout.write(']\n');
+  await new Promise(r => setTimeout(r, 500)); // 最終フレームの取りこぼし防止
 
   capturing = false;
   await client.send('Page.stopScreencast').catch(() => {});
@@ -134,7 +140,6 @@ async function record({ speed, fps, everyNth, out, label, part1Only }) {
     const ff = spawn('ffmpeg', [
       '-y', '-f', 'concat', '-safe', '0',
       '-i', path.join(tmpDir, 'list.txt'),
-      ...(maxSec ? ['-t', String(maxSec)] : []),
       '-vf', `fps=${fps}`,
       '-vcodec', 'libx264', '-crf', '22', '-preset', 'fast',
       '-pix_fmt', 'yuv420p',

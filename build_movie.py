@@ -288,8 +288,15 @@ function render(s){
   else if(s.r<=3) se('shine');
   setProg(s.r);
 }
+// 絶対時刻基準でスケジュールし、setTimeoutの遅れを次ステップで吸収（長尺でのドリフト防止）
+let nextAt=null;
 function step(){ if(isFeed()) return; const s=steps[si]; render(s); clearTimeout(timer);
-  if(playing) timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;updateBtn();} }, dur(s)); updateProg(); }
+  if(playing){ const now=performance.now();
+    if(nextAt==null||nextAt<now-1000||nextAt>now+50) nextAt=now; // 停止明け・手動移動後はリセット
+    nextAt+=dur(s);
+    timer=setTimeout(()=>{ if(si<steps.length-1){si++;step();} else {playing=false;nextAt=null;updateBtn();} }, Math.max(50,nextAt-now));
+  } else nextAt=null;
+  updateProg(); }
 function updateProg(){const s=steps[si]; let t;
   if(isFeed()) t='フィード再生中';
   else if(s.t==='podium') t='RESULT';
