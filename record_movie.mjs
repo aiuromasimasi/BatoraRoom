@@ -25,16 +25,17 @@ const W = 1080, H = 1920;
 // ブラウザプレビューと同じ cqmin スケールにするため logical 540×960 / DSF=2 → 物理 1080×1920
 const LW = 540, LH = 960;
 
-// 映像尺: 前半60s + 後半(100作×6s+タメ62s) + RESULTロール10s ≒ 732s (mult=1)
+// 映像尺は steps の合計からページ内で自動計算する
+// （前半: clipあり=動画3s+表紙1s / なし=表紙2s、後半: 1作6s+タメ、RESULTロール10s）
 const MODES = {
-  standard:   { speed: 1,   durationSec: 745, fps: 30, everyNth: 2, out: 'movie_standard.mp4',       label: '標準/30fps' },
-  fast:       { speed: 0.6, durationSec: 445, fps: 30, everyNth: 2, out: 'movie_fast.mp4',           label: '速い/30fps' },
-  standard60: { speed: 1,   durationSec: 745, fps: 60, everyNth: 1, out: 'movie_standard_60fps.mp4', label: '標準/60fps' },
-  fast60:     { speed: 0.6, durationSec: 445, fps: 60, everyNth: 1, out: 'movie_fast_60fps.mp4',     label: '速い/60fps' },
-  part1:      { speed: 1,   durationSec: 74,  fps: 60, everyNth: 1, out: 'movie_part1_200-101_60fps.mp4', label: '前半200→101位のみ+ロール/60fps', part1Only: true, maxSec: 71 },
+  standard:   { speed: 1,   fps: 30, everyNth: 2, out: 'movie_standard.mp4',       label: '標準/30fps' },
+  fast:       { speed: 0.6, fps: 30, everyNth: 2, out: 'movie_fast.mp4',           label: '速い/30fps' },
+  standard60: { speed: 1,   fps: 60, everyNth: 1, out: 'movie_standard_60fps.mp4', label: '標準/60fps' },
+  fast60:     { speed: 0.6, fps: 60, everyNth: 1, out: 'movie_fast_60fps.mp4',     label: '速い/60fps' },
+  part1:      { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part1_200-101_60fps.mp4', label: '前半200→101位のみ+ロール/60fps', part1Only: true },
 };
 
-async function record({ speed, durationSec, fps, everyNth, out, label, part1Only, maxSec }) {
+async function record({ speed, fps, everyNth, out, label, part1Only }) {
   const tmpDir = path.join(__dirname, `.rec_${Date.now()}`);
   mkdirSync(tmpDir, { recursive: true });
 
@@ -69,13 +70,19 @@ async function record({ speed, durationSec, fps, everyNth, out, label, part1Only
   ` });
 
   // 速度設定して最初から再生（SEは録画に乗らないのでそのまま）
-  await page.evaluate((s, p1) => {
+  // 戻り値 = steps 合計の実尺(秒)。録画待機と ffmpeg -t に使う
+  const totalSec = await page.evaluate((s, p1) => {
     mult = s;
     buildSteps();
     if (p1) { P1ROLL = true; buildSteps();
       const i = steps.findIndex(x => x.t !== 'p1one' && x.t !== 'p1roll'); if (i > 0) steps.length = i; } // 前半のみ+ロール
     si = 0; playing = true; updateBtn(); step();
+    return steps.reduce((a, x) => a + x.base, 0) * mult / 1000;
   }, speed, !!part1Only);
+
+  const maxSec = Math.ceil(totalSec);          // 出力MP4の尺（末尾の静止を切り落とす）
+  const durationSec = maxSec + 3;              // 録画待機（バッファ3秒）
+  console.log(`  映像尺: ${totalSec.toFixed(1)}秒 → ${durationSec}秒録画`);
 
   const client = await page.createCDPSession();
   const frames = [];

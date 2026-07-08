@@ -16,14 +16,14 @@ function radar(d){
 function tierOf(r){return r<=1?'👑 第 1 位':r<=3?'BEST 3':r<=10?'TOP 10':r<=20?'BEST 20':r<=50?'BEST 50':'BEST 100';}
 const TAME_MAX=20; // タメ(正体伏せ)演出の対象範囲: この順位以下で発動
 const steps=[];
-const T1=60000; // Part1(200→101)=1分
 const G_SEC=6000; // 後半1作の尺: clip5秒+表紙1秒
+const P1_CLIP=4000, P1_NOCLIP=2000; // 前半1作の尺: clipあり=動画3秒+表紙1秒 / なし=表紙2秒
 function buildSteps(){ steps.length=0;
   const has=r=>byRank[r]!=null;
   // ---- Part1: 200→101位 1枚ずつラッシュ（いきなり200位から開始）----
   const p1=[];
   for(let r=200;r>=101;r--){ if(has(r)) p1.push({t:'p1one',r}); }
-  const sm=p1.length||1; p1.forEach(s=>s.base=T1/sm);
+  p1.forEach(s=>s.base=byRank[s.r].clip?P1_CLIP:P1_NOCLIP);
   if(P1ROLL) p1.push({t:'p1roll',r:101,base:10000}); // 200→101の3列ロール(10秒)
   // ---- Part2: 100→1位（全作6秒固定＝clip5秒+表紙1秒。タメ3〜4秒）----
   const p2=[];
@@ -165,29 +165,30 @@ function tameHTML(g,r,d){
 function p1meta(g){ return `<span class="mg">${esc(g.genre)}</span>`+(g.plat?`<span class="mp">${esc(g.plat)}</span>`:'')+(g.year?`<span class="my">${esc(g.year)}年</span>`:''); }
 function p1oneHTML(g,r){
   const ti=esc(g.title), mt=p1meta(g), intro=esc(g.intro||''), src=g.img, ts='ts'+TS;
+  const hs=g.clip?3:null; // clipあり: 動画3秒→表紙1秒の2段構成
   const cap=`<div class="cti">${ti}</div><div class="cmeta">${mt}</div>`+(intro?`<div class="cintro">${intro}</div>`:'');
   if(P1===0){ // ① 全面ブチ抜き
-    return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0">${vid(g,'fbimg')}<div class="fbscrim"></div>
+    return `<div class="p1one fb"><img class="fbimg" src="${src}" onerror="this.style.opacity=0">${vid(g,'fbimg',hs)}<div class="fbscrim"></div>
       <div class="fbrk">${r}<span>位</span></div>
       <div class="p1cap fbcap tcap ${ts}"><div class="cti">${ti}</div><div class="cmeta">${mt}</div></div>
       ${intro?`<div class="p1cap fbcap icap ${ts}"><div class="cintro">${intro}</div></div>`:''}</div>`;
   }
   if(P1===1){ // ② ブラー自己背景
     return `<div class="p1one blur"><img class="bgblur" src="${src}" onerror="this.style.opacity=0"><div class="blurdark"></div>
-      <div class="blurcv"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
+      <div class="blurcv"><img src="${src}" onerror="this.style.opacity=0">${vid(g,null,hs)}</div>
       <div class="brk">${r}<span>位</span></div><div class="p1cap blurcap ${ts}">${cap}</div></div>`;
   }
   if(P1===2){ // ③ カード送り
-    return `<div class="p1one slide"><div class="slcard"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
+    return `<div class="p1one slide"><div class="slcard"><img src="${src}" onerror="this.style.opacity=0">${vid(g,null,hs)}</div>
       <div class="slside"><div class="slrk">${r}<span>位</span></div><div class="p1cap slcap ${ts}">${cap}</div></div></div>`;
   }
   if(P1===3){ // ④ シネスコ黒帯
     return `<div class="p1one cs"><div class="csbar t"></div><div class="csbar b"></div><div class="csflash"></div>
-      <div class="cswrap"><div class="csrk">${r}<span>位</span></div><div class="cscv"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
+      <div class="cswrap"><div class="csrk">${r}<span>位</span></div><div class="cscv"><img src="${src}" onerror="this.style.opacity=0">${vid(g,null,hs)}</div>
       <div class="p1cap cscap ${ts}">${cap}</div></div></div>`;
   }
   // ⑤ スポットステージ
-  return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0">${vid(g)}</div>
+  return `<div class="p1one st"><div class="stbg"></div><div class="stcv"><img src="${src}" onerror="this.style.opacity=0">${vid(g,null,hs)}</div>
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
 // ==== 3列グリッドのスクロールロール（RESULT / 前半200→101 で共用） ====
@@ -251,7 +252,7 @@ function buildFeed(){
   const list=GAMES.slice().sort((a,b)=>b.rank-a.rank);
   stage.innerHTML='<div class="feed" id="feed">'+list.map(g=>`<div class="frow"><div class="frk">${g.rank}<small>位</small></div><div class="fcv"><img src="${g.img}" onerror="this.style.opacity=0"></div><div class="fti">${esc(g.title)}</div></div>`).join('')+'</div>';
   const feed=document.getElementById('feed'), rows=[...feed.children]; feedStart=null;
-  const total=(T1+T2)*mult;
+  const total=steps.reduce((a,s)=>a+s.base,0)*mult;
   function fa(t){ if(LM!==3) return; if(feedStart==null)feedStart=t; const p=Math.min(1,(t-feedStart)/total);
     const max=Math.max(1,feed.scrollHeight-stage.clientHeight); feed.style.transform='translateY('+(-max*p).toFixed(1)+'px)';
     const fi=Math.round(p*(rows.length-1)); rows.forEach((r,k)=>r.classList.toggle('focus',k===fi)); setProgP(p);
