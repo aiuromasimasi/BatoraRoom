@@ -566,12 +566,13 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .cvwrap video,.cineCv video,.blurcv video,.slcard video,.cscv video,.stcv video,.pdCv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
   .cineCv{position:relative}.p1one.cs .cscv{position:relative}
   .slide.full video.bg{animation:none}
-  /* SNSの中央1:1クロップ(上下21.9%カット)でもタイトルが見えるよう、タイトルは78%ラインより上に配置 */
-  .botF.titleF{bottom:24cqh;right:8%}
-  .p1one.fb .fbcap.tcap{bottom:24cqh}
+  /* SNSの中央1:1クロップ(上下21.9%カット)でもタイトルが見えるよう、タイトルは78%ラインより上に配置
+     タイトル+紹介文のブロック全体を1行分(約3.8cqh)まとめて上に移動（相対間隔は維持） */
+  .botF.titleF{bottom:27.8cqh;right:8%}
+  .p1one.fb .fbcap.tcap{bottom:27.8cqh}
   /* 紹介文はタイトル+メタの直下に上寄せ（スクエア外でOK） */
-  .botF.icap{bottom:auto;top:77.5cqh}
-  .p1one.fb .fbcap.icap{bottom:auto;top:77.5cqh}
+  .botF.icap{bottom:auto;top:73.7cqh}
+  .p1one.fb .fbcap.icap{bottom:auto;top:73.7cqh}
   /* clip→表紙の2段構成: hideS秒後にクリップがフェードアウトして下の表紙が見える */
   @keyframes clipHide{to{opacity:0;visibility:hidden}}
   /* ===== RESULTロール（1位→100位・3列スクロール） ===== */
