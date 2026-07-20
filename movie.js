@@ -35,6 +35,16 @@ function buildSteps(){ steps.length=0;
   // ---- RESULTロール: 99位→1位を3列グリッドでスクロール（10秒・99枚=3列×33行）----
   steps.push({t:'podium',r:1,base:10000});
 }
+// ==== 後半(100→1位)を299秒制限で2分割する専用ビルド（タメ演出なし・1作5.8秒固定）====
+// Part2A: 100→51位（290秒）/ Part2B: 50→1位+RESULT（298秒）。動画書き出し専用（通常プレビューには影響しない）
+const G_SEC2=5800, PODIUM2=8000;
+function buildPart2A(){ steps.length=0;
+  for(let r=100;r>=51;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC2}); }
+}
+function buildPart2B(){ steps.length=0;
+  for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC2}); }
+  steps.push({t:'podium',r:1,base:PODIUM2});
+}
 
 const stage=document.getElementById('stage');
 let si=0, playing=true, mult=1, AUTO=false, LM=1, mode=2, TS=1, TM=2, timer=null, feedRAF=null, feedStart=null;

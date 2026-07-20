@@ -33,9 +33,11 @@ const MODES = {
   standard60: { speed: 1,   fps: 60, everyNth: 1, out: 'movie_standard_60fps.mp4', label: '標準/60fps' },
   fast60:     { speed: 0.6, fps: 60, everyNth: 1, out: 'movie_fast_60fps.mp4',     label: '速い/60fps' },
   part1:      { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part1_200-101_60fps.mp4', label: '前半200→101位のみ+ロール/60fps', part1Only: true },
+  part2a:     { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part2a_100-51_60fps.mp4',  label: '後半100→51位（タメなし・290秒）/60fps', part2Which: 'a' },
+  part2b:     { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part2b_50-1_60fps.mp4',    label: '後半50→1位+RESULT（タメなし・298秒）/60fps', part2Which: 'b' },
 };
 
-async function record({ speed, fps, everyNth, out, label, part1Only }) {
+async function record({ speed, fps, everyNth, out, label, part1Only, part2Which }) {
   const tmpDir = path.join(__dirname, `.rec_${Date.now()}`);
   mkdirSync(tmpDir, { recursive: true });
 
@@ -71,14 +73,18 @@ async function record({ speed, fps, everyNth, out, label, part1Only }) {
 
   // 速度設定して最初から再生（SEは録画に乗らないのでそのまま）
   // 戻り値 = steps 合計の実尺(秒)。録画待機と ffmpeg -t に使う
-  const totalSec = await page.evaluate((s, p1) => {
+  const totalSec = await page.evaluate((s, p1, p2w) => {
     mult = s;
-    buildSteps();
-    if (p1) { P1ROLL = true; buildSteps();
-      const i = steps.findIndex(x => x.t !== 'p1one' && x.t !== 'p1roll'); if (i > 0) steps.length = i; } // 前半のみ+ロール
+    if (p2w === 'a') buildPart2A();
+    else if (p2w === 'b') buildPart2B();
+    else {
+      buildSteps();
+      if (p1) { P1ROLL = true; buildSteps();
+        const i = steps.findIndex(x => x.t !== 'p1one' && x.t !== 'p1roll'); if (i > 0) steps.length = i; } // 前半のみ+ロール
+    }
     si = 0; playing = true; updateBtn(); step();
     return steps.reduce((a, x) => a + x.base, 0) * mult / 1000;
-  }, speed, !!part1Only);
+  }, speed, !!part1Only, part2Which || null);
 
   // setTimeoutの累積ドリフトで実再生は名目尺より数%長くなるため、
   // 固定時間待ちではなく「最終ステップ終了(playing=false)」をポーリングして録画を止める
