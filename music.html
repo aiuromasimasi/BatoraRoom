@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI作曲 ずかん ✦</title>
+<style>
+  :root{
+    --purple:#6a4cd6; --pink:#e85a9a; --bg:#faf8ff; --card:#ffffff;
+    --text:#2b2b3a; --muted:#7a7a8c; --border:#e8e2f7;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--text);
+  }
+  header{
+    padding:28px 20px 16px; text-align:center;
+    background:linear-gradient(135deg,var(--purple),var(--pink));
+    color:#fff;
+  }
+  header h1{ margin:0; font-size:1.6rem; }
+  header p{ margin:8px 0 0; opacity:.9; font-size:.9rem; }
+  header a{ color:#fff; }
+  main{
+    max-width:960px; margin:0 auto; padding:20px;
+    display:grid; grid-template-columns:280px 1fr; gap:20px;
+  }
+  @media (max-width:720px){ main{ grid-template-columns:1fr; } }
+  #list{
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:8px; max-height:80vh; overflow-y:auto;
+  }
+  .song-item{
+    padding:10px 12px; border-radius:8px; cursor:pointer; margin-bottom:4px;
+  }
+  .song-item:hover{ background:#f3effc; }
+  .song-item.active{ background:var(--purple); color:#fff; }
+  .song-item .t{ font-weight:bold; font-size:.95rem; }
+  .song-item .d{ font-size:.75rem; color:var(--muted); }
+  .song-item.active .d{ color:#e8dcff; }
+  #detail{
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:24px;
+  }
+  #detail h2{ margin:0 0 4px; color:var(--purple); }
+  #detail audio{ width:100%; margin:12px 0; }
+  .tags{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+  .tag{
+    background:#f3effc; color:var(--purple); border-radius:999px;
+    padding:4px 12px; font-size:.8rem; white-space:nowrap;
+  }
+  .tag b{ color:var(--pink); }
+  #lyrics{
+    white-space:pre-wrap; line-height:1.9; background:#fbfaff;
+    border:1px solid var(--border); border-radius:8px; padding:16px;
+    font-size:.95rem; margin-top:12px;
+  }
+  #empty{ text-align:center; color:var(--muted); padding:60px 20px; }
+  .backlink{ display:inline-block; margin-top:20px; color:var(--purple); text-decoration:none; font-size:.85rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎵 AI作曲 ずかん</h1>
+  <p>音声ルームBot「アイラ」が ACE-Step で作った曲たち ♪</p>
+</header>
+<main>
+  <div id="list"><div id="empty">読み込み中…</div></div>
+  <div id="detail"><div id="empty">左のリストから曲を選んでね</div></div>
+</main>
+<script>
+let songs = [];
+let currentId = null;
+
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function fmtDate(ts){
+  if(!ts) return "";
+  const d = new Date(ts);
+  const p = x => String(x).padStart(2,"0");
+  const wd = ["日","月","火","水","木","金","土"][d.getDay()];
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}（${wd}）`;
+}
+
+function renderList(){
+  const box = document.getElementById("list");
+  if(!songs.length){ box.innerHTML = '<div id="empty">まだ曲がありません</div>'; return; }
+  box.innerHTML = songs.map(s => `
+    <div class="song-item${s.id===currentId?' active':''}" data-id="${esc(s.id)}">
+      <div class="t">${esc(s.title||"無題")}</div>
+      <div class="d">${esc(fmtDate(s.ts))}</div>
+    </div>`).join("");
+  box.querySelectorAll(".song-item").forEach(el=>{
+    el.addEventListener("click", ()=> selectSong(el.getAttribute("data-id")));
+  });
+}
+
+function renderDetail(song){
+  const box = document.getElementById("detail");
+  if(!song){ box.innerHTML = '<div id="empty">左のリストから曲を選んでね</div>'; return; }
+  box.innerHTML = `
+    <h2>${esc(song.title||"無題")}</h2>
+    <div style="color:#7a7a8c;font-size:.85rem">${esc(fmtDate(song.ts))}</div>
+    <audio controls preload="none" src="${esc(song.file)}"></audio>
+    <div class="tags">
+      ${song.bpm ? `<span class="tag"><b>BPM</b> ${esc(song.bpm)}</span>` : ""}
+      ${song.keyScale ? `<span class="tag"><b>キー</b> ${esc(song.keyScale)}</span>` : ""}
+      ${song.genre ? `<span class="tag"><b>ジャンル</b> ${esc(song.genre)}</span>` : ""}
+      ${song.mood ? `<span class="tag"><b>雰囲気</b> ${esc(song.mood)}</span>` : ""}
+      ${song.instruments ? `<span class="tag"><b>楽器</b> ${esc(song.instruments)}</span>` : ""}
+      ${song.harmony ? `<span class="tag"><b>ハーモニー</b> ${esc(song.harmony)}</span>` : ""}
+    </div>
+    <div id="lyrics">${esc(song.lyrics||"（歌詞なし）")}</div>
+  `;
+}
+
+function selectSong(id){
+  currentId = id;
+  renderList();
+  renderDetail(songs.find(s=>s.id===id));
+}
+
+fetch("music/songs.json?_=" + Date.now())
+  .then(r => { if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(data => {
+    songs = Array.isArray(data) ? data : [];
+    renderList();
+  })
+  .catch(e => {
+    document.getElementById("list").innerHTML = `<div id="empty">読み込みに失敗しました: ${esc(e.message)}</div>`;
+  });
+</script>
+<div style="text-align:center"><a class="backlink" href="index.html">← トップへ戻る</a></div>
+</body>
+</html>
