@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>思い入れのあるゲーム ランキング100 ✦ バトラ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--pink:#ff5ea8;--purple:#9b5cff;--blue:#36c5ff;--yellow:#ffd23f;--mint:#3ff2c2;--orange:#ff8a3d;--gold:#ffb800;--ink:#2a1a4a;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"M PLUS Rounded 1c","Baloo 2",sans-serif;color:var(--ink);
+    background:linear-gradient(135deg,#ffd6ec,#d6e4ff,#d9fff4,#fff3c4,#ffd6ec);
+    background-size:400% 400%;animation:bg 22s ease infinite;overflow-x:hidden;padding-bottom:60px}
+  @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes pop{from{transform:scale(.6) translateY(10px);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  @keyframes wob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+  @keyframes shine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes sparkle{0%,100%{transform:scale(.4);opacity:0}50%{transform:scale(1.2);opacity:1}}
+
+  header{text-align:center;padding:52px 16px 6px}
+  .title{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(28px,7vw,58px);line-height:1.12;
+    background:linear-gradient(90deg,var(--pink),var(--orange),var(--yellow),var(--mint),var(--blue),var(--purple),var(--pink));
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 3px 0 rgba(255,255,255,.8));animation:shine 6s linear infinite}
+  .title .em{-webkit-text-fill-color:initial;display:inline-block;animation:wob 2.5s ease-in-out infinite}
+  .sub{margin-top:12px;font-weight:800;color:#6a4d8a;font-size:clamp(14px,3.6vw,17px)}
+  .hint{margin:14px auto 0;max-width:560px;background:rgba(255,255,255,.9);border:3px solid #fff;border-radius:20px;
+    padding:12px 16px;font-weight:700;color:var(--ink);line-height:1.6;box-shadow:0 10px 24px rgba(155,92,255,.18)}
+  .hint b{color:var(--pink)}
+  .scroll{margin-top:14px;font-weight:800;color:var(--purple);font-size:14px;animation:floaty 2s ease-in-out infinite}
+
+  .tier{max-width:1180px;margin:0 auto;padding:14px 16px 8px;position:relative}
+  .banner{position:sticky;top:8px;z-index:10;display:inline-flex;align-items:center;gap:12px;margin:18px 0 16px;
+    padding:10px 22px 10px 14px;border-radius:999px;background:rgba(255,255,255,.92);border:3px solid #fff;
+    box-shadow:0 10px 24px rgba(58,36,86,.18)}
+  .banner .bemo{font-size:30px;animation:floaty 4s ease-in-out infinite}
+  .banner h2{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(18px,4.4vw,26px);line-height:1.1;
+    background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .banner p{font-weight:800;color:#6a4d8a;font-size:12.5px;margin-top:2px}
+
+  .grid{display:grid;gap:14px}
+  .m{position:relative;background:#fff;border-radius:16px;padding:8px;box-shadow:0 8px 18px rgba(58,36,86,.16);
+    animation:pop .5s backwards;transition:transform .16s,box-shadow .16s;display:flex;flex-direction:column}
+  .m:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 18px 34px rgba(58,36,86,.28);z-index:5}
+  .m .cv{position:relative;display:block;border-radius:10px;overflow:hidden;aspect-ratio:3/4;
+    background:linear-gradient(150deg,hsl(var(--h,200),85%,70%),hsl(calc(var(--h,200) + 48),88%,56%))}
+  .m .cv .ph{position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:6px;padding:8px;text-align:center}
+  .m .cv .ph .pe{font-size:34px;line-height:1;filter:drop-shadow(0 3px 5px rgba(0,0,0,.28))}
+  .m .cv .ph .pt{font-weight:800;font-size:11px;line-height:1.3;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.45)}
+  .m .cv img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;display:block;padding:6px}
+  .m.has-cover .cv img{object-fit:cover;padding:0}
+  .m .rk{position:absolute;top:-8px;left:-8px;z-index:3;min-width:30px;height:30px;padding:0 7px;border-radius:999px;
+    display:grid;place-items:center;font-family:"Baloo 2";font-weight:800;color:#fff;font-size:14px;
+    background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 4px 8px rgba(58,36,86,.25)}
+  .m .ti{margin-top:7px;font-weight:800;font-size:12px;line-height:1.35;color:var(--ink);text-align:center;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
+
+  /* ===== tier sizing: 1位に近づくほど大きく豪華に ===== */
+  .t100 .grid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+  .t50  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .t20  .grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+  .t10  .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+  .t3   .grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px;max-width:760px;margin:0 auto}
+
+  .t50 .m .ti,.t20 .m .ti{font-size:13px}
+  .t10 .m{padding:10px;border-radius:20px}
+  .t10 .m .ti{font-size:15px}
+  .t10 .m .cv .ph .pe{font-size:48px}.t10 .m .cv .ph .pt{font-size:14px}
+  .t10 .m .rk{height:38px;min-width:38px;font-size:18px;background:linear-gradient(135deg,var(--orange),var(--pink));
+    box-shadow:0 0 0 3px #fff,0 6px 14px rgba(255,138,61,.5)}
+  .t10{background:radial-gradient(120% 120% at 50% 0,rgba(255,210,63,.35),transparent 60%);border-radius:32px}
+
+  /* 表彰台 2・3位 */
+  .t3{background:radial-gradient(120% 120% at 50% 0,rgba(255,184,0,.45),transparent 62%);border-radius:36px;padding-top:24px}
+  .t3 .m{padding:14px;border-radius:26px;border:4px solid #fff;
+    box-shadow:0 0 0 4px rgba(255,184,0,.35),0 18px 36px rgba(58,36,86,.3)}
+  .t3 .m .cv{border-radius:18px}
+  .t3 .m .cv .ph .pe{font-size:64px}.t3 .m .cv .ph .pt{font-size:18px}
+  .t3 .m .ti{font-size:18px;min-height:auto;margin-top:12px}
+  .t3 .m .rk{height:50px;min-width:50px;font-size:24px;top:-14px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,var(--gold),var(--orange));box-shadow:0 0 0 4px #fff,0 8px 18px rgba(255,184,0,.6)}
+  .t3 .m::after{content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
+    background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.55) 48%,transparent 60%);
+    background-size:200% 100%;animation:shine 3.5s linear infinite}
+
+  /* ===== No.1 hero ===== */
+  .t1{max-width:760px;text-align:center;padding:30px 16px 50px;position:relative}
+  .crownwrap{position:relative;z-index:3}
+  .crown{font-size:64px;animation:floaty 3s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(255,184,0,.5))}
+  .no1label{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(22px,6vw,34px);margin-top:2px;
+    background:linear-gradient(90deg,var(--gold),var(--orange),var(--pink),var(--gold));background-size:200% auto;
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shine 4s linear infinite}
+  .herocard{position:relative;margin:18px auto 0;max-width:430px;background:#fff;border-radius:30px;padding:18px;
+    border:5px solid #fff;box-shadow:0 0 0 5px rgba(255,184,0,.4),0 26px 60px rgba(58,36,86,.4);
+    animation:pop .7s backwards;overflow:hidden}
+  .heroglow{position:absolute;inset:-40%;z-index:0;background:conic-gradient(from 0deg,var(--gold),var(--pink),var(--purple),var(--blue),var(--mint),var(--gold));
+    opacity:.22;animation:spin 12s linear infinite}
+  .herocard .cv{position:relative;z-index:1;display:block;border-radius:18px;overflow:hidden;aspect-ratio:3/4;
+    background:linear-gradient(150deg,hsl(var(--h,40),85%,68%),hsl(calc(var(--h,40) + 48),88%,54%))}
+  .herocard .cv .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;text-align:center}
+  .herocard .cv .ph .pe{font-size:90px;line-height:1;filter:drop-shadow(0 5px 8px rgba(0,0,0,.3))}
+  .herocard .cv .ph .pt{font-weight:800;font-size:22px;line-height:1.3;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.45)}
+  .herocard .cv img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;display:block;padding:10px}
+  .herocard.has-cover .cv img{object-fit:cover;padding:0}
+  .herocard figcaption{position:relative;z-index:1}
+  .no1tag{display:inline-block;margin-top:16px;font-weight:800;color:#fff;font-size:13px;letter-spacing:1px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));padding:6px 16px;border-radius:999px}
+  .herotitle{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(22px,6vw,32px);margin-top:12px;line-height:1.25;color:var(--ink)}
+  .herosub{margin-top:10px;font-weight:800;color:#6a4d8a;font-size:14px}
+  .spark{position:absolute;inset:0;pointer-events:none;z-index:1}
+  .spark span{position:absolute;font-size:22px;animation:sparkle 2.2s ease-in-out infinite;
+    left:calc((var(--n)*67%)%100%);top:calc((var(--n)*43%)%96%);animation-delay:calc(var(--n)*.16s)}
+
+  footer{text-align:center;margin-top:30px;color:#6a4d8a;font-weight:700;font-size:13px;padding:0 16px;line-height:1.9}
+  footer a{color:var(--purple);font-weight:800}
+
+  /* ===== 詳細モーダル（画像タップで表示） ===== */
+  .m .cv,.herocard .cv{cursor:pointer}
+  .ov{position:fixed;inset:0;z-index:200;background:rgba(42,26,74,.72);display:none;align-items:center;justify-content:center;
+    padding:18px;opacity:0;transition:opacity .25s}
+  .ov.show{display:flex;opacity:1}
+  .mod{position:relative;width:100%;max-width:720px;max-height:92vh;overflow:auto;border-radius:28px;border:4px solid #fff;
+    background:linear-gradient(160deg,#ffffff,#fff5fb);box-shadow:0 30px 80px rgba(58,36,86,.55);padding:22px 18px 26px;
+    animation:mpop .45s cubic-bezier(.2,1.25,.3,1)}
+  @keyframes mpop{from{transform:scale(.82) translateY(18px);opacity:0}to{transform:none;opacity:1}}
+  .mx{position:absolute;top:10px;right:12px;width:34px;height:34px;border:0;border-radius:50%;cursor:pointer;font-weight:800;
+    font-size:16px;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));box-shadow:0 4px 10px rgba(155,92,255,.5);z-index:3}
+  .mhead{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+  .mcv{width:130px;flex:none;aspect-ratio:3/4;border-radius:14px;overflow:hidden;
+    background:linear-gradient(150deg,#c9d6ff,#a18bbf);box-shadow:0 10px 24px rgba(58,36,86,.3)}
+  .mcv img{width:100%;height:100%;object-fit:cover}
+  .mhd{flex:1;min-width:190px}
+  .mrk{display:inline-block;font-family:"Baloo 2","Mochiy Pop One";font-weight:800;color:#fff;font-size:13px;padding:3px 12px;
+    border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--purple))}
+  .mti{font-family:"Mochiy Pop One";font-size:clamp(18px,4.6vw,24px);margin:8px 0;line-height:1.3;color:var(--ink)}
+  .mmeta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+  .mmeta b{font-weight:800;font-size:11px;padding:3px 10px;border-radius:999px;background:#f0e8ff;color:#6a4d8a}
+  .mintro{font-weight:700;color:var(--ink);font-size:13.5px;line-height:1.75}
+  .vrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:18px}
+  .vbox{background:rgba(255,255,255,.78);border:2px solid #fff;border-radius:20px;padding:10px 8px 8px;text-align:center;
+    box-shadow:0 8px 18px rgba(58,36,86,.12);overflow:hidden}
+  .vbox h4{font-family:"Mochiy Pop One";font-size:12px;color:var(--purple);margin-bottom:6px}
+  .leg2{margin-top:12px;font-weight:800;color:var(--ink);font-size:12.5px;text-align:center;
+    background:rgba(255,255,255,.7);border-radius:14px;padding:8px}
+  .nodata{margin-top:16px;text-align:center;font-weight:800;color:#a18bbf;background:rgba(255,255,255,.7);border-radius:16px;padding:16px}
+  @keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+  @keyframes popin{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes trace{to{stroke-dashoffset:0}}
+  @keyframes grow{from{transform:scale(0)}to{transform:scale(1)}}
+  .sweep{transform-origin:0 0;animation:spin 3.2s linear infinite}
+  .confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6;border-radius:28px}
+  .confetti span{position:absolute;top:-16px;width:8px;height:13px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(560px) rotate(600deg);opacity:.15}}
+</style>
+</head>
+<body>
+  <header>
+    <h1 class="title"><span class="em">🎮</span> 思い入れのあるゲーム ランキング 100 <span class="em">🏆</span></h1>
+    <p class="sub">バトラのオールタイム・ベスト100 ✦ 100位からカウントダウン！</p>
+    <p class="hint">単なる「好きなゲーム」ではなく、<b>思い出補正</b>だったり、<b>娘の影響</b>だったり、<b>歳をとってから感動した</b>もの、<b>当時衝撃を受けた</b>もの…そんな“心に残った度”が評価軸の中心になっているよ。</p>
+    <p class="hint">下にスクロールするほど上位＝<b>1位に近づくほどレイアウトが豪華に</b>なっていくよ。最後の <b>👑 第1位</b> まで一気にどうぞ！</p>
+    <p class="scroll">▼ スクロールしてカウントダウン開始 ▼</p>
+  </header>
+
+<section class="tier t100">
+  <div class="banner"><span class="bemo">🕹️</span><div><h2>BEST 100</h2><p>100位 → 51位　ウォームアップ！</p></div></div>
+  <div class="grid">
+<figure class="m t100" data-cid="50" style="--i:100;--h:100"><span class="rk">100</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">魔法少女ノ魔女裁判</span></span><img loading="lazy" alt="魔法少女ノ魔女裁判" src="game_covers/c50.jpg" onerror="this.remove()"></span><figcaption class="ti">魔法少女ノ魔女裁判</figcaption></figure>
+<figure class="m t100" data-cid="84" style="--i:99;--h:63"><span class="rk">99</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">Deemo</span></span><img loading="lazy" alt="Deemo" src="game_covers/c84.jpg" onerror="this.remove()"></span><figcaption class="ti">Deemo</figcaption></figure>
+<figure class="m t100" data-cid="93" style="--i:98;--h:26"><span class="rk">98</span><span class="cv"><span class="ph"><span class="pe">🌟</span><span class="pt">PICO PARK</span></span><img loading="lazy" alt="PICO PARK" src="game_covers/c93.jpg" onerror="this.remove()"></span><figcaption class="ti">PICO PARK</figcaption></figure>
+<figure class="m t100" data-cid="11" style="--i:97;--h:349"><span class="rk">97</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">ゼルダの伝説（初代）</span></span><img loading="lazy" alt="ゼルダの伝説（初代）" src="game_covers/c11.jpg" onerror="this.remove()"></span><figcaption class="ti">ゼルダの伝説（初代）</figcaption></figure>
+<figure class="m t100" data-cid="92" style="--i:96;--h:312"><span class="rk">96</span><span class="cv"><span class="ph"><span class="pe">🌟</span><span class="pt">CUPHEAD</span></span><img loading="lazy" alt="CUPHEAD" src="game_covers/c92.jpg" onerror="this.remove()"></span><figcaption class="ti">CUPHEAD</figcaption></figure>
+<figure class="m t100" data-cid="73" style="--i:95;--h:275"><span class="rk">95</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">Slay the Spire</span></span><img loading="lazy" alt="Slay the Spire" src="game_covers/c73.jpg" onerror="this.remove()"></span><figcaption class="ti">Slay the Spire</figcaption></figure>
+<figure class="m t100" data-cid="38" style="--i:94;--h:238"><span class="rk">94</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">弟切草</span></span><img loading="lazy" alt="弟切草" src="game_covers/c38.jpg" onerror="this.remove()"></span><figcaption class="ti">弟切草</figcaption></figure>
+<figure class="m t100" data-cid="13" style="--i:93;--h:201"><span class="rk">93</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">朧村正</span></span><img loading="lazy" alt="朧村正" src="game_covers/c13.jpg" onerror="this.remove()"></span><figcaption class="ti">朧村正</figcaption></figure>
+<figure class="m t100" data-cid="96" style="--i:92;--h:164"><span class="rk">92</span><span class="cv"><span class="ph"><span class="pe">🕹️</span><span class="pt">レッドアリーマー（魔界村外伝）</span></span><img loading="lazy" alt="レッドアリーマー（魔界村外伝）" src="game_covers/c96.jpg" onerror="this.remove()"></span><figcaption class="ti">レッドアリーマー（魔界村外伝）</figcaption></figure>
+<figure class="m t100" data-cid="9" style="--i:91;--h:127"><span class="rk">91</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">ヨッシーストーリー</span></span><img loading="lazy" alt="ヨッシーストーリー" src="game_covers/c9.jpg" onerror="this.remove()"></span><figcaption class="ti">ヨッシーストーリー</figcaption></figure>
+<figure class="m t100" data-cid="7" style="--i:90;--h:90"><span class="rk">90</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">カエルのために鐘は鳴る</span></span><img loading="lazy" alt="カエルのために鐘は鳴る" src="game_covers/c7.jpg" onerror="this.remove()"></span><figcaption class="ti">カエルのために鐘は鳴る</figcaption></figure>
+<figure class="m t100" data-cid="30" style="--i:89;--h:53"><span class="rk">89</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">真・女神転生III NOCTURNE</span></span><img loading="lazy" alt="真・女神転生III NOCTURNE" src="game_covers/c30.jpg" onerror="this.remove()"></span><figcaption class="ti">真・女神転生III NOCTURNE</figcaption></figure>
+<figure class="m t100" data-cid="34" style="--i:88;--h:16"><span class="rk">88</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ロマンシング サガ2</span></span><img loading="lazy" alt="ロマンシング サガ2" src="game_covers/c34.jpg" onerror="this.remove()"></span><figcaption class="ti">ロマンシング サガ2</figcaption></figure>
+<figure class="m t100" data-cid="49" style="--i:87;--h:339"><span class="rk">87</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">VA-11 Hall-A</span></span><img loading="lazy" alt="VA-11 Hall-A" src="game_covers/c49.jpg" onerror="this.remove()"></span><figcaption class="ti">VA-11 Hall-A</figcaption></figure>
+<figure class="m t100" data-cid="5" style="--i:86;--h:302"><span class="rk">86</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">星のカービィ ディスカバリー</span></span><img loading="lazy" alt="星のカービィ ディスカバリー" src="game_covers/c5.jpg" onerror="this.remove()"></span><figcaption class="ti">星のカービィ ディスカバリー</figcaption></figure>
+<figure class="m t100" data-cid="4" style="--i:85;--h:265"><span class="rk">85</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">ゼルダの伝説 夢をみる島</span></span><img loading="lazy" alt="ゼルダの伝説 夢をみる島" src="game_covers/c4.jpg" onerror="this.remove()"></span><figcaption class="ti">ゼルダの伝説 夢をみる島</figcaption></figure>
+<figure class="m t100" data-cid="36" style="--i:84;--h:228"><span class="rk">84</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">不思議のダンジョン 風来のシレン</span></span><img loading="lazy" alt="不思議のダンジョン 風来のシレン" src="game_covers/c36.jpg" onerror="this.remove()"></span><figcaption class="ti">不思議のダンジョン 風来のシレン</figcaption></figure>
+<figure class="m t100" data-cid="82" style="--i:83;--h:191"><span class="rk">83</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">THE KING OF FIGHTERS &#x27;98</span></span><img loading="lazy" alt="THE KING OF FIGHTERS &#x27;98" src="game_covers/c82.jpg" onerror="this.remove()"></span><figcaption class="ti">THE KING OF FIGHTERS &#x27;98</figcaption></figure>
+<figure class="m t100" data-cid="99" style="--i:82;--h:154"><span class="rk">82</span><span class="cv"><span class="ph"><span class="pe">🕹️</span><span class="pt">デイトナUSA</span></span><img loading="lazy" alt="デイトナUSA" src="game_covers/c99.jpg" onerror="this.remove()"></span><figcaption class="ti">デイトナUSA</figcaption></figure>
+<figure class="m t100" data-cid="19" style="--i:81;--h:117"><span class="rk">81</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ドラゴンクエスト4</span></span><img loading="lazy" alt="ドラゴンクエスト4" src="game_covers/c19.jpg" onerror="this.remove()"></span><figcaption class="ti">ドラゴンクエスト4</figcaption></figure>
+<figure class="m t100" data-cid="45" style="--i:80;--h:80"><span class="rk">80</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">キミガシネ</span></span><img loading="lazy" alt="キミガシネ" src="game_covers/c45.jpg" onerror="this.remove()"></span><figcaption class="ti">キミガシネ</figcaption></figure>
+<figure class="m t100" data-cid="76" style="--i:79;--h:43"><span class="rk">79</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">マインクラフト</span></span><img loading="lazy" alt="マインクラフト" src="game_covers/c76.jpg" onerror="this.remove()"></span><figcaption class="ti">マインクラフト</figcaption></figure>
+<figure class="m t100" data-cid="46" style="--i:78;--h:6"><span class="rk">78</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">都市伝説解体センター</span></span><img loading="lazy" alt="都市伝説解体センター" src="game_covers/c46.jpg" onerror="this.remove()"></span><figcaption class="ti">都市伝説解体センター</figcaption></figure>
+<figure class="m t100" data-cid="88" style="--i:77;--h:329"><span class="rk">77</span><span class="cv"><span class="ph"><span class="pe">🌟</span><span class="pt">It Takes Two</span></span><img loading="lazy" alt="It Takes Two" src="game_covers/c88.jpg" onerror="this.remove()"></span><figcaption class="ti">It Takes Two</figcaption></figure>
+<figure class="m t100" data-cid="94" style="--i:76;--h:292"><span class="rk">76</span><span class="cv"><span class="ph"><span class="pe">🌟</span><span class="pt">デイヴ・ザ・ダイバー</span></span><img loading="lazy" alt="デイヴ・ザ・ダイバー" src="game_covers/c94.jpg" onerror="this.remove()"></span><figcaption class="ti">デイヴ・ザ・ダイバー</figcaption></figure>
+<figure class="m t100" data-cid="63" style="--i:75;--h:255"><span class="rk">75</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">斑鳩 IKARUGA</span></span><img loading="lazy" alt="斑鳩 IKARUGA" src="game_covers/c63.jpg" onerror="this.remove()"></span><figcaption class="ti">斑鳩 IKARUGA</figcaption></figure>
+<figure class="m t100" data-cid="81" style="--i:74;--h:218"><span class="rk">74</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">鉄拳3</span></span><img loading="lazy" alt="鉄拳3" src="game_covers/c81.jpg" onerror="this.remove()"></span><figcaption class="ti">鉄拳3</figcaption></figure>
+<figure class="m t100" data-cid="75" style="--i:73;--h:181"><span class="rk">73</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">終ノ空</span></span><img loading="lazy" alt="終ノ空" src="game_covers/c75.jpg" onerror="this.remove()"></span><figcaption class="ti">終ノ空</figcaption></figure>
+<figure class="m t100" data-cid="8" style="--i:72;--h:144"><span class="rk">72</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">スーパーマリオ オデッセイ</span></span><img loading="lazy" alt="スーパーマリオ オデッセイ" src="game_covers/c8.jpg" onerror="this.remove()"></span><figcaption class="ti">スーパーマリオ オデッセイ</figcaption></figure>
+<figure class="m t100" data-cid="61" style="--i:71;--h:107"><span class="rk">71</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">東方紺珠伝</span></span><img loading="lazy" alt="東方紺珠伝" src="game_covers/c61.jpg" onerror="this.remove()"></span><figcaption class="ti">東方紺珠伝</figcaption></figure>
+<figure class="m t100" data-cid="91" style="--i:70;--h:70"><span class="rk">70</span><span class="cv"><span class="ph"><span class="pe">🌟</span><span class="pt">UNDERTALE</span></span><img loading="lazy" alt="UNDERTALE" src="game_covers/c91.jpg" onerror="this.remove()"></span><figcaption class="ti">UNDERTALE</figcaption></figure>
+<figure class="m t100" data-cid="72" style="--i:69;--h:33"><span class="rk">69</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">ウルティマオンライン</span></span><img loading="lazy" alt="ウルティマオンライン" src="game_covers/c72.jpg" onerror="this.remove()"></span><figcaption class="ti">ウルティマオンライン</figcaption></figure>
+<figure class="m t100" data-cid="53" style="--i:68;--h:356"><span class="rk">68</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">雫</span></span><img loading="lazy" alt="雫" src="game_covers/c53.jpg" onerror="this.remove()"></span><figcaption class="ti">雫</figcaption></figure>
+<figure class="m t100" data-cid="97" style="--i:67;--h:319"><span class="rk">67</span><span class="cv"><span class="ph"><span class="pe">🕹️</span><span class="pt">コナミワイワイワールド</span></span><img loading="lazy" alt="コナミワイワイワールド" src="game_covers/c97.jpg" onerror="this.remove()"></span><figcaption class="ti">コナミワイワイワールド</figcaption></figure>
+<figure class="m t100" data-cid="21" style="--i:66;--h:282"><span class="rk">66</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ドラゴンクエスト10</span></span><img loading="lazy" alt="ドラゴンクエスト10" src="game_covers/c21.jpg" onerror="this.remove()"></span><figcaption class="ti">ドラゴンクエスト10</figcaption></figure>
+<figure class="m t100" data-cid="68" style="--i:65;--h:245"><span class="rk">65</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">WarCraft III</span></span><img loading="lazy" alt="WarCraft III" src="game_covers/c68.jpg" onerror="this.remove()"></span><figcaption class="ti">WarCraft III</figcaption></figure>
+<figure class="m t100" data-cid="80" style="--i:64;--h:208"><span class="rk">64</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">バーチャファイター2</span></span><img loading="lazy" alt="バーチャファイター2" src="game_covers/c80.jpg" onerror="this.remove()"></span><figcaption class="ti">バーチャファイター2</figcaption></figure>
+<figure class="m t100" data-cid="87" style="--i:63;--h:171"><span class="rk">63</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">beatmania IIDX</span></span><img loading="lazy" alt="beatmania IIDX" src="game_covers/c87.jpg" onerror="this.remove()"></span><figcaption class="ti">beatmania IIDX</figcaption></figure>
+<figure class="m t100" data-cid="58" style="--i:62;--h:134"><span class="rk">62</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">グラディウスII</span></span><img loading="lazy" alt="グラディウスII" src="game_covers/c58.jpg" onerror="this.remove()"></span><figcaption class="ti">グラディウスII</figcaption></figure>
+<figure class="m t100" data-cid="44" style="--i:61;--h:97"><span class="rk">61</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">レイジングループ</span></span><img loading="lazy" alt="レイジングループ" src="game_covers/c44.jpg" onerror="this.remove()"></span><figcaption class="ti">レイジングループ</figcaption></figure>
+<figure class="m t100" data-cid="83" style="--i:60;--h:60"><span class="rk">60</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">ストリートファイターIII 3rd STRIKE</span></span><img loading="lazy" alt="ストリートファイターIII 3rd STRIKE" src="game_covers/c83.jpg" onerror="this.remove()"></span><figcaption class="ti">ストリートファイターIII 3rd STRIKE</figcaption></figure>
+<figure class="m t100" data-cid="71" style="--i:59;--h:23"><span class="rk">59</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">Plants vs. Zombies</span></span><img loading="lazy" alt="Plants vs. Zombies" src="game_covers/c71.jpg" onerror="this.remove()"></span><figcaption class="ti">Plants vs. Zombies</figcaption></figure>
+<figure class="m t100" data-cid="86" style="--i:58;--h:346"><span class="rk">58</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">DDR（Dance Dance Revolution）</span></span><img loading="lazy" alt="DDR（Dance Dance Revolution）" src="game_covers/c86.jpg" onerror="this.remove()"></span><figcaption class="ti">DDR（Dance Dance Revolution）</figcaption></figure>
+<figure class="m t100" data-cid="89" style="--i:57;--h:309"><span class="rk">57</span><span class="cv"><span class="ph"><span class="pe">🌟</span><span class="pt">God of War</span></span><img loading="lazy" alt="God of War" src="game_covers/c89.jpg" onerror="this.remove()"></span><figcaption class="ti">God of War</figcaption></figure>
+<figure class="m t100" data-cid="66" style="--i:56;--h:272"><span class="rk">56</span><span class="cv"><span class="ph"><span class="pe">🔫</span><span class="pt">Unreal Tournament</span></span><img loading="lazy" alt="Unreal Tournament" src="game_covers/c66.jpg" onerror="this.remove()"></span><figcaption class="ti">Unreal Tournament</figcaption></figure>
+<figure class="m t100" data-cid="59" style="--i:55;--h:235"><span class="rk">55</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">グラディウスIII</span></span><img loading="lazy" alt="グラディウスIII" src="game_covers/c59.jpg" onerror="this.remove()"></span><figcaption class="ti">グラディウスIII</figcaption></figure>
+<figure class="m t100" data-cid="12" style="--i:54;--h:198"><span class="rk">54</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">ICO</span></span><img loading="lazy" alt="ICO" src="game_covers/c12.jpg" onerror="this.remove()"></span><figcaption class="ti">ICO</figcaption></figure>
+<figure class="m t100" data-cid="23" style="--i:53;--h:161"><span class="rk">53</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ファイナルファンタジー4</span></span><img loading="lazy" alt="ファイナルファンタジー4" src="game_covers/c23.jpg" onerror="this.remove()"></span><figcaption class="ti">ファイナルファンタジー4</figcaption></figure>
+<figure class="m t100" data-cid="16" style="--i:52;--h:124"><span class="rk">52</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">スーパーマリオRPG</span></span><img loading="lazy" alt="スーパーマリオRPG" src="game_covers/c16.jpg" onerror="this.remove()"></span><figcaption class="ti">スーパーマリオRPG</figcaption></figure>
+<figure class="m t100" data-cid="95" style="--i:51;--h:87"><span class="rk">51</span><span class="cv"><span class="ph"><span class="pe">🕹️</span><span class="pt">悪魔城ドラキュラX 月下の夜想曲</span></span><img loading="lazy" alt="悪魔城ドラキュラX 月下の夜想曲" src="game_covers/c95.jpg" onerror="this.remove()"></span><figcaption class="ti">悪魔城ドラキュラX 月下の夜想曲</figcaption></figure>
+  </div>
+</section>
+<section class="tier t50">
+  <div class="banner"><span class="bemo">🔥</span><div><h2>BEST 50</h2><p>50位 → 21位　ここから本気♪</p></div></div>
+  <div class="grid">
+<figure class="m t50" data-cid="26" style="--i:50;--h:50"><span class="rk">50</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ファイナルファンタジー7</span></span><img loading="lazy" alt="ファイナルファンタジー7" src="game_covers/c26.jpg" onerror="this.remove()"></span><figcaption class="ti">ファイナルファンタジー7</figcaption></figure>
+<figure class="m t50" data-cid="27" style="--i:49;--h:13"><span class="rk">49</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">NieR:Automata</span></span><img loading="lazy" alt="NieR:Automata" src="game_covers/c27.jpg" onerror="this.remove()"></span><figcaption class="ti">NieR:Automata</figcaption></figure>
+<figure class="m t50" data-cid="15" style="--i:48;--h:336"><span class="rk">48</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">LIVE A LIVE</span></span><img loading="lazy" alt="LIVE A LIVE" src="game_covers/c15.jpg" onerror="this.remove()"></span><figcaption class="ti">LIVE A LIVE</figcaption></figure>
+<figure class="m t50" data-cid="17" style="--i:47;--h:299"><span class="rk">47</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">魔界塔士Sa・Ga2 秘宝伝説</span></span><img loading="lazy" alt="魔界塔士Sa・Ga2 秘宝伝説" src="game_covers/c17.jpg" onerror="this.remove()"></span><figcaption class="ti">魔界塔士Sa・Ga2 秘宝伝説</figcaption></figure>
+<figure class="m t50" data-cid="74" style="--i:46;--h:262"><span class="rk">46</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">PAINKILLER</span></span><img loading="lazy" alt="PAINKILLER" src="game_covers/c74.jpg" onerror="this.remove()"></span><figcaption class="ti">PAINKILLER</figcaption></figure>
+<figure class="m t50" data-cid="85" style="--i:45;--h:225"><span class="rk">45</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">将棋ウォーズ</span></span><img loading="lazy" alt="将棋ウォーズ" src="game_covers/c85.jpg" onerror="this.remove()"></span><figcaption class="ti">将棋ウォーズ</figcaption></figure>
+<figure class="m t50" data-cid="20" style="--i:44;--h:188"><span class="rk">44</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ドラゴンクエスト5</span></span><img loading="lazy" alt="ドラゴンクエスト5" src="game_covers/c20.jpg" onerror="this.remove()"></span><figcaption class="ti">ドラゴンクエスト5</figcaption></figure>
+<figure class="m t50" data-cid="22" style="--i:43;--h:151"><span class="rk">43</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ファイナルファンタジー3</span></span><img loading="lazy" alt="ファイナルファンタジー3" src="game_covers/c22.jpg" onerror="this.remove()"></span><figcaption class="ti">ファイナルファンタジー3</figcaption></figure>
+<figure class="m t50" data-cid="31" style="--i:42;--h:114"><span class="rk">42</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">デビルサマナー</span></span><img loading="lazy" alt="デビルサマナー" src="game_covers/c31.jpg" onerror="this.remove()"></span><figcaption class="ti">デビルサマナー</figcaption></figure>
+<figure class="m t50" data-cid="28" style="--i:41;--h:77"><span class="rk">41</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">真・女神転生</span></span><img loading="lazy" alt="真・女神転生" src="game_covers/c28.jpg" onerror="this.remove()"></span><figcaption class="ti">真・女神転生</figcaption></figure>
+<figure class="m t50" data-cid="35" style="--i:40;--h:40"><span class="rk">40</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">トルネコの大冒険 不思議のダンジョン</span></span><img loading="lazy" alt="トルネコの大冒険 不思議のダンジョン" src="game_covers/c35.jpg" onerror="this.remove()"></span><figcaption class="ti">トルネコの大冒険 不思議のダンジョン</figcaption></figure>
+<figure class="m t50" data-cid="51" style="--i:39;--h:3"><span class="rk">39</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">AIR</span></span><img loading="lazy" alt="AIR" src="game_covers/c51.jpg" onerror="this.remove()"></span><figcaption class="ti">AIR</figcaption></figure>
+<figure class="m t50" data-cid="43" style="--i:38;--h:326"><span class="rk">38</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">STEINS;GATE</span></span><img loading="lazy" alt="STEINS;GATE" src="game_covers/c43.jpg" onerror="this.remove()"></span><figcaption class="ti">STEINS;GATE</figcaption></figure>
+<figure class="m t50" data-cid="70" style="--i:37;--h:289"><span class="rk">37</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">Left 4 Dead</span></span><img loading="lazy" alt="Left 4 Dead" src="game_covers/c70.jpg" onerror="this.remove()"></span><figcaption class="ti">Left 4 Dead</figcaption></figure>
+<figure class="m t50" data-cid="69" style="--i:36;--h:252"><span class="rk">36</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">StarCraft</span></span><img loading="lazy" alt="StarCraft" src="game_covers/c69.jpg" onerror="this.remove()"></span><figcaption class="ti">StarCraft</figcaption></figure>
+<figure class="m t50" data-cid="29" style="--i:35;--h:215"><span class="rk">35</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">真・女神転生II</span></span><img loading="lazy" alt="真・女神転生II" src="game_covers/c29.jpg" onerror="this.remove()"></span><figcaption class="ti">真・女神転生II</figcaption></figure>
+<figure class="m t50" data-cid="32" style="--i:34;--h:178"><span class="rk">34</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">英雄伝説3 白き魔女</span></span><img loading="lazy" alt="英雄伝説3 白き魔女" src="game_covers/c32.jpg" onerror="this.remove()"></span><figcaption class="ti">英雄伝説3 白き魔女</figcaption></figure>
+<figure class="m t50" data-cid="62" style="--i:33;--h:141"><span class="rk">33</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">Gダライアス</span></span><img loading="lazy" alt="Gダライアス" src="game_covers/c62.jpg" onerror="this.remove()"></span><figcaption class="ti">Gダライアス</figcaption></figure>
+<figure class="m t50" data-cid="100" style="--i:32;--h:104"><span class="rk">32</span><span class="cv"><span class="ph"><span class="pe">🕹️</span><span class="pt">セガラリー</span></span><img loading="lazy" alt="セガラリー" src="game_covers/c100.jpg" onerror="this.remove()"></span><figcaption class="ti">セガラリー</figcaption></figure>
+<figure class="m t50" data-cid="78" style="--i:31;--h:67"><span class="rk">31</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">TETRIS THE GRAND MASTER 4 -ABSOLUTE EYE-</span></span><img loading="lazy" alt="TETRIS THE GRAND MASTER 4 -ABSOLUTE EYE-" src="game_covers/c78.jpg" onerror="this.remove()"></span><figcaption class="ti">TETRIS THE GRAND MASTER 4 -ABSOLUTE EYE-</figcaption></figure>
+<figure class="m t50" data-cid="90" style="--i:30;--h:30"><span class="rk">30</span><span class="cv"><span class="ph"><span class="pe">🌟</span><span class="pt">ロックマン2</span></span><img loading="lazy" alt="ロックマン2" src="game_covers/c90.jpg" onerror="this.remove()"></span><figcaption class="ti">ロックマン2</figcaption></figure>
+<figure class="m t50" data-cid="40" style="--i:29;--h:353"><span class="rk">29</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">スーパーダンガンロンパ2</span></span><img loading="lazy" alt="スーパーダンガンロンパ2" src="game_covers/c40.jpg" onerror="this.remove()"></span><figcaption class="ti">スーパーダンガンロンパ2</figcaption></figure>
+<figure class="m t50" data-cid="79" style="--i:28;--h:316"><span class="rk">28</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">スーパーストリートファイターII X</span></span><img loading="lazy" alt="スーパーストリートファイターII X" src="game_covers/c79.jpg" onerror="this.remove()"></span><figcaption class="ti">スーパーストリートファイターII X</figcaption></figure>
+<figure class="m t50" data-cid="98" style="--i:27;--h:279"><span class="rk">27</span><span class="cv"><span class="ph"><span class="pe">🕹️</span><span class="pt">NiGHTS into dreams...</span></span><img loading="lazy" alt="NiGHTS into dreams..." src="game_covers/c98.jpg" onerror="this.remove()"></span><figcaption class="ti">NiGHTS into dreams...</figcaption></figure>
+<figure class="m t50" data-cid="55" style="--i:26;--h:242"><span class="rk">26</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">ブランディッシュ3</span></span><img loading="lazy" alt="ブランディッシュ3" src="game_covers/c55.jpg" onerror="this.remove()"></span><figcaption class="ti">ブランディッシュ3</figcaption></figure>
+<figure class="m t50" data-cid="10" style="--i:25;--h:205"><span class="rk">25</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">スーパーマリオブラザーズ2（ディスクシステム）</span></span><img loading="lazy" alt="スーパーマリオブラザーズ2（ディスクシステム）" src="game_covers/c10.jpg" onerror="this.remove()"></span><figcaption class="ti">スーパーマリオブラザーズ2（ディスクシステム）</figcaption></figure>
+<figure class="m t50" data-cid="48" style="--i:24;--h:168"><span class="rk">24</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">街 〜運命の交差点〜</span></span><img loading="lazy" alt="街 〜運命の交差点〜" src="game_covers/c48.jpg" onerror="this.remove()"></span><figcaption class="ti">街 〜運命の交差点〜</figcaption></figure>
+<figure class="m t50" data-cid="52" style="--i:23;--h:131"><span class="rk">23</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">Kanon</span></span><img loading="lazy" alt="Kanon" src="game_covers/c52.jpg" onerror="this.remove()"></span><figcaption class="ti">Kanon</figcaption></figure>
+<figure class="m t50" data-cid="18" style="--i:22;--h:94"><span class="rk">22</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ドラゴンクエスト3</span></span><img loading="lazy" alt="ドラゴンクエスト3" src="game_covers/c18.jpg" onerror="this.remove()"></span><figcaption class="ti">ドラゴンクエスト3</figcaption></figure>
+<figure class="m t50" data-cid="39" style="--i:21;--h:57"><span class="rk">21</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">ダンガンロンパ 希望の学園と絶望の高校生</span></span><img loading="lazy" alt="ダンガンロンパ 希望の学園と絶望の高校生" src="game_covers/c39.jpg" onerror="this.remove()"></span><figcaption class="ti">ダンガンロンパ 希望の学園と絶望の高校生</figcaption></figure>
+  </div>
+</section>
+<section class="tier t20">
+  <div class="banner"><span class="bemo">💎</span><div><h2>BEST 20</h2><p>20位 → 11位　神ゲーぞろい！</p></div></div>
+  <div class="grid">
+<figure class="m t20" data-cid="60" style="--i:20;--h:20"><span class="rk">20</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">グラディウス外伝</span></span><img loading="lazy" alt="グラディウス外伝" src="game_covers/c60.jpg" onerror="this.remove()"></span><figcaption class="ti">グラディウス外伝</figcaption></figure>
+<figure class="m t20" data-cid="6" style="--i:19;--h:343"><span class="rk">19</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">スーパーマリオワールド</span></span><img loading="lazy" alt="スーパーマリオワールド" src="game_covers/c6.jpg" onerror="this.remove()"></span><figcaption class="ti">スーパーマリオワールド</figcaption></figure>
+<figure class="m t20" data-cid="47" style="--i:18;--h:306"><span class="rk">18</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">スウィートホーム</span></span><img loading="lazy" alt="スウィートホーム" src="game_covers/c47.jpg" onerror="this.remove()"></span><figcaption class="ti">スウィートホーム</figcaption></figure>
+<figure class="m t20" data-cid="33" style="--i:17;--h:269"><span class="rk">17</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">クロノトリガー</span></span><img loading="lazy" alt="クロノトリガー" src="game_covers/c33.jpg" onerror="this.remove()"></span><figcaption class="ti">クロノトリガー</figcaption></figure>
+<figure class="m t20" data-cid="54" style="--i:16;--h:232"><span class="rk">16</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">痕</span></span><img loading="lazy" alt="痕" src="game_covers/c54.jpg" onerror="this.remove()"></span><figcaption class="ti">痕</figcaption></figure>
+<figure class="m t20" data-cid="37" style="--i:15;--h:195"><span class="rk">15</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">かまいたちの夜</span></span><img loading="lazy" alt="かまいたちの夜" src="game_covers/c37.jpg" onerror="this.remove()"></span><figcaption class="ti">かまいたちの夜</figcaption></figure>
+<figure class="m t20" data-cid="25" style="--i:14;--h:158"><span class="rk">14</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ファイナルファンタジー6</span></span><img loading="lazy" alt="ファイナルファンタジー6" src="game_covers/c25.jpg" onerror="this.remove()"></span><figcaption class="ti">ファイナルファンタジー6</figcaption></figure>
+<figure class="m t20" data-cid="14" style="--i:13;--h:121"><span class="rk">13</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">聖剣伝説2</span></span><img loading="lazy" alt="聖剣伝説2" src="game_covers/c14.jpg" onerror="this.remove()"></span><figcaption class="ti">聖剣伝説2</figcaption></figure>
+<figure class="m t20" data-cid="3" style="--i:12;--h:84"><span class="rk">12</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">ゼルダの伝説 神々のトライフォース</span></span><img loading="lazy" alt="ゼルダの伝説 神々のトライフォース" src="game_covers/c3.jpg" onerror="this.remove()"></span><figcaption class="ti">ゼルダの伝説 神々のトライフォース</figcaption></figure>
+<figure class="m t20" data-cid="57" style="--i:11;--h:47"><span class="rk">11</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">怒首領蜂</span></span><img loading="lazy" alt="怒首領蜂" src="game_covers/c57.jpg" onerror="this.remove()"></span><figcaption class="ti">怒首領蜂</figcaption></figure>
+  </div>
+</section>
+<section class="tier t10">
+  <div class="banner"><span class="bemo">🏆</span><div><h2>TOP 10</h2><p>10位 → 4位　殿堂入り！</p></div></div>
+  <div class="grid">
+<figure class="m t10" data-cid="56" style="--i:10;--h:10"><span class="rk">10</span><span class="cv"><span class="ph"><span class="pe">🚀</span><span class="pt">レイディアント シルバーガン</span></span><img loading="lazy" alt="レイディアント シルバーガン" src="game_covers/c56.jpg" onerror="this.remove()"></span><figcaption class="ti">レイディアント シルバーガン</figcaption></figure>
+<figure class="m t10" data-cid="64" style="--i:9;--h:333"><span class="rk">9</span><span class="cv"><span class="ph"><span class="pe">🔫</span><span class="pt">QUAKE II</span></span><img loading="lazy" alt="QUAKE II" src="game_covers/c64.jpg" onerror="this.remove()"></span><figcaption class="ti">QUAKE II</figcaption></figure>
+<figure class="m t10" data-cid="77" style="--i:8;--h:296"><span class="rk">8</span><span class="cv"><span class="ph"><span class="pe">🎯</span><span class="pt">テトリス グランドマスター2 THE ABSOLUTE PLUS</span></span><img loading="lazy" alt="テトリス グランドマスター2 THE ABSOLUTE PLUS" src="game_covers/c77.jpg" onerror="this.remove()"></span><figcaption class="ti">テトリス グランドマスター2 THE ABSOLUTE PLUS</figcaption></figure>
+<figure class="m t10" data-cid="24" style="--i:7;--h:259"><span class="rk">7</span><span class="cv"><span class="ph"><span class="pe">⚔️</span><span class="pt">ファイナルファンタジー5</span></span><img loading="lazy" alt="ファイナルファンタジー5" src="game_covers/c24.jpg" onerror="this.remove()"></span><figcaption class="ti">ファイナルファンタジー5</figcaption></figure>
+<figure class="m t10" data-cid="67" style="--i:6;--h:222"><span class="rk">6</span><span class="cv"><span class="ph"><span class="pe">🖥️</span><span class="pt">ディアブロII</span></span><img loading="lazy" alt="ディアブロII" src="game_covers/c67.jpg" onerror="this.remove()"></span><figcaption class="ti">ディアブロII</figcaption></figure>
+<figure class="m t10" data-cid="42" style="--i:5;--h:185"><span class="rk">5</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">ひぐらしのなく頃に</span></span><img loading="lazy" alt="ひぐらしのなく頃に" src="game_covers/c42.jpg" onerror="this.remove()"></span><figcaption class="ti">ひぐらしのなく頃に</figcaption></figure>
+<figure class="m t10" data-cid="65" style="--i:4;--h:148"><span class="rk">4</span><span class="cv"><span class="ph"><span class="pe">🔫</span><span class="pt">UNREAL</span></span><img loading="lazy" alt="UNREAL" src="game_covers/c65.jpg" onerror="this.remove()"></span><figcaption class="ti">UNREAL</figcaption></figure>
+  </div>
+</section>
+<section class="tier t3">
+  <div class="banner"><span class="bemo">🥈</span><div><h2>BEST 3</h2><p>3位・2位　表彰台！</p></div></div>
+  <div class="grid">
+<figure class="m t3" data-cid="1" style="--i:3;--h:111"><span class="rk">3</span><span class="cv"><span class="ph"><span class="pe">🎮</span><span class="pt">ブレス オブ ザ ワイルド</span></span><img loading="lazy" alt="ブレス オブ ザ ワイルド" src="game_covers/c1.jpg" onerror="this.remove()"></span><figcaption class="ti">ブレス オブ ザ ワイルド</figcaption></figure>
+<figure class="m t3" data-cid="41" style="--i:2;--h:74"><span class="rk">2</span><span class="cv"><span class="ph"><span class="pe">📖</span><span class="pt">うみねこのなく頃に</span></span><img loading="lazy" alt="うみねこのなく頃に" src="game_covers/c41.jpg" onerror="this.remove()"></span><figcaption class="ti">うみねこのなく頃に</figcaption></figure>
+  </div>
+</section>
+
+<section class="tier t1" id="no1">
+  <div class="spark"><span style="--n:0">✨</span><span style="--n:1">✨</span><span style="--n:2">✨</span><span style="--n:3">✨</span><span style="--n:4">✨</span><span style="--n:5">✨</span><span style="--n:6">✨</span><span style="--n:7">✨</span><span style="--n:8">✨</span><span style="--n:9">✨</span><span style="--n:10">✨</span><span style="--n:11">✨</span><span style="--n:12">✨</span><span style="--n:13">✨</span></div>
+  <div class="crownwrap"><div class="crown">👑</div><div class="no1label">第 1 位</div></div>
+  <figure class="herocard" data-cid="2">
+    <div class="heroglow"></div>
+    <span class="cv" style="--h:37"><span class="ph"><span class="pe">🎮</span><span class="pt">ティアーズ オブ ザ キングダム</span></span><img alt="ティアーズ オブ ザ キングダム" src="game_covers/c2.jpg" onerror="this.remove()"></span>
+    <figcaption>
+      <span class="no1tag">堂々の N o . 1 🎉</span>
+      <h2 class="herotitle">ティアーズ オブ ザ キングダム</h2>
+      <p class="herosub">バトラの「思い入れのあるゲーム」第1位はコレ！</p>
+    </figcaption>
+  </figure>
+</section>
+
+  <footer>
+    全100タイトル ✦ レトロ〜現行・PC洋ゲーまで全部入り ✦ <a href="manga.html">マンガ100</a>／<a href="command.htm">コマンドずかん</a>／<a href="voicevox.html">声の図鑑</a> もどうぞ 💖<br>
+    <a href="index.html">← トップへ戻る</a><br>
+    <a href="rank_edit.html">✏️ 順位を編集（ドラッグ&ドロップ）</a>
+  </footer>
+
+  <div class="ov" id="ov"><div class="mod" id="mod"><button class="mx" id="mx" aria-label="閉じる">✕</button><div id="mbody"></div></div></div>
+
+<script>const GD = {"2": {"t": "ティアーズ オブ ザ キングダム", "intro": "空と地底まで世界が拡張。ウルトラハンドで創意工夫が無限に広がる続編。", "genre": "オープンワールドアクションADV", "year": "2023", "plat": "Switch", "played": "2026", "m": 10, "i": 10, "f": 9, "r": 7, "mu": 6}, "41": {"t": "うみねこのなく頃に", "intro": "孤島の連続殺人と魔女。推理か幻想か、究極の知恵比べ。", "genre": "サウンドノベル", "year": "2007", "plat": "PC", "played": "2008-2010", "m": 9, "i": 9, "f": 8, "r": 4, "mu": 7}, "1": {"t": "ブレス オブ ザ ワイルド", "intro": "広大なハイラルをどこへでも。自由な探索と物理パズルでゼルダを再発明した金字塔。", "genre": "オープンワールドアクションADV", "year": "2017", "plat": "Switch", "played": "2025", "m": 8, "i": 9, "f": 9, "r": 7, "mu": 6}, "65": {"t": "UNREAL", "intro": "美麗エンジンで魅せた異星探索FPS。Unrealの始まり。", "genre": "FPS", "year": "1998", "plat": "PC", "played": "1998", "m": 10, "i": 8, "f": 8, "r": 3, "mu": 3}, "42": {"t": "ひぐらしのなく頃に", "intro": "雛見沢の惨劇を繰り返す。謎と恐怖と友情の同人傑作。", "genre": "サウンドノベル", "year": "2002", "plat": "PC", "played": "2004-2007", "m": 8, "i": 9, "f": 8, "r": 5, "mu": 8}, "67": {"t": "ディアブロII", "intro": "暗黒世界でひたすら狩る。ハクスラの不朽の名作。", "genre": "ハクスラARPG", "year": "2000", "plat": "PC", "played": "2000", "m": 10, "i": 5, "f": 8, "r": 5, "mu": 5}, "24": {"t": "ファイナルファンタジー5", "intro": "ジョブとアビリティの自由な組合せ。やり込みの金字塔。", "genre": "RPG", "year": "1992", "plat": "SFC", "played": "1992", "m": 9, "i": 5, "f": 9, "r": 5, "mu": 9}, "77": {"t": "テトリス グランドマスター2 THE ABSOLUTE PLUS", "intro": "超高速落下の上級者向けテトリス。TGMの代表作。", "genre": "パズル", "year": "2000", "plat": "アーケード", "played": "2002-2012", "m": 8, "i": 8, "f": 10, "r": 3, "mu": 8}, "64": {"t": "QUAKE II", "intro": "id Software。ストロッグとの戦い、3D FPSの礎。", "genre": "FPS", "year": "1997", "plat": "PC", "played": "1997", "m": 8, "i": 8, "f": 8, "r": 4, "mu": 4}, "56": {"t": "レイディアント シルバーガン", "intro": "トレジャー製の縦STG。多彩なショットと濃密な演出。", "genre": "STG", "year": "1998", "plat": "SS", "played": "2000", "m": 7, "i": 9, "f": 9, "r": 5, "mu": 8}, "57": {"t": "怒首領蜂", "intro": "ケイブ弾幕STGの代表格。レーザーと敵弾の美学。", "genre": "STG", "year": "1997", "plat": "アーケード", "played": "1997", "m": 9, "i": 9, "f": 7, "r": 5, "mu": 6}, "3": {"t": "ゼルダの伝説 神々のトライフォース", "intro": "光と闇の2つの世界を行き来する名作。見下ろし型ゼルダの完成形。", "genre": "アクションADV", "year": "1991", "plat": "SFC", "played": "1991", "m": 8, "i": 6, "f": 8, "r": 6, "mu": 8}, "14": {"t": "聖剣伝説2", "intro": "リングコマンドと協力プレイのアクションRPG。美しい世界と音楽。", "genre": "アクションRPG", "year": "1993", "plat": "SFC", "played": "1993", "m": 8, "i": 7, "f": 8, "r": 6, "mu": 8}, "25": {"t": "ファイナルファンタジー6", "intro": "多人数群像と魔導の世界。完成度の高いドット表現と物語。", "genre": "RPG", "year": "1994", "plat": "SFC", "played": "1994", "m": 9, "i": 6, "f": 7, "r": 6, "mu": 8}, "37": {"t": "かまいたちの夜", "intro": "雪山のペンションの連続殺人。選択で分岐する元祖サウンドノベル。", "genre": "サウンドノベル", "year": "1994", "plat": "SFC", "played": "1994", "m": 8, "i": 8, "f": 8, "r": 7, "mu": 7}, "54": {"t": "痕", "intro": "Leaf。旧家の因習と鬼の血を巡る伝奇サスペンスノベル。", "genre": "ビジュアルノベル", "year": "1996", "plat": "PC-98", "played": "1996", "m": 8, "i": 9, "f": 8, "r": 8, "mu": 8}, "33": {"t": "クロノトリガー", "intro": "時を越える冒険。豪華スタッフ、連携技とマルチエンドの傑作。", "genre": "RPG", "year": "1995", "plat": "SFC", "played": "1995", "m": 6, "i": 6, "f": 8, "r": 9, "mu": 9}, "47": {"t": "スウィートホーム", "intro": "映画原作のFC作。バイオの源流とされる先駆的ホラー。", "genre": "ホラーRPG", "year": "1989", "plat": "FC", "played": "1989-90", "m": 8, "i": 8, "f": 8, "r": 7, "mu": 9}, "6": {"t": "スーパーマリオワールド", "intro": "ヨッシー初登場。SFC黎明を飾った2Dマリオの傑作。", "genre": "2Dアクション", "year": "1990", "plat": "SFC", "played": "1990", "m": 7, "i": 7, "f": 8, "r": 5, "mu": 7}, "60": {"t": "グラディウス外伝", "intro": "シリーズ集大成のPS作。4機体と豪華演出の横STG。", "genre": "STG", "year": "1997", "plat": "PS", "played": "1997", "m": 6, "i": 5, "f": 7, "r": 5, "mu": 8}, "39": {"t": "ダンガンロンパ 希望の学園と絶望の高校生", "intro": "学級裁判で殺人を暴くハイスピード推理アクション。", "genre": "推理ADV", "year": "2010", "plat": "PSP", "played": "2010", "m": 7, "i": 8, "f": 8, "r": 8, "mu": 8}, "18": {"t": "ドラゴンクエスト3", "intro": "そして伝説へ。職業システムと壮大な物語、社会現象を起こした名作。", "genre": "RPG", "year": "1988", "plat": "FC", "played": "198", "m": 10, "i": 5, "f": 6, "r": 5, "mu": 9}, "52": {"t": "Kanon", "intro": "雪の街の奇跡の物語。泣きゲーブームの先駆。", "genre": "ビジュアルノベル", "year": "1999", "plat": "PC", "played": "1999", "m": 8, "i": 6, "f": 7, "r": 7, "mu": 8}, "48": {"t": "街 〜運命の交差点〜", "intro": "渋谷の群像をザッピングで描く実写サウンドノベルの金字塔。", "genre": "サウンドノベル", "year": "1998", "plat": "SS", "played": "1998", "m": 7, "i": 8, "f": 8, "r": 8, "mu": 4}, "10": {"t": "スーパーマリオブラザーズ2（ディスクシステム）", "intro": "通称マリオ2。前作より高難度の鬼畜ステージで腕に覚えのある人向け。", "genre": "2Dアクション", "year": "1986", "plat": "FCディスク", "played": "1988-1989", "m": 8, "i": 6, "f": 6, "r": 5, "mu": 6}, "55": {"t": "ブランディッシュ3", "intro": "視点が回転する迷宮探索アクションRPG。ファルコムの名作。", "genre": "アクションRPG", "year": "1994", "plat": "PC-98", "played": "1994", "m": 8, "i": 7, "f": 6, "r": 7, "mu": 8}, "98": {"t": "NiGHTS into dreams...", "intro": "夢の中を舞うように飛ぶ。セガサターンの幻想的名作。", "genre": "アクション", "year": "1996", "plat": "SS", "played": "1996", "m": 8, "i": 7, "f": 7, "r": 5, "mu": 8}, "79": {"t": "スーパーストリートファイターII X", "intro": "スパIIの完成版。スーパーコンボ搭載、格闘の金字塔。", "genre": "対戦格闘", "year": "1994", "plat": "アーケード", "played": "1994", "m": 7, "i": 5, "f": 7, "r": 5, "mu": 7}, "40": {"t": "スーパーダンガンロンパ2", "intro": "南の島で再び繰り返される殺し合い。衝撃の真相。", "genre": "推理ADV", "year": "2012", "plat": "PSP", "played": "2012", "m": 7, "i": 8, "f": 8, "r": 8, "mu": 6}, "90": {"t": "ロックマン2", "intro": "8大ボスと弱点武器。ロックマン人気を決定づけた名作。", "genre": "2Dアクション", "year": "1988", "plat": "FC", "played": "1988-2000", "m": 9, "i": 5, "f": 6, "r": 5, "mu": 9}, "78": {"t": "TETRIS THE GRAND MASTER 4 -ABSOLUTE EYE-", "intro": "20年ぶりのTGM新作。アリカの超硬派テトリス。", "genre": "パズル", "year": "2025", "plat": "Switch/Steam", "played": "2025-2026", "m": 5, "i": 9, "f": 9, "r": 5, "mu": 9}, "100": {"t": "セガラリー", "intro": "ダート路面の駆け引き。アーケードラリーの傑作。", "genre": "レース", "year": "1995", "plat": "アーケード", "played": "1995", "m": 7, "i": 6, "f": 8, "r": 5, "mu": 9}, "62": {"t": "Gダライアス", "intro": "捕獲システムと巨大戦艦。タイトーの3D横STG。", "genre": "STG", "year": "1997", "plat": "アーケード", "played": "1997", "m": 7, "i": 8, "f": 7, "r": 5, "mu": 9}, "32": {"t": "英雄伝説3 白き魔女", "intro": "ガガーブ三部作の始まり。温かな物語と名曲の軌跡シリーズ。", "genre": "RPG", "year": "1994", "plat": "PC-98", "played": "1994", "m": 8, "i": 8, "f": 7, "r": 8, "mu": 8}, "29": {"t": "真・女神転生II", "intro": "管理社会の東京で神と対峙。シリーズの方向性を決めた一作。", "genre": "RPG", "year": "1994", "plat": "SFC", "played": "1994", "m": 5, "i": 8, "f": 7, "r": 8, "mu": 8}, "69": {"t": "StarCraft", "intro": "3種族の非対称バランス。eスポーツの礎を築いたRTS。", "genre": "RTS", "year": "1998", "plat": "PC", "played": "1998-2000", "m": 8, "i": 8, "f": 8, "r": 6, "mu": 5}, "70": {"t": "Left 4 Dead", "intro": "4人協力でゾンビの大群を切り抜ける緊張の協力FPS。", "genre": "協力FPS", "year": "2008", "plat": "PC", "played": "2008-2010", "m": 10, "i": 8, "f": 8, "r": 6, "mu": 4}, "43": {"t": "STEINS;GATE", "intro": "電話レンジでタイムリープ。緻密なSFと群像の名作ノベル。", "genre": "SF ADV", "year": "2009", "plat": "Xbox360", "played": "2009", "m": 8, "i": 8, "f": 9, "r": 9, "mu": 6}, "51": {"t": "AIR", "intro": "Key制作。夏と空、千年の物語。涙腺を直撃する名作ノベル。", "genre": "ビジュアルノベル", "year": "2000", "plat": "PC", "played": "2000", "m": 7, "i": 7, "f": 6, "r": 6, "mu": 8}, "35": {"t": "トルネコの大冒険 不思議のダンジョン", "intro": "入る度に変わる迷宮。不思議のダンジョンシリーズの原点。", "genre": "ローグライク", "year": "1993", "plat": "SFC", "played": "1993", "m": 8, "i": 8, "f": 8, "r": 5, "mu": 6}, "28": {"t": "真・女神転生", "intro": "悪魔合体とロウ/カオス。退廃的世界観のメガテン原典格。", "genre": "RPG", "year": "1992", "plat": "SFC", "played": "1992", "m": 7, "i": 8, "f": 8, "r": 8, "mu": 8}, "31": {"t": "デビルサマナー", "intro": "現代を舞台にした悪魔召喚師もの。伝奇色の強いメガテン外伝。", "genre": "RPG", "year": "1995", "plat": "SS", "played": "1995", "m": 8, "i": 8, "f": 8, "r": 8, "mu": 9}, "22": {"t": "ファイナルファンタジー3", "intro": "ジョブチェンジを本格導入。冒険の幅が大きく広がった一作。", "genre": "RPG", "year": "1990", "plat": "FC", "played": "1990", "m": 7, "i": 5, "f": 7, "r": 6, "mu": 8}, "20": {"t": "ドラゴンクエスト5", "intro": "親子三代と花嫁選び、モンスター仲間。屈指の感動作。", "genre": "RPG", "year": "1992", "plat": "SFC", "played": "1992", "m": 7, "i": 6, "f": 7, "r": 7, "mu": 8}, "85": {"t": "将棋ウォーズ", "intro": "オンライン対戦将棋アプリ。手軽に強敵と指せる定番。", "genre": "対戦将棋", "year": "2013", "plat": "スマホ", "played": "2016-2020", "m": 9, "i": 10, "f": 8, "r": 4, "mu": 9}, "74": {"t": "PAINKILLER", "intro": "高速で撃ちまくる硬派なオールドスクールFPS。", "genre": "FPS", "year": "2004", "plat": "PC", "played": "2011", "m": 8, "i": 8, "f": 8, "r": 4, "mu": 4}, "17": {"t": "魔界塔士Sa・Ga2 秘宝伝説", "intro": "GBサガ第2作。種族システムと自由度、神を殴る衝撃の結末。", "genre": "RPG", "year": "1990", "plat": "GB", "played": "1990", "m": 6, "i": 6, "f": 8, "r": 8, "mu": 8}, "15": {"t": "LIVE A LIVE", "intro": "7つの時代の短編が交差する異色RPG。リメイクで再評価。", "genre": "RPG", "year": "1994", "plat": "SFC", "played": "1994", "m": 7, "i": 8, "f": 8, "r": 7, "mu": 8}, "27": {"t": "NieR:Automata", "intro": "アンドロイド2B達の戦い。周回で意味が反転する衝撃の物語。", "genre": "アクションRPG", "year": "2017", "plat": "PS4", "played": "2017", "m": 6, "i": 8, "f": 8, "r": 7, "mu": 8}, "26": {"t": "ファイナルファンタジー7", "intro": "3D表現で世界を変えた名作。クラウドとセフィロスの物語。", "genre": "RPG", "year": "1997", "plat": "PS", "played": "1998", "m": 5, "i": 6, "f": 7, "r": 6, "mu": 7}, "95": {"t": "悪魔城ドラキュラX 月下の夜想曲", "intro": "メトロイドヴァニアの傑作。広大な城を探索する。", "genre": "探索アクション", "year": "1997", "plat": "PS", "played": "1997", "m": 6, "i": 7, "f": 7, "r": 6, "mu": 7}, "16": {"t": "スーパーマリオRPG", "intro": "マリオ初のRPG。スクウェア制作、軽快な戦闘とユーモア。", "genre": "RPG", "year": "1996", "plat": "SFC", "played": "2025", "m": 7, "i": 9, "f": 8, "r": 6, "mu": 6}, "23": {"t": "ファイナルファンタジー4", "intro": "ATB導入、重厚な群像ドラマ。SFC RPGの到達点。", "genre": "RPG", "year": "1991", "plat": "SFC", "played": "1992", "m": 5, "i": 6, "f": 7, "r": 7, "mu": 8}, "12": {"t": "ICO", "intro": "少女ヨルダと手をつなぎ城を脱出。静謐で詩的な名作。", "genre": "アクションADV", "year": "2001", "plat": "PS2", "played": "2011", "m": 6, "i": 8, "f": 6, "r": 5, "mu": 5}, "59": {"t": "グラディウスIII", "intro": "伝説から神話へ。難度と多彩な装備のアーケード横STG。", "genre": "STG", "year": "1989", "plat": "アーケード", "played": "2003", "m": 7, "i": 5, "f": 6, "r": 4, "mu": 9}, "66": {"t": "Unreal Tournament", "intro": "対戦特化のアリーナFPS。爽快な撃ち合いの金字塔。", "genre": "FPS", "year": "1999", "plat": "PC", "played": "1999", "m": 7, "i": 7, "f": 6, "r": 4, "mu": 7}, "89": {"t": "God of War", "intro": "クレイトスと息子の旅。北欧神話の重厚なリブート作。", "genre": "アクションADV", "year": "2005", "plat": "PS4", "played": "2011", "m": 7, "i": 7, "f": 7, "r": 5, "mu": 4}, "86": {"t": "DDR（Dance Dance Revolution）", "intro": "足で踏む体感リズムゲーム。社会現象になった名作。", "genre": "音ゲー", "year": "1998", "plat": "アーケード", "played": "1999", "m": 7, "i": 7, "f": 5, "r": 4, "mu": 8}, "71": {"t": "Plants vs. Zombies", "intro": "植物でゾンビを撃退。中毒性抜群のTD。", "genre": "タワーディフェンス", "year": "2009", "plat": "PC", "played": "2010", "m": 7, "i": 5, "f": 8, "r": 5, "mu": 7}, "83": {"t": "ストリートファイターIII 3rd STRIKE", "intro": "ブロッキングの読み合い。格ゲー史に残る完成度。", "genre": "対戦格闘", "year": "1999", "plat": "アーケード", "played": "2000", "m": 6, "i": 6, "f": 7, "r": 5, "mu": 7}, "44": {"t": "レイジングループ", "intro": "因習村の人狼ゲーム。ループで真相に迫る和風サスペンス。", "genre": "ホラーADV", "year": "2015", "plat": "スマホ", "played": "2023", "m": 6, "i": 8, "f": 8, "r": 8, "mu": 5}, "58": {"t": "グラディウスII", "intro": "パワーアップ選択の横STG。名曲と高難度、人気の一作。", "genre": "STG", "year": "1988", "plat": "アーケード", "played": "2003", "m": 6, "i": null, "f": null, "r": null, "mu": null}, "87": {"t": "beatmania IIDX", "intro": "鍵盤とターンテーブルのDJゲーム。硬派な人気音ゲー。", "genre": "音ゲー", "year": "1999", "plat": "アーケード", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "80": {"t": "バーチャファイター2", "intro": "なめらかな3D格闘。アーケードを席巻した名作。", "genre": "3D対戦格闘", "year": "1994", "plat": "アーケード", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "68": {"t": "WarCraft III", "intro": "英雄ユニットとMOD文化の源流。名作RTS。", "genre": "RTS", "year": "2002", "plat": "PC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "21": {"t": "ドラゴンクエスト10", "intro": "オンラインのドラクエ。仲間と冒険する広大な世界。", "genre": "MMORPG", "year": "2012", "plat": "Wii", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "97": {"t": "コナミワイワイワールド", "intro": "コナミのオールスターが集合。FCのお祭りアクション。", "genre": "アクション", "year": "1987", "plat": "FC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "53": {"t": "雫", "intro": "Leaf初期。鬱屈と狂気を描く伝奇ノベル、葉鍵の源流。", "genre": "ビジュアルノベル", "year": "1996", "plat": "PC-98", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "72": {"t": "ウルティマオンライン", "intro": "自由度の高い元祖MMORPG。生活も冒険も思いのまま。", "genre": "MMORPG", "year": "1997", "plat": "PC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "91": {"t": "UNDERTALE", "intro": "誰も殺さず進める選択。心を揺さぶるインディーRPG。", "genre": "RPG", "year": "2015", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "61": {"t": "東方紺珠伝", "intro": "完全無欠の弾幕。月を巡る東方Projectの一作。", "genre": "STG", "year": "2015", "plat": "PC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "8": {"t": "スーパーマリオ オデッセイ", "intro": "帽子キャッピーで敵を乗っ取る箱庭3Dマリオ。世界を巡る祝祭。", "genre": "3Dアクション", "year": "2017", "plat": "Switch", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "75": {"t": "終ノ空", "intro": "屋上と終末。後の作品に影響を与えた鬱系伝説ノベル。", "genre": "ビジュアルノベル", "year": "1999", "plat": "PC-98", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "81": {"t": "鉄拳3", "intro": "横移動導入で進化した3D格闘。屈指の完成度。", "genre": "3D対戦格闘", "year": "1997", "plat": "アーケード", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "63": {"t": "斑鳩 IKARUGA", "intro": "白黒の属性反転で弾を吸収。トレジャーの硬派縦STG。", "genre": "STG", "year": "2001", "plat": "アーケード", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "94": {"t": "デイヴ・ザ・ダイバー", "intro": "昼は海に潜り夜は寿司屋。中毒性の高い海洋アドベンチャー。", "genre": "アクションADV", "year": "2023", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "88": {"t": "It Takes Two", "intro": "2人専用協力アクション。ギミック満載の感動作。", "genre": "協力アクション", "year": "2021", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "46": {"t": "都市伝説解体センター", "intro": "都市伝説の怪異を解き明かすデジタル探偵アドベンチャー。", "genre": "推理ADV", "year": "2025", "plat": "Switch/Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "76": {"t": "マインクラフト", "intro": "ブロックで何でも作れる。世界一売れた創造の箱庭。", "genre": "サンドボックス", "year": "2011", "plat": "PC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "45": {"t": "キミガシネ", "intro": "多数決デスゲーム。フリゲ発の人気サスペンスADV。", "genre": "推理ADV", "year": "2017", "plat": "PC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "19": {"t": "ドラゴンクエスト4", "intro": "章立てで群像を描く導かれし者たち。AIバトルを導入。", "genre": "RPG", "year": "1990", "plat": "FC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "99": {"t": "デイトナUSA", "intro": "セガの名作アーケードレース。あの歌と滑る挙動。", "genre": "レース", "year": "1994", "plat": "アーケード", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "82": {"t": "THE KING OF FIGHTERS '98", "intro": "ドリームマッチ。KOF屈指の傑作対戦格闘。", "genre": "対戦格闘", "year": "1998", "plat": "アーケード", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "36": {"t": "不思議のダンジョン 風来のシレン", "intro": "持ち込みなしの緊張感。シレンシリーズの傑作SFC作。", "genre": "ローグライク", "year": "1995", "plat": "SFC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "4": {"t": "ゼルダの伝説 夢をみる島", "intro": "島から目覚めるための旅。GBで描かれた小宇宙のような名作。", "genre": "アクションADV", "year": "1993", "plat": "GB", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "5": {"t": "星のカービィ ディスカバリー", "intro": "初の本格3Dカービィ。ほおばりヘンケイで物を吸い込み大変身。", "genre": "3Dアクション", "year": "2022", "plat": "Switch", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "49": {"t": "VA-11 Hall-A", "intro": "サイバーパンク世界のバーで酒を作り会話する一作。", "genre": "ADV", "year": "2016", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "34": {"t": "ロマンシング サガ2", "intro": "皇帝継承と閃きシステム。自由度の高いフリーシナリオRPG。", "genre": "RPG", "year": "1993", "plat": "SFC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "30": {"t": "真・女神転生III NOCTURNE", "intro": "受胎後の東京を彷徨う。プレスターンバトルの名作。", "genre": "RPG", "year": "2003", "plat": "PS2", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "7": {"t": "カエルのために鐘は鳴る", "intro": "サブレ王子の冒険。任天堂の軽妙なアクションRPG、後の作品に影響。", "genre": "アクションADV", "year": "1992", "plat": "GB", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "9": {"t": "ヨッシーストーリー", "intro": "絵本のような世界のヨッシー。フルーツを集めて進むやさしい一作。", "genre": "2Dアクション", "year": "1997", "plat": "N64", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "96": {"t": "レッドアリーマー（魔界村外伝）", "intro": "魔界村の宿敵が主役。GBのアクションRPG外伝。", "genre": "アクションRPG", "year": "1990", "plat": "GB", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "13": {"t": "朧村正", "intro": "浮世絵調の和風2D斬撃アクション。妖刀を打ち百鬼を斬る。", "genre": "2Dアクション", "year": "2009", "plat": "Wii", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "38": {"t": "弟切草", "intro": "嵐の洋館のホラー。サウンドノベルというジャンルを生んだ作品。", "genre": "サウンドノベル", "year": "1992", "plat": "SFC", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "73": {"t": "Slay the Spire", "intro": "カードを組み塔を登る。ジャンルを定義した傑作。", "genre": "デッキ構築ローグライク", "year": "2019", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "92": {"t": "CUPHEAD", "intro": "1930年代アニメ調の高難度ボスラッシュ。", "genre": "2Dアクション", "year": "2017", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "11": {"t": "ゼルダの伝説（初代）", "intro": "すべての原点。広大なフィールド探索とダンジョン攻略の発明。", "genre": "アクションADV", "year": "1986", "plat": "FCディスク", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "93": {"t": "PICO PARK", "intro": "全員協力でゴール。ワイワイ遊べる協力パズル。", "genre": "協力パズル", "year": "2016", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "84": {"t": "Deemo", "intro": "ピアノと物語の音楽ゲーム。美しい世界観のリズムゲー。", "genre": "音ゲー", "year": "2013", "plat": "スマホ", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}, "50": {"t": "魔法少女ノ魔女裁判", "intro": "魔法少女が裁かれる魔女裁判。ダークなフリゲ系推理ADV。", "genre": "推理ADV", "year": "2024", "plat": "Steam", "played": "", "m": null, "i": null, "f": null, "r": null, "mu": null}};</script>
+<script>
+  // reveal stagger within each grid row
+  document.querySelectorAll('.grid').forEach(g=>{
+    [...g.children].forEach((c,i)=>{c.style.animationDelay=(i%12*30)+'ms';});
+  });
+  // カバー画像が読めたらプレースホルダーを隠し、ポスター風(cover)に切替
+  document.querySelectorAll('.cv img').forEach(img=>{
+    const card=img.closest('.m,.herocard');
+    const reveal=()=>{const ph=img.parentElement.querySelector('.ph'); if(ph) ph.style.display='none';
+      // 縦長〜正方形の画像はポスター風に全面表示
+      if(card && img.naturalWidth && img.naturalHeight && img.naturalWidth/img.naturalHeight <= 1.1) card.classList.add('has-cover');};
+    if(img.complete && img.naturalWidth>0) reveal();
+    else img.addEventListener('load',reveal);
+  });
+
+  // ===== 詳細モーダル（画像タップ／クリックで表示） =====
+  const ov=document.getElementById('ov'), mb=document.getElementById('mbody');
+  const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const AX=[{k:'m',a:-90,c:'#ff5ea8',l:'思い入れ'},{k:'i',a:-18,c:'#ff8a3d',l:'衝撃'},{k:'f',a:54,c:'#36c5ff',l:'面白さ'},{k:'r',a:126,c:'#1bbf9a',l:'物語'},{k:'mu',a:198,c:'#9b5cff',l:'音楽'}];
+  function radar(d){
+    const R=70, rad=a=>a*Math.PI/180, P=(v,a)=>[((v||0)/10*R*Math.cos(rad(a))).toFixed(1),((v||0)/10*R*Math.sin(rad(a))).toFixed(1)];
+    const ringPts=s=>AX.map(x=>[(R*s*Math.cos(rad(x.a))).toFixed(1),(R*s*Math.sin(rad(x.a))).toFixed(1)].join(',')).join(' ');
+    const grid=[1,.66,.33].map(s=>`<polygon points="${ringPts(s)}" fill="none" stroke="#e6dbf8" stroke-width="1"/>`).join('');
+    const axes=AX.map(x=>`<line x1="0" y1="0" x2="${(R*Math.cos(rad(x.a))).toFixed(1)}" y2="${(R*Math.sin(rad(x.a))).toFixed(1)}" stroke="#ece3fb" stroke-width="1"/>`).join('');
+    const V=AX.map(x=>P(d[x.k],x.a));
+    const poly=V.map(p=>p.join(',')).join(' ');
+    const dots=V.map((p,k)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${AX[k].c}"/>`).join('');
+    const labels=AX.map(x=>{const lr=R+16,X=(lr*Math.cos(rad(x.a))).toFixed(1),Y=(lr*Math.sin(rad(x.a))+4).toFixed(1),val=(d[x.k]==null?'－':d[x.k]);
+      return `<text x="${X}" y="${Y}" text-anchor="middle" font-size="13" font-weight="800" fill="${x.c}">${x.l[0]}${val}</text>`;}).join('');
+    return `<svg viewBox="-108 -100 216 210" width="100%" style="max-width:212px"><defs><radialGradient id="sw"><stop offset="0" stop-color="#9b5cff" stop-opacity=".5"/><stop offset="1" stop-color="#9b5cff" stop-opacity="0"/></radialGradient></defs>
+      ${grid}${axes}
+      <g class="sweep"><path d="M0,0 L0,-${R} A${R},${R} 0 0 1 ${(R*Math.sin(rad(44))).toFixed(1)},-${(R*Math.cos(rad(44))).toFixed(1)} Z" fill="url(#sw)"/></g>
+      <g style="transform-origin:0px 0px;animation:grow .9s cubic-bezier(.2,1,.3,1) backwards">
+        <polygon points="${poly}" fill="rgba(155,92,255,.30)" stroke="#9b5cff" stroke-width="2.5" style="filter:drop-shadow(0 0 7px rgba(155,92,255,.8))"/>
+        ${dots}</g>${labels}</svg>`;
+  }
+  function aura(m,i,f,rk){
+    const ring=(rad,col,v,dir,dur)=>{const w=(3+v/10*8).toFixed(1);return `<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:${rad*2}px;height:${rad*2}px;border-radius:50%;border:${w}px solid ${col};box-shadow:0 0 ${(6+v).toFixed(0)}px ${col},inset 0 0 ${(4+v/2).toFixed(0)}px ${col};opacity:${(.5+v/24).toFixed(2)};animation:spin ${dur}s linear infinite ${dir}"></div>`;};
+    return `<div style="position:relative;width:176px;height:176px;margin:0 auto">${ring(84,'#36c5ff',f,'',9)}${ring(64,'#ff8a3d',i,'reverse',7)}${ring(46,'#ff5ea8',m,'',5)}
+      <div style="position:absolute;inset:0;display:grid;place-items:center;font-family:'Mochiy Pop One';font-size:30px;color:#9b5cff;animation:pulse 2.5s ease-in-out infinite">${rk}</div></div>`;
+  }
+  function donut(m,i,f){
+    const C=465, seg=v=>(v/10*140), avg=((m+i+f)/3).toFixed(1);
+    const arc=(v,col,rot)=>`<circle r="74" fill="none" stroke="${col}" stroke-width="15" stroke-linecap="round" stroke-dasharray="${seg(v).toFixed(1)} ${C}" transform="rotate(${rot})" style="--len:${seg(v).toFixed(1)};stroke-dashoffset:0;animation:draw 1.05s ease-out backwards;filter:drop-shadow(0 0 5px ${col})"/>`;
+    return `<svg viewBox="0 0 200 200" width="100%" style="max-width:190px"><g transform="translate(100,100)">
+      <circle r="74" fill="none" stroke="#eee5ff" stroke-width="15"/>${arc(m,'#ff5ea8',-90)}${arc(i,'#ff8a3d',30)}${arc(f,'#36c5ff',150)}
+      <text x="0" y="-3" text-anchor="middle" font-size="12" font-weight="800" fill="#6a4d8a">総合</text>
+      <text x="0" y="23" text-anchor="middle" font-family="'Mochiy Pop One'" font-size="24" fill="#9b5cff" class="cnt" data-to="${avg}" data-dec="1">0.0</text></g></svg>`;
+  }
+  function countUp(el,to,dur,dec){let st=null;function f(t){if(st==null)st=t;let p=Math.min(1,(t-st)/dur);p=1-Math.pow(1-p,3);el.textContent=(to*p).toFixed(dec);if(p<1)requestAnimationFrame(f);}requestAnimationFrame(f);}
+  function confetti(){const cols=['#ff5ea8','#9b5cff','#36c5ff','#ffd23f','#3ff2c2','#ff8a3d'];const w=document.createElement('div');w.className='confetti';
+    for(let i=0;i<42;i++){const s=document.createElement('span');s.style.left=(Math.random()*100).toFixed(1)+'%';s.style.background=cols[i%cols.length];
+      s.style.animationDelay=(Math.random()*.4).toFixed(2)+'s';s.style.animationDuration=(1.8+Math.random()*1.3).toFixed(2)+'s';w.appendChild(s);}
+    mb.appendChild(w);setTimeout(()=>{if(w.parentNode)w.remove();},3400);}
+  function openModal(fig){
+    const cid=fig.dataset.cid, d=GD[cid]; if(!d) return;
+    const rk=(fig.querySelector('.rk')?.textContent)||'1';
+    const cover='game_covers/c'+cid+'.jpg';
+    const meta=[['🎮',d.genre,'#7b53d6'],['🕹',d.plat,'#0f8f6e'],['📅',(d.year?d.year+'年':''),'#1f86c8'],['⏱',(d.played?'主に'+d.played:''),'#c25a16']]
+      .filter(p=>p[1]).map(p=>'<b style="color:'+p[2]+'">'+p[0]+' '+esc(p[1])+'</b>').join('');
+    const rated = d.m!=null&&d.i!=null&&d.f!=null;
+    let viz;
+    if(rated){
+      const leg=[['💖',d.m,'#ff5ea8'],['⚡',d.i,'#ff8a3d'],['🎉',d.f,'#36c5ff'],['📖',d.r,'#1bbf9a'],['🎵',d.mu,'#9b5cff']]
+        .map(p=>p[0]+' '+(p[1]==null?'<b style="color:#c3b8dc">－</b>':'<b class="cnt" data-to="'+p[1]+'" data-dec="0" style="color:'+p[2]+'">0</b>')).join('　');
+      viz='<div class="vrow"><div class="vbox"><h4>5軸レーダー</h4>'+radar(d)+'</div>'
+        +'<div class="vbox"><h4>オーラリング</h4>'+aura(d.m,d.i,d.f,rk)+'</div>'
+        +'<div class="vbox"><h4>三つ巴スコア</h4>'+donut(d.m,d.i,d.f)+'</div></div>'
+        +'<div class="leg2">'+leg+'</div>';
+    } else {
+      viz='<div class="nodata">評価データは準備中（思い入れ度・衝撃度・面白さ 未入力）</div>';
+    }
+    mb.innerHTML='<div class="mhead"><div class="mcv"><img src="'+cover+'" alt="" onerror="this.style.opacity=0"></div>'
+      +'<div class="mhd"><span class="mrk">第 '+rk+' 位</span><div class="mti">'+esc(d.t)+'</div>'
+      +'<div class="mmeta">'+meta+'</div><div class="mintro">'+esc(d.intro)+'</div></div></div>'+viz;
+    ov.classList.add('show');
+    if(rated){mb.querySelectorAll('.cnt').forEach(el=>countUp(el,+el.dataset.to,950,+el.dataset.dec||0)); confetti();}
+  }
+  function closeModal(){ov.classList.remove('show');}
+  document.querySelectorAll('figure[data-cid] .cv').forEach(cv=>{
+    cv.addEventListener('click',e=>{e.preventDefault();openModal(cv.closest('figure'));});
+  });
+  document.getElementById('mx').onclick=closeModal;
+  ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>

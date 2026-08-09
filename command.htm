@@ -42,16 +42,20 @@
     padding:14px 18px;font-weight:700;color:var(--ink);line-height:1.7;box-shadow:0 12px 26px rgba(155,92,255,.18)}
   .hello b{color:var(--pink)}
 
-  /* sticky category nav */
-  nav{position:sticky;top:0;z-index:30;padding:12px 10px;backdrop-filter:blur(7px);
-    display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-  nav a{text-decoration:none;font-weight:800;font-size:14px;color:var(--ink);background:var(--card);
-    border:2px solid #fff;border-radius:999px;padding:7px 15px;box-shadow:0 6px 14px rgba(58,36,86,.16);
-    transition:transform .14s}
+  /* sticky category nav — 横1行に固定（狭い端末でも収まるよう自動縮小） */
+  nav{position:sticky;top:0;z-index:30;padding:8px 8px;backdrop-filter:blur(7px);
+    display:flex;gap:5px;justify-content:safe center;flex-wrap:nowrap;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  nav a{flex:0 1 auto;min-width:0;white-space:nowrap;text-decoration:none;font-weight:800;
+    font-size:clamp(11px,3.1vw,13px);color:var(--ink);background:var(--card);
+    border:2px solid #fff;border-radius:999px;padding:6px clamp(8px,2.4vw,13px);
+    box-shadow:0 6px 14px rgba(58,36,86,.16);transition:transform .14s}
   nav a:hover{transform:translateY(-3px) scale(1.05)}
 
   main{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:8px 16px}
-  section{margin-top:30px}
+  /* sticky nav の下に見出しが隠れないよう着地位置をずらす */
+  section{margin-top:30px;scroll-margin-top:64px}
   .cat{display:flex;align-items:center;gap:12px;margin:0 6px 14px}
   .cat .ic{font-size:30px;animation:floaty 5s ease-in-out infinite}
   .cat h2{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(20px,5vw,28px);color:#fff;
@@ -127,11 +131,11 @@
   </header>
 
   <nav>
-    <a href="#voice">🎙️ 声をかえる</a>
+    <a href="#voice">🎙️ 声</a>
     <a href="#fun">🎲 あそぶ</a>
-    <a href="#info">💬 話題・情報</a>
+    <a href="#info">💬 話題</a>
     <a href="#help">❓ ヘルプ</a>
-    <a href="#play">🎮 みんなで遊ぼう</a>
+    <a href="#play">🎮 みんな</a>
     <a href="#adv">⭐ 上級者</a>
   </nav>
 
