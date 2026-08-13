@@ -412,23 +412,24 @@
   }
 
   /* scroll cue: 初回表示時、下にコンテンツがあることを示す誘導矢印。スクロールして
-     最初のrevealセクションが読み込まれたら消える */
+     最初のrevealセクションが読み込まれたら消える。
+     position:fixedだと閲覧環境（外部アプリの独自UI等）のビューポート計算次第で
+     画面外に隠れることがあるため、通常のドキュメントフロー内（ヒーロー直下）に配置する */
+  .scroll-cue-wrap { text-align: center; margin-top: -8px; position: relative; z-index: 2; }
   .scroll-cue {
-    position: fixed; left: 50%; bottom: 22px; z-index: 5;
-    transform: translateX(-50%);
+    display: inline-flex; align-items: center; justify-content: center;
     width: 46px; height: 46px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,.85); backdrop-filter: blur(4px);
+    background: rgba(255,255,255,.9);
     box-shadow: 0 8px 20px rgba(155,92,255,.35);
     font-size: 1.3rem; color: var(--purple);
     animation: scrollcue-bob 1.4s ease-in-out infinite;
-    opacity: 1; transition: opacity .4s ease, transform .4s ease;
-    pointer-events: none;
+    opacity: 1; transition: opacity .4s ease;
   }
-  .scroll-cue.hide { opacity: 0; animation-play-state: paused; }
+  .scroll-cue-wrap.hide { opacity: 0; pointer-events: none; }
+  .scroll-cue-wrap.hide .scroll-cue { animation-play-state: paused; }
   @keyframes scrollcue-bob {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(10px); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
   }
 
   /* small screens */
@@ -446,7 +447,6 @@
 <body>
 
 <div class="floaties" id="floaties"></div>
-<div class="scroll-cue" id="scrollCue" aria-hidden="true">↓</div>
 
 <div class="wrap">
 
@@ -463,6 +463,7 @@
       <span class="badge b5">シングルファーザー</span>
     </div>
   </header>
+  <div class="scroll-cue-wrap" id="scrollCueWrap"><div class="scroll-cue" aria-hidden="true">↓</div></div>
 
   <!-- WHAT'S NEW / アイラのあゆみ -->
   <section class="reveal">
@@ -732,7 +733,7 @@
   });
 
   // reveal on scroll + skill bars
-  const scrollCue = document.getElementById("scrollCue");
+  const scrollCue = document.getElementById("scrollCueWrap");
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) {
