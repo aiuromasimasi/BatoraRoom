@@ -15,24 +15,25 @@
     background:var(--bg); color:var(--text);
   }
   header{
-    padding:28px 20px 16px; text-align:center;
+    padding:22px 20px; text-align:center;
     background:linear-gradient(135deg,var(--purple),var(--pink));
     color:#fff;
   }
   header h1{ margin:0; font-size:1.6rem; }
-  header p{ margin:8px 0 0; opacity:.9; font-size:.9rem; }
-  header a{ color:#fff; }
   main{
     max-width:960px; margin:0 auto; padding:20px;
     display:grid; grid-template-columns:280px 1fr; gap:20px;
   }
-  @media (max-width:720px){ main{ grid-template-columns:1fr; } }
+  @media (max-width:720px){
+    main{ grid-template-columns:1fr; }
+    #detail{ order:-1; }   /* 曲を選ぶと再生・歌詞が先頭に来る＝長いリストを下までスクロールしなくて済む */
+  }
   #list{
     background:var(--card); border:1px solid var(--border); border-radius:12px;
     padding:8px; max-height:80vh; overflow-y:auto;
   }
   .song-item{
-    padding:10px 12px; border-radius:8px; cursor:pointer; margin-bottom:4px;
+    padding:6px 10px; border-radius:8px; cursor:pointer; margin-bottom:1px;
   }
   .song-item:hover{ background:#f3effc; }
   .song-item.active{ background:var(--purple); color:#fff; }
@@ -62,8 +63,7 @@
 </head>
 <body>
 <header>
-  <h1>🎵 AI作曲 ずかん</h1>
-  <p>音声ルームBot「アイラ」が ACE-Step で作った曲たち ♪</p>
+  <h1>♬アイラが作った曲</h1>
 </header>
 <main>
   <div id="list"><div id="empty">読み込み中…</div></div>
@@ -86,11 +86,17 @@ function fmtDate(ts){
 function renderList(){
   const box = document.getElementById("list");
   if(!songs.length){ box.innerHTML = '<div id="empty">まだ曲がありません</div>'; return; }
-  box.innerHTML = songs.map(s => `
+  let lastDate = null;   // songsはts降順が前提。同じ日が連続する間は日付表示を省略する
+  box.innerHTML = songs.map(s => {
+    const dateStr = fmtDate(s.ts);
+    const showDate = dateStr !== lastDate;
+    lastDate = dateStr;
+    return `
     <div class="song-item${s.id===currentId?' active':''}" data-id="${esc(s.id)}">
       <div class="t">${esc(s.title||"無題")}</div>
-      <div class="d">${esc(fmtDate(s.ts))}</div>
-    </div>`).join("");
+      ${showDate ? `<div class="d">${esc(dateStr)}</div>` : ""}
+    </div>`;
+  }).join("");
   box.querySelectorAll(".song-item").forEach(el=>{
     el.addEventListener("click", ()=> selectSong(el.getAttribute("data-id")));
   });
