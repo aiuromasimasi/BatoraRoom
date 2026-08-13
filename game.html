@@ -157,9 +157,23 @@
   .confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6;border-radius:28px}
   .confetti span{position:absolute;top:-16px;width:8px;height:13px;border-radius:2px;animation:fall linear forwards}
   @keyframes fall{to{transform:translateY(560px) rotate(600deg);opacity:.15}}
+
+  .ranktabs{position:sticky;top:0;z-index:50;display:flex;justify-content:center;gap:10px;
+    padding:10px 12px;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);
+    border-bottom:3px solid #fff;box-shadow:0 4px 14px rgba(58,36,86,.12)}
+  .ranktabs a{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:999px;
+    font-weight:800;font-size:14px;text-decoration:none;color:var(--purple);
+    background:#fff;border:2px solid var(--purple);transition:transform .15s}
+  .ranktabs a:hover{transform:translateY(-2px)}
+  .ranktabs a.active{color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));border-color:transparent;
+    box-shadow:0 8px 18px rgba(155,92,255,.35)}
 </style>
 </head>
 <body>
+  <nav class="ranktabs">
+    <a href="manga.html">📚 好きなマンガ</a>
+    <a href="game.html" class="active">🎮 好きなゲーム</a>
+  </nav>
   <header>
     <h1 class="title"><span class="em">🎮</span> 思い入れのあるゲーム ランキング 100 <span class="em">🏆</span></h1>
     <p class="sub">バトラのオールタイム・ベスト100 ✦ 100位からカウントダウン！</p>
