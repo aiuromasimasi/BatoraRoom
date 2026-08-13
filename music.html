@@ -51,7 +51,7 @@
   .tags{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
   .tag{
     background:#f3effc; color:var(--purple); border-radius:999px;
-    padding:4px 12px; font-size:.8rem; max-width:100%;
+    padding:4px 12px; font-size:.7rem; max-width:100%;
     white-space:normal; word-break:break-word;
   }
   .tag b{ color:var(--pink); }
@@ -111,7 +111,6 @@ function renderDetail(song){
   box.innerHTML = `
     <div style="color:#7a7a8c;font-size:.85rem">${esc(fmtDate(song.ts))}</div>
     <h2>${esc(song.title||"無題")}</h2>
-    <div class="audiowrap"><audio controls preload="none" src="${esc(song.file)}"></audio></div>
     <div class="tags">
       ${song.bpm ? `<span class="tag"><b>BPM</b> ${esc(song.bpm)}</span>` : ""}
       ${song.keyScale ? `<span class="tag"><b>キー</b> ${esc(song.keyScale)}</span>` : ""}
@@ -120,6 +119,7 @@ function renderDetail(song){
       ${song.instruments ? `<span class="tag"><b>楽器</b> ${esc(song.instruments)}</span>` : ""}
       ${song.harmony ? `<span class="tag"><b>ハーモニー</b> ${esc(song.harmony)}</span>` : ""}
     </div>
+    <div class="audiowrap"><audio controls preload="none" src="${esc(song.file)}"></audio></div>
     <div id="lyrics">${esc(song.lyrics||"（歌詞なし）")}</div>
   `;
 }
@@ -128,6 +128,8 @@ function selectSong(id){
   currentId = id;
   renderList();
   renderDetail(songs.find(s=>s.id===id));
+  // モバイルではリストの途中から選んでも再生ボタンが画面外のままになりやすいため、詳細を必ず視界に入れる
+  document.getElementById("detail").scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 fetch("music/songs.json?_=" + Date.now())
