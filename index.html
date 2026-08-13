@@ -411,6 +411,26 @@
     line-break: strict;
   }
 
+  /* scroll cue: 初回表示時、下にコンテンツがあることを示す誘導矢印。スクロールして
+     最初のrevealセクションが読み込まれたら消える */
+  .scroll-cue {
+    position: fixed; left: 50%; bottom: 22px; z-index: 5;
+    transform: translateX(-50%);
+    width: 46px; height: 46px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.85); backdrop-filter: blur(4px);
+    box-shadow: 0 8px 20px rgba(155,92,255,.35);
+    font-size: 1.3rem; color: var(--purple);
+    animation: scrollcue-bob 1.4s ease-in-out infinite;
+    opacity: 1; transition: opacity .4s ease, transform .4s ease;
+    pointer-events: none;
+  }
+  .scroll-cue.hide { opacity: 0; animation-play-state: paused; }
+  @keyframes scrollcue-bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+  }
+
   /* small screens */
   @media (max-width: 480px) {
     .wrap { padding: 16px 12px 64px; }
@@ -426,6 +446,7 @@
 <body>
 
 <div class="floaties" id="floaties"></div>
+<div class="scroll-cue" id="scrollCue" aria-hidden="true">↓</div>
 
 <div class="wrap">
 
@@ -711,6 +732,7 @@
   });
 
   // reveal on scroll + skill bars
+  const scrollCue = document.getElementById("scrollCue");
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) {
@@ -719,6 +741,9 @@
           bar.style.width = bar.dataset.w;
         });
         io.unobserve(e.target);
+        // heroは元々show済みで初回observe時に即発火するため対象から除く。それ以外(下のコンテンツ)の
+        // 読み込み(reveal)が始まったら誘導矢印は不要
+        if (scrollCue && !e.target.classList.contains("hero")) scrollCue.classList.add("hide");
       }
     });
   }, { threshold: 0.18 });
