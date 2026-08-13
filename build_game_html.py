@@ -39,7 +39,9 @@ rank = {}
 for l in lines:
     m = re.match(r'^(\d+)\.\s+(.*)$', l)
     if m:
-        rank[int(m.group(1))] = m.group(2).strip()
+        n = int(m.group(1))
+        if n <= 100:  # game.html はTOP100のみ（101〜200は動画前半パート用）
+            rank[n] = m.group(2).strip()
 assert len(rank) == 100 and set(rank) == set(range(1, 101)), "ranking not 1..100"
 
 # games_data.csv から各ゲームの紹介・評価値を読み込む（cidをキーに。順位が変わっても不変）
@@ -54,12 +56,12 @@ if os.path.exists("games_data.csv"):
                 x = (x or "").strip()
                 return int(x) if x.isdigit() else None
             gdata[int(mm.group(1))] = {
-                "t": row.get("タイトル", "").strip(),
-                "intro": row.get("ゲーム紹介", "").strip(),
-                "genre": row.get("ジャンル", "").strip(),
-                "year": row.get("発売年", "").strip(),
-                "plat": row.get("プラットフォーム", "").strip(),
-                "played": row.get("主に遊んだ年", "").strip(),
+                "t": (row.get("タイトル") or "").strip(),
+                "intro": (row.get("ゲーム紹介") or "").strip(),
+                "genre": (row.get("ジャンル") or "").strip(),
+                "year": (row.get("発売年") or "").strip(),
+                "plat": (row.get("プラットフォーム") or "").strip(),
+                "played": (row.get("主に遊んだ年") or "").strip(),
                 "m": _n(row.get("思い入れ度")), "i": _n(row.get("衝撃度")), "f": _n(row.get("面白さ")),
                 "r": _n(row.get("ストーリー")), "mu": _n(row.get("音楽・サウンド")),
             }
