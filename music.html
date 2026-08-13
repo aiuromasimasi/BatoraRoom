@@ -128,8 +128,9 @@ function selectSong(id){
   currentId = id;
   renderList();
   renderDetail(songs.find(s=>s.id===id));
-  // モバイルではリストの途中から選んでも再生ボタンが画面外のままになりやすいため、詳細を必ず視界に入れる
-  document.getElementById("detail").scrollIntoView({behavior:"smooth", block:"start"});
+  // モバイルではリストの途中から選んでも再生ボタンが画面外のままになりやすいため、
+  // ページ自体を一番上（＝モバイルではorder:-1で先頭に来る#detail）まで戻す
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
 fetch("music/songs.json?_=" + Date.now())
