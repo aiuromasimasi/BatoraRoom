@@ -19,12 +19,6 @@
   "start": 788,
   "url": "https://www.youtube.com/watch?v=bT--MviXYqw&list=PLyNPy006ABoEHZUyOMlLXtpMKevU3h1eT"
  },
- "10": {
-  "start": 98
- },
- "11": {
-  "start": 3742
- },
  "12": {
   "start": 954,
   "url": "https://www.youtube.com/watch?v=JBm-RRm6-TQ"
@@ -45,27 +39,28 @@
   "url": "https://www.youtube.com/watch?v=t5Eb_oB9vuM"
  },
  "22": {
-  "start": 18,
+  "start": 26,
   "url": "https://www.youtube.com/watch?v=Edor_TJzcSQ"
  },
  "23": {
-  "start": 18
+  "start": 27
  },
  "24": {
-  "start": 18
+  "start": 34
  },
  "25": {
-  "start": 18
+  "start": 24
  },
  "26": {
-  "start": 300
+  "start": 167,
+  "url": "https://www.youtube.com/watch?v=FiNa0gCDMyg"
  },
  "27": {
   "start": 14,
   "tidx": 1
  },
  "28": {
-  "start": 6,
+  "start": 35,
   "url": "https://youtu.be/_PzsIh3oXBU?si=n5z5UOXCtwPphiQ4"
  },
  "29": {
@@ -84,7 +79,7 @@
   "url": "https://youtu.be/6VvBSKt7MaE?si=15iyBXqzUA2lfRre&t=1571"
  },
  "33": {
-  "start": 52
+  "start": 50
  },
  "34": {
   "start": 10,
@@ -143,7 +138,7 @@
   "url": "https://youtu.be/LeDp7f57yA0?si=56JnOp1i6B-cSaIE&t=3545"
  },
  "54": {
-  "start": 28,
+  "start": 15,
   "url": "https://www.youtube.com/watch?v=qFJ50haX9Js&list=PLdqMrHS5mwVQiSzD3K9W9ZBoS49dVaXMR"
  },
  "55": {
@@ -157,9 +152,6 @@
  "57": {
   "start": 3243,
   "url": "https://youtu.be/_LDGr3zUW0k?si=Xa7Bsuc2Xps2GYVE&t=3243"
- },
- "60": {
-  "start": 678
  },
  "61": {
   "start": 90,
@@ -202,9 +194,6 @@
   "pos": "left",
   "tidx": 4
  },
- "79": {
-  "pos": "left"
- },
  "82": {
   "start": 19
  },
@@ -220,17 +209,13 @@
   "pos": "left",
   "url": "https://youtu.be/3LNb-5Y8e68?si=3AfKzwO4sv-RjLlc"
  },
- "87": {
-  "pos": "left"
- },
  "88": {
   "start": 51,
   "tidx": 1
  },
  "89": {
   "start": 8956,
-  "url": "https://youtu.be/FTPc0ZaHqKk?si=u99U3nWb3h9f6ZQ2&t=8956",
-  "tidx": 1
+  "url": "https://youtu.be/FTPc0ZaHqKk?si=u99U3nWb3h9f6ZQ2&t=8956"
  },
  "91": {
   "start": 10
@@ -244,18 +229,9 @@
  "94": {
   "start": 38
  },
- "95": {
-  "start": 2497
- },
  "96": {
   "start": 1910,
   "url": "https://youtu.be/B3oWNm563H4?si=g-hWqS6obqD4Juae"
- },
- "97": {
-  "start": 80
- },
- "98": {
-  "start": 240
  },
  "101": {
   "start": 139,
@@ -305,9 +281,6 @@
   "start": 390,
   "url": "https://www.youtube.com/watch?v=oQx5GrBac7I"
  },
- "113": {
-  "start": 2915
- },
  "114": {
   "start": 38,
   "url": "https://www.youtube.com/shorts/D--QWtyt4R0"
@@ -315,9 +288,6 @@
  "115": {
   "start": 90,
   "url": "https://www.youtube.com/watch?v=BSN3zAkOhDo"
- },
- "117": {
-  "start": 98
  },
  "118": {
   "start": 84,
@@ -428,5 +398,61 @@
   "start": 964,
   "pos": "left",
   "url": "https://www.youtube.com/watch?v=AJL7rw4ae9I"
+ },
+ "6": {
+  "start": 5,
+  "url": "https://www.youtube.com/watch?v=xWCbJSWBy18"
+ },
+ "10": {
+  "start": 866,
+  "url": "https://www.youtube.com/watch?v=YhG9MYcmyqs"
+ },
+ "17": {
+  "start": 219,
+  "url": "https://www.youtube.com/watch?v=P-OuhkzpqcA&list=PLWyJq7n92T0p3kAzmtiEjMyLcyGAbyXJa"
+ },
+ "18": {
+  "start": 510,
+  "url": "https://www.youtube.com/watch?v=t186Rjs2MNk"
+ },
+ "20": {
+  "start": 620,
+  "url": "https://www.youtube.com/watch?v=_U-CqXDnZBw&list=PLCOc2uR19M0lOHCeCkj2AQrhXip4voz-T"
+ },
+ "35": {
+  "start": 613,
+  "url": "https://www.youtube.com/watch?v=PKqWzZBcJ5E"
+ },
+ "47": {
+  "start": 88,
+  "url": "https://www.youtube.com/watch?v=3U8ZVul2UsQ"
+ },
+ "60": {
+  "start": 679,
+  "url": "https://www.youtube.com/watch?v=iTu3TJmrlJA&t=679s"
+ },
+ "65": {
+  "start": 18,
+  "url": "https://www.youtube.com/watch?v=7BA5ZyGv2Dw&list=PLX14X1emMhSHx85wXnbGqq6uton1aRrqa&index=2"
+ },
+ "74": {
+  "start": 946,
+  "url": "https://www.youtube.com/watch?v=MrZp7CAeg-M"
+ },
+ "79": {
+  "start": 34,
+  "url": "https://www.youtube.com/watch?v=s4WLjY8vn8E"
+ },
+ "90": {
+  "start": 148,
+  "url": "https://www.youtube.com/watch?v=NvCiNkcBYts"
+ },
+ "98": {
+  "start": 199,
+  "url": "https://www.youtube.com/watch?v=2gj6As24my8"
+ },
+ "100": {
+  "start": 15,
+  "url": "https://www.youtube.com/watch?v=4dgc2_W2sjI"
  }
 }

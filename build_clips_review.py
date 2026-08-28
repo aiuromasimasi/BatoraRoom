@@ -6,8 +6,14 @@ Steam産は fetch_steam_trailers.py で落としたトレーラーを【フル�
 - 位置はその場でプレビュー反映（「縦9:16プレビュー」で縦画面の見え方も確認可能）
 - 「📋 設定をエクスポート」→ JSON を clip_meta.json に保存
   → python3 fetch_clip_meta.py（start/url/tidx分を再取得）→ python3 build_movie.py
-使い方: python3 build_clips_review.py"""
-import glob, json, os, re
+使い方: python3 build_clips_review.py [--rank-min N] [--rank-max N]
+  例: python3 build_clips_review.py --rank-min 1 --rank-max 50  → 50位〜1位のみ・順位順で表示"""
+import argparse, glob, json, os, re
+
+p_ = argparse.ArgumentParser()
+p_.add_argument("--rank-min", type=int, default=None)
+p_.add_argument("--rank-max", type=int, default=None)
+ARGS = p_.parse_args()
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 lines = open("game_ranking_draft.md", encoding="utf-8").read().split("\n")
@@ -28,7 +34,13 @@ trailers = json.load(open("game_trailers/index.json", encoding="utf-8")) if os.p
 
 def esc(s): return (s or "").replace("&","&amp;").replace("<","&lt;").replace('"',"&quot;")
 
-clips = sorted((int(re.search(r'c(\d+)\.mp4$', p).group(1)), p) for p in glob.glob("game_clips/c*.mp4"))
+clips = [(int(re.search(r'c(\d+)\.mp4$', p).group(1)), p) for p in glob.glob("game_clips/c*.mp4")]
+if ARGS.rank_min is not None or ARGS.rank_max is not None:
+    lo = ARGS.rank_min if ARGS.rank_min is not None else 1
+    hi = ARGS.rank_max if ARGS.rank_max is not None else 999
+    clips = [(cid, p) for cid, p in clips if rank_of.get(cid) is not None and lo <= rank_of[cid] <= hi]
+# 順位順（1位が先頭）。順位不明(圏外/前半101-200)は末尾にcid順で
+clips = sorted(clips, key=lambda x: (rank_of.get(x[0]) is None, rank_of.get(x[0], 0), x[0]))
 cells = []
 for cid, path in clips:
     t = cid2title.get(cid, "?"); r = rank_of.get(cid)
@@ -57,10 +69,10 @@ for cid, path in clips:
     <div class="yt-view" hidden><div class="yt-holder"></div>
       <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
         <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div>'''
-    cells.append(f'''<div class="cell" data-cid="{cid}"{' data-steam="1"' if tr else ''}{f' data-yt="{esc(src.get("url",""))}"' if src else ''}><div class="media"><video src="{path}?v={os.path.getmtime(path):.0f}" preload="metadata" muted loop playsinline
+    cells.append(f'''<div class="cell" data-cid="{cid}" data-title="{esc(t)}"{' data-steam="1"' if tr else ''}{f' data-yt="{esc(src.get("url",""))}"' if src else ''}><div class="media"><video src="{path}?v={os.path.getmtime(path):.0f}" preload="metadata" muted loop playsinline
       style="{f'object-position:{pos} center' if pos else ''}"
       onclick="this.paused?this.play():this.pause()"></video><span class="tap">▶ タップで再生</span></div>
-    <div class="cap"><b>{"?" if r is None else str(r)+"位"}</b> <b class="cid">c{cid}</b> {esc(t)}
+    <div class="cap"><span class="drag" title="ドラッグで順位入れ替え">⠿</span><b class="rankbadge">{"?" if r is None else str(r)+"位"}</b> <b class="cid">c{cid}</b> {esc(t)}
       <span class="origin">{origin}</span></div>
     <div class="edit">
       <label>開始秒<input type="number" class="in-start" min="0" step="1" placeholder="{cur_start}" value="{esc(str(mt.get('start','')))}"></label>
@@ -70,6 +82,48 @@ for cid, path in clips:
         <option value="right"{' selected' if pos=='right' else ''}>右寄せ</option></select></label>
       <label class="lurl">URL差替<input type="text" class="in-url" placeholder="{'(YouTubeに変える場合のみ)' if tr else '(出典のまま)'}" value="{esc(mt.get('url',''))}"></label>
     </div>{tr_ui}{yt_ui}</div>''')
+
+# ---- 未取得（game_clips になくクリップが無い）カード: URLをその場入力→視聴→開始秒セットできるようにする ----
+# ランク絞り込み時のみ対象（絞り込み無しだと圏外まで含め大量になるため）
+if ARGS.rank_min is not None or ARGS.rank_max is not None:
+    lo = ARGS.rank_min if ARGS.rank_min is not None else 1
+    hi = ARGS.rank_max if ARGS.rank_max is not None else 999
+    have_cids = {cid for cid, _ in clips}
+    missing = []
+    for cid, r_ in rank_of.items():
+        if lo <= r_ <= hi and cid not in have_cids:
+            missing.append((r_, cid))
+    missing.sort()
+    for r_, cid in missing:
+        t = cid2title.get(cid, "?")
+        mt = meta.get(str(cid), {})
+        pos = mt.get("pos", "")
+        cover = f"game_covers/c{cid}.jpg"
+        yt_ui = f'''<div class="ytedit"><button type="button" class="yt-open">▶ YouTube視聴</button>
+      <span class="ythint">URLを入力してから押す。シークして「⏱セット」で開始秒が入る</span></div>
+    <div class="yt-view" hidden><div class="yt-holder"></div>
+      <div class="tr-time">現在 <b class="yt-cur">0</b> 秒
+        <button type="button" class="yt-set">⏱ この秒を開始秒にセット</button></div></div>'''
+        cells.append(f'''<div class="cell missing" data-cid="{cid}" data-title="{esc(t)}"><div class="media">
+      <img src="{cover}" alt="" onerror="this.style.opacity=0" style="width:100%;height:100%;object-fit:cover;display:block">
+      <span class="tap missing-badge">未取得</span></div>
+    <div class="cap"><span class="drag" title="ドラッグで順位入れ替え">⠿</span><b class="rankbadge">{r_}位</b> <b class="cid">c{cid}</b> {esc(t)}
+      <span class="origin"><span class="nosrc">出典URL未登録</span></span></div>
+    <div class="edit">
+      <label>開始秒<input type="number" class="in-start" min="0" step="1" placeholder="90" value="{esc(str(mt.get('start','')))}"></label>
+      <label>位置<select class="in-pos">
+        <option value=""{'' if pos else ' selected'}>中央</option>
+        <option value="left"{' selected' if pos=='left' else ''}>左寄せ</option>
+        <option value="right"{' selected' if pos=='right' else ''}>右寄せ</option></select></label>
+      <label class="lurl">URL<input type="text" class="in-url" placeholder="YouTube URLを貼り付け" value="{esc(mt.get('url',''))}"></label>
+    </div>{yt_ui}</div>''')
+
+# 順位入れ替え（ドラッグ&ドロップ）: 絞り込みが「連続した範囲を過不足なくカバー」している時だけ有効化
+_all_shown_cids = [cid for cid, _ in clips] + [cid for _, cid in (missing if 'missing' in dir() else [])]
+REORDER_LO = ARGS.rank_min if ARGS.rank_min is not None else None
+REORDER_HI = ARGS.rank_max if ARGS.rank_max is not None else None
+REORDERABLE = (REORDER_LO is not None and REORDER_HI is not None and
+               len(_all_shown_cids) == REORDER_HI - REORDER_LO + 1)
 
 TR_JSON = json.dumps(trailers, ensure_ascii=False)
 
@@ -87,15 +141,24 @@ HTML = f'''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
  .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;max-width:1500px;margin:0 auto}}
  .cell{{background:#1e1738;border-radius:12px;overflow:hidden;border:2px solid #322858}}
  .cell.changed{{border-color:#ffd23f}}
+ .cell.missing{{border-color:#5a4a3a;background:#241c38}}
+ .cell.missing.changed{{border-color:#ffd23f}}
  .media{{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer;transition:aspect-ratio .2s}}
  body.vert .media{{aspect-ratio:9/16}}
  .media video{{width:100%;height:100%;object-fit:cover;display:block}}
  .media .tap{{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:2px 8px;border-radius:999px;pointer-events:none}}
+ .media .missing-badge{{left:6px;right:auto;background:rgba(255,140,60,.85);color:#2a1400;font-weight:800}}
  .cap{{padding:8px 10px 2px;font-size:12.5px;font-weight:700;line-height:1.5}}
  .cap .cid{{color:#a78bfa;font-family:monospace;margin:0 4px}}
+ .cap .drag{{cursor:grab;color:#6a5c9a;margin-right:2px;display:none}}
+ body.reorder .cap .drag{{display:inline}}
+ body.reorder .cell{{cursor:grab}}
+ .cell.dragging{{opacity:.35}}
+ .cell.drag-over{{outline:3px dashed #ffd23f;outline-offset:-3px}}
  .origin{{display:block;font-size:11px;font-weight:600;margin-top:2px}}
  .origin .yt{{color:#ff8a8a;text-decoration:none}}
  .origin .steam{{color:#7fd7ff}}
+ .origin .nosrc{{color:#ff8c3c}}
  .edit,.tredit{{display:flex;flex-wrap:wrap;gap:6px 10px;padding:6px 10px;font-size:11px;color:#b8a8e0;align-items:center}}
  .tredit{{padding-top:0}}
  .edit label,.tredit label{{display:flex;align-items:center;gap:4px;font-weight:700}}
@@ -113,9 +176,9 @@ HTML = f'''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
  .yt-holder iframe{{width:100%;height:100%;display:block;border:0}}
  .tr-time{{font-size:12px;font-weight:700;color:#ffd23f;margin-top:4px;display:flex;gap:10px;align-items:center}}
  .tr-time b{{font-size:16px;min-width:2em;text-align:right}}
- #out{{display:none;max-width:900px;margin:12px auto;width:100%}}
- #out textarea{{width:100%;height:150px;font-family:monospace;font-size:12px;background:#0d0a1e;color:#8f8;border:1px solid #443a6e;border-radius:8px;padding:8px}}
- #out .how{{font-size:12px;color:#b8a8e0;line-height:1.8;margin-top:6px}}
+ #out,#outOrder{{display:none;max-width:900px;margin:12px auto;width:100%}}
+ #out textarea,#outOrder textarea{{width:100%;height:150px;font-family:monospace;font-size:12px;background:#0d0a1e;color:#8f8;border:1px solid #443a6e;border-radius:8px;padding:8px}}
+ #out .how,#outOrder .how{{font-size:12px;color:#b8a8e0;line-height:1.8;margin-top:6px}}
  code{{background:#0d0a1e;padding:1px 6px;border-radius:4px;color:#9f9}}
 </style></head><body>
 <h1>🎬 実機クリップ検品・調整（{len(cells)}本）</h1>
@@ -126,6 +189,7 @@ HTML = f'''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
 変更したカードは<b style="color:#ffd23f">金枠</b>。終わったら上の「📋 設定をエクスポート」。</p>
 <div class="bar">
   <button id="exp">📋 設定をエクスポート</button>
+  {'<button id="reorderToggle">🔀 順位入れ替えモード</button><button id="expOrder">📋 順位をエクスポート</button>' if REORDERABLE else ''}
   <label><input type="checkbox" id="vert">縦9:16プレビュー</label>
   <label><input type="checkbox" id="autoplay">全部再生</label>
 </div>
@@ -133,6 +197,8 @@ HTML = f'''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   <div class="how">↑ この内容を <code>clip_meta.json</code> に保存（コピー済み）→
   <code>python3 fetch_clip_meta.py</code>（開始秒/URL/トレーラー変更分を再取得）→ <code>python3 build_movie.py</code>。<br>
   位置(左右)だけの変更なら <code>build_movie.py</code> の再実行だけでOK。チャットにそのまま貼ってもらえれば私がやります。</div></div>
+<div id="outOrder"><textarea id="orderText" readonly></textarea>
+  <div class="how">↑ 新しい順位（{REORDER_LO if REORDERABLE else ''}〜{REORDER_HI if REORDERABLE else ''}位）をコピー済み。チャットに貼ってもらえれば <code>game_ranking_draft.md</code> に反映します。</div></div>
 <div class="grid">
 {chr(10).join(cells)}
 </div>
@@ -233,6 +299,59 @@ document.getElementById('exp').onclick=()=>{{
 }};
 document.getElementById('vert').onchange=e=>document.body.classList.toggle('vert',e.target.checked);
 document.getElementById('autoplay').onchange=e=>document.querySelectorAll('.media video').forEach(v=>e.target.checked?v.play():v.pause());
+
+// ==== 順位入れ替え（ドラッグ&ドロップ）====
+const REORDERABLE={('true' if REORDERABLE else 'false')};
+const REORDER_LO={REORDER_LO if REORDERABLE else 'null'}, REORDER_HI={REORDER_HI if REORDERABLE else 'null'};
+const LS_ORDER='clip_review_order_v1';
+if(REORDERABLE){{
+  const grid=document.querySelector('.grid');
+  function renumber(){{
+    [...grid.children].forEach((c,i)=>{{ c.querySelector('.rankbadge').textContent=(REORDER_LO+i)+'位'; }});
+  }}
+  function saveOrder(){{
+    localStorage.setItem(LS_ORDER, JSON.stringify([...grid.children].map(c=>c.dataset.cid)));
+  }}
+  let dragEl=null;
+  grid.querySelectorAll('.cell').forEach(c=>{{
+    c.addEventListener('dragstart',e=>{{ if(!document.body.classList.contains('reorder')){{e.preventDefault();return;}}
+      dragEl=c; c.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; }});
+    c.addEventListener('dragend',()=>{{ c.classList.remove('dragging');
+      grid.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'));
+      renumber(); saveOrder(); }});
+    c.addEventListener('dragover',e=>{{ if(!document.body.classList.contains('reorder'))return;
+      e.preventDefault();
+      if(c!==dragEl) c.classList.add('drag-over'); }});
+    c.addEventListener('dragleave',()=>c.classList.remove('drag-over'));
+    c.addEventListener('drop',e=>{{ if(!document.body.classList.contains('reorder'))return;
+      e.preventDefault(); c.classList.remove('drag-over');
+      if(!dragEl||dragEl===c)return;
+      const rect=c.getBoundingClientRect();
+      const before=(e.clientY-rect.top)<rect.height/2;
+      grid.insertBefore(dragEl, before?c:c.nextSibling);
+    }});
+  }});
+  document.getElementById('reorderToggle').onclick=()=>{{
+    document.body.classList.toggle('reorder');
+    grid.querySelectorAll('.cell').forEach(c=>c.draggable=document.body.classList.contains('reorder'));
+  }};
+  document.getElementById('expOrder').onclick=()=>{{
+    const cells2=[...grid.children];
+    const lines=cells2.map((c,i)=>`${{REORDER_LO+i}}. ${{c.dataset.title}}`);
+    const txt=lines.join('\\n');
+    const o=document.getElementById('outOrder'); o.style.display='block';
+    document.getElementById('orderText').value=txt;
+    navigator.clipboard&&navigator.clipboard.writeText(txt).catch(()=>{{}});
+    o.scrollIntoView({{behavior:'smooth'}});
+  }};
+  try{{ const sv=JSON.parse(localStorage.getItem(LS_ORDER)||'null');
+    if(sv&&sv.length===grid.children.length){{
+      const map={{}}; grid.querySelectorAll('.cell').forEach(c=>map[c.dataset.cid]=c);
+      sv.forEach(cid=>{{ if(map[cid]) grid.appendChild(map[cid]); }});
+      renumber();
+    }}
+  }}catch(e){{}}
+}}
 </script>
 </body></html>'''
 open("clips_review.html", "w", encoding="utf-8").write(HTML)
