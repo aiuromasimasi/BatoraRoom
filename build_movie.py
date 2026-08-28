@@ -98,8 +98,8 @@ function buildPart2B(){ steps.length=0;
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC2}); }
   steps.push({t:'podium',r:1,base:PODIUM2});
 }
-// Part3: 50→1位（タメなし・1作5.68秒＝284秒）+ 200→1位 全表紙スクロール(15秒) = 計299秒
-const G_SEC3=5680, COVROLL3=15000;
+// Part3: 50→1位（タメなし） + 200→1位 全表紙スクロール(15秒) = 計299秒以内（録画時ドリフト分の安全マージンを確保）
+const G_SEC3=5630, COVROLL3=15000;
 function buildPart3(){ steps.length=0;
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC3}); }
   steps.push({t:'covroll',r:1,base:COVROLL3});
