@@ -45,11 +45,20 @@ function buildPart2B(){ steps.length=0;
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC2}); }
   steps.push({t:'podium',r:1,base:PODIUM2});
 }
-// Part3: 50→1位（タメなし） + 200→1位 全表紙スクロール(15秒) = 計299秒以内（録画時ドリフト分の安全マージンを確保）
-const G_SEC3=5630, COVROLL3=15000;
+// Part3: 冒頭タイトルカード(3秒) + 50→1位（タメなし） + 200→1位 全表紙スクロール(15秒) = 計299秒以内（録画時ドリフト分の安全マージンを確保）
+const G_SEC3=5630, COVROLL3=15000, TITLECARD3=3000;
 function buildPart3(){ steps.length=0;
+  steps.push({t:'titlecard',r:0,base:TITLECARD3});
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC3}); }
   steps.push({t:'covroll',r:1,base:COVROLL3});
+}
+// 冒頭タイトルカード: 背景に全200作の表紙を3列で流し、中央に「思い入れのあるゲーム BEST50」
+function titleCardHTML(){
+  const list=GAMES.slice().sort((a,b)=>a.rank-b.rank);
+  const cards=list.map(g=>`<div class="rsCard tcCard"><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"></div>`).join('');
+  return `<div class="podium titlecard"><div class="rsWrap" style="top:0"><div class="rsList tcList">${cards}${cards}</div></div>
+    <div class="tcOverlay"></div>
+    <div class="tcTitle"><div class="tcSub">思い入れのある</div><div class="tcMain">ゲーム</div><div class="tcBest">BEST<span>50</span></div></div></div>`;
 }
 
 const stage=document.getElementById('stage');
@@ -225,6 +234,9 @@ function fitTitles(root){ if(!root) return;
   fitEl(root.querySelector('.cti'),3); fitEl(root.querySelector('.ti'),3);
   fitEl(root.querySelector('.tiF'),3); fitEl(root.querySelector('.tiC'),3); }
 function render(s){
+  if(s.t==='titlecard'){ stage.innerHTML=titleCardHTML();
+    stage.insertAdjacentHTML('beforeend',sparkleHTML(1)); se('fanfare');
+    setProg(50); return; }
   if(s.t==='p1roll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,101,dd,'⚡ 200 → 101');
     stage.insertAdjacentHTML('beforeend',sparkleHTML(50)); se('fanfare');
     setProg(101); return; }

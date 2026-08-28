@@ -98,11 +98,20 @@ function buildPart2B(){ steps.length=0;
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC2}); }
   steps.push({t:'podium',r:1,base:PODIUM2});
 }
-// Part3: 50→1位（タメなし） + 200→1位 全表紙スクロール(15秒) = 計299秒以内（録画時ドリフト分の安全マージンを確保）
-const G_SEC3=5630, COVROLL3=15000;
+// Part3: 冒頭タイトルカード(3秒) + 50→1位（タメなし） + 200→1位 全表紙スクロール(15秒) = 計299秒以内（録画時ドリフト分の安全マージンを確保）
+const G_SEC3=5630, COVROLL3=15000, TITLECARD3=3000;
 function buildPart3(){ steps.length=0;
+  steps.push({t:'titlecard',r:0,base:TITLECARD3});
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC3}); }
   steps.push({t:'covroll',r:1,base:COVROLL3});
+}
+// 冒頭タイトルカード: 背景に全200作の表紙を3列で流し、中央に「思い入れのあるゲーム BEST50」
+function titleCardHTML(){
+  const list=GAMES.slice().sort((a,b)=>a.rank-b.rank);
+  const cards=list.map(g=>`<div class="rsCard tcCard"><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"></div>`).join('');
+  return `<div class="podium titlecard"><div class="rsWrap" style="top:0"><div class="rsList tcList">${cards}${cards}</div></div>
+    <div class="tcOverlay"></div>
+    <div class="tcTitle"><div class="tcSub">思い入れのある</div><div class="tcMain">ゲーム</div><div class="tcBest">BEST<span>50</span></div></div></div>`;
 }
 
 const stage=document.getElementById('stage');
@@ -278,6 +287,9 @@ function fitTitles(root){ if(!root) return;
   fitEl(root.querySelector('.cti'),3); fitEl(root.querySelector('.ti'),3);
   fitEl(root.querySelector('.tiF'),3); fitEl(root.querySelector('.tiC'),3); }
 function render(s){
+  if(s.t==='titlecard'){ stage.innerHTML=titleCardHTML();
+    stage.insertAdjacentHTML('beforeend',sparkleHTML(1)); se('fanfare');
+    setProg(50); return; }
   if(s.t==='p1roll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,101,dd,'⚡ 200 → 101');
     stage.insertAdjacentHTML('beforeend',sparkleHTML(50)); se('fanfare');
     setProg(101); return; }
@@ -609,6 +621,17 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .rsCard.top1 .rsRk{background:var(--gold);color:#4a3200}
   .rsCard.top2{border-color:#d9dee8}.rsCard.top2 .rsRk{background:#d9dee8;color:#333c4c}
   .rsCard.top3{border-color:#e0945a}.rsCard.top3 .rsRk{background:#e0945a;color:#4a2400}
+  /* ===== 冒頭タイトルカード（BEST50・背景に全表紙が3列で流れる） ===== */
+  .titlecard .rsWrap{top:0;filter:brightness(.55) saturate(.85)}
+  .titlecard .tcList{animation-duration:70s;animation-timing-function:linear}
+  .titlecard .tcCard{border-color:rgba(255,255,255,.35)}
+  .tcOverlay{position:absolute;inset:0;z-index:3;background:radial-gradient(60% 46% at 50% 46%,rgba(8,4,20,.15),rgba(8,4,20,.72) 70%),linear-gradient(180deg,rgba(8,4,20,.55) 0%,rgba(8,4,20,.2) 30%,rgba(8,4,20,.2) 68%,rgba(8,4,20,.65) 100%)}
+  .tcTitle{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:tcIn .55s cubic-bezier(.2,1.3,.3,1) backwards}
+  @keyframes tcIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+  .tcSub{font-family:"Mochiy Pop One";font-weight:400;font-size:clamp(18px,6.4cqmin,34px);color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.9);letter-spacing:2px}
+  .tcMain{font-family:"Mochiy Pop One";font-weight:400;font-size:clamp(26px,9.2cqmin,50px);color:#fff;text-shadow:0 4px 18px rgba(0,0,0,.95);letter-spacing:4px;margin-bottom:.3em}
+  .tcBest{font-family:"Baloo 2";font-weight:800;font-size:clamp(48px,17cqmin,110px);line-height:1;color:var(--gold);text-shadow:0 0 34px rgba(255,184,0,.75),0 6px 20px rgba(0,0,0,.9);letter-spacing:2px}
+  .tcBest span{margin-left:.08em}
   .ctl{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,.08);padding:8px 14px;border-radius:999px;max-width:98vw}
   .ctl button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 13px;cursor:pointer;background:rgba(255,255,255,.92);color:#2a1a4a}
   .ctl .prog{color:#fff;font-weight:800;font-size:13px;min-width:118px;text-align:center}
