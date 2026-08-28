@@ -270,10 +270,13 @@ function p1oneHTML(g,r){
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
 // ==== 3列グリッドのスクロールロール（RESULT / 前半200→101 で共用） ====
-function rollHTML(hi,lo,d,label){
+// soloMax指定時: その順位以下(例: 5位以下)は3列に混ぜず、1列1枚で縦並び表示にする
+function rollHTML(hi,lo,d,label,soloMax){
+  soloMax=soloMax||0;
   const cards=[];
   for(let r=hi;r>=lo;r--){ const g=byRank[r]; if(!g)continue;
-    cards.push(`<div class="rsCard${r<=3?' top'+r:''}"><span class="rsRk">${r}<small>位</small></span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="rsTi">${esc(g.title)}</span></div>`); }
+    const solo=r<=soloMax;
+    cards.push(`<div class="rsCard${r<=3?' top'+r:''}${solo?' solo':''}"><span class="rsRk">${r}<small>位</small></span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="rsTi">${esc(g.title)}</span></div>`); }
   return `<div class="podium"><div class="pdLabel">${label}</div>
     <div class="rsWrap"><div class="rsList" style="animation-duration:${(d/1000).toFixed(1)}s">${cards.join('')}</div></div></div>`;
 }
@@ -293,7 +296,7 @@ function render(s){
   if(s.t==='p1roll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,101,dd,'⚡ 200 → 101');
     stage.insertAdjacentHTML('beforeend',sparkleHTML(50)); se('fanfare');
     setProg(101); return; }
-  if(s.t==='covroll'){ const dd=dur(s); stage.innerHTML=rollHTML(50,1,dd,'🏆 50 → 1 全結果');
+  if(s.t==='covroll'){ const dd=dur(s); stage.innerHTML=rollHTML(50,1,dd,'🏆 50 → 1 全結果',5);
     stage.insertAdjacentHTML('beforeend',sparkleHTML(1)); se('fanfare'); fireworks(4);
     setProg(1); return; }
   if(s.t==='podium'){ const dd=dur(s); stage.innerHTML=resultHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(1));
@@ -621,6 +624,11 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
   .rsCard.top1 .rsRk{background:var(--gold);color:#4a3200}
   .rsCard.top2{border-color:#d9dee8}.rsCard.top2 .rsRk{background:#d9dee8;color:#333c4c}
   .rsCard.top3{border-color:#e0945a}.rsCard.top3 .rsRk{background:#e0945a;color:#4a2400}
+  /* soloMax指定時（例:5位以下）: 3列に混ぜず1列1枚でフル幅・縦並び */
+  .rsCard.solo{grid-column:1/-1;display:flex;align-items:center;gap:3cqw;padding:1cqh 1cqw}
+  .rsCard.solo img{width:34%;aspect-ratio:3/4;flex-shrink:0}
+  .rsCard.solo .rsTi{flex:1;padding:0;background:none;white-space:normal;font-size:clamp(13px,3.6cqmin,22px);line-height:1.3}
+  .rsCard.solo .rsRk{position:static;font-size:clamp(20px,5.6cqmin,40px);padding:0 10px 0 0;background:none;border-radius:0;flex-shrink:0}
   /* ===== 冒頭タイトルカード（BEST50・背景に全表紙が3列で流れる） ===== */
   .titlecard .rsWrap{top:0;filter:brightness(.55) saturate(.85)}
   .titlecard .tcList{animation-duration:70s;animation-timing-function:linear}

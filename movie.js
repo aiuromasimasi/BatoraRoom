@@ -217,10 +217,13 @@ function p1oneHTML(g,r){
     <div class="stbot"><div class="strk">${r}<span>位</span></div><div class="p1cap stcap ${ts}">${cap}</div></div></div>`;
 }
 // ==== 3列グリッドのスクロールロール（RESULT / 前半200→101 で共用） ====
-function rollHTML(hi,lo,d,label){
+// soloMax指定時: その順位以下(例: 5位以下)は3列に混ぜず、1列1枚で縦並び表示にする
+function rollHTML(hi,lo,d,label,soloMax){
+  soloMax=soloMax||0;
   const cards=[];
   for(let r=hi;r>=lo;r--){ const g=byRank[r]; if(!g)continue;
-    cards.push(`<div class="rsCard${r<=3?' top'+r:''}"><span class="rsRk">${r}<small>位</small></span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="rsTi">${esc(g.title)}</span></div>`); }
+    const solo=r<=soloMax;
+    cards.push(`<div class="rsCard${r<=3?' top'+r:''}${solo?' solo':''}"><span class="rsRk">${r}<small>位</small></span><img src="${g.img}" loading="lazy" onerror="this.style.opacity=0"><span class="rsTi">${esc(g.title)}</span></div>`); }
   return `<div class="podium"><div class="pdLabel">${label}</div>
     <div class="rsWrap"><div class="rsList" style="animation-duration:${(d/1000).toFixed(1)}s">${cards.join('')}</div></div></div>`;
 }
@@ -240,7 +243,7 @@ function render(s){
   if(s.t==='p1roll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,101,dd,'⚡ 200 → 101');
     stage.insertAdjacentHTML('beforeend',sparkleHTML(50)); se('fanfare');
     setProg(101); return; }
-  if(s.t==='covroll'){ const dd=dur(s); stage.innerHTML=rollHTML(50,1,dd,'🏆 50 → 1 全結果');
+  if(s.t==='covroll'){ const dd=dur(s); stage.innerHTML=rollHTML(50,1,dd,'🏆 50 → 1 全結果',5);
     stage.insertAdjacentHTML('beforeend',sparkleHTML(1)); se('fanfare'); fireworks(4);
     setProg(1); return; }
   if(s.t==='podium'){ const dd=dur(s); stage.innerHTML=resultHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(1));

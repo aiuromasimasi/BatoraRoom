@@ -242,6 +242,11 @@
   .rsCard.top1 .rsRk{background:var(--gold);color:#4a3200}
   .rsCard.top2{border-color:#d9dee8}.rsCard.top2 .rsRk{background:#d9dee8;color:#333c4c}
   .rsCard.top3{border-color:#e0945a}.rsCard.top3 .rsRk{background:#e0945a;color:#4a2400}
+  /* soloMax指定時（例:5位以下）: 3列に混ぜず1列1枚でフル幅・縦並び */
+  .rsCard.solo{grid-column:1/-1;display:flex;align-items:center;gap:3cqw;padding:1cqh 1cqw}
+  .rsCard.solo img{width:34%;aspect-ratio:3/4;flex-shrink:0}
+  .rsCard.solo .rsTi{flex:1;padding:0;background:none;white-space:normal;font-size:clamp(13px,3.6cqmin,22px);line-height:1.3}
+  .rsCard.solo .rsRk{position:static;font-size:clamp(20px,5.6cqmin,40px);padding:0 10px 0 0;background:none;border-radius:0;flex-shrink:0}
   /* ===== 冒頭タイトルカード（BEST50・背景に全表紙が3列で流れる） ===== */
   .titlecard .rsWrap{top:0;filter:brightness(.55) saturate(.85)}
   .titlecard .tcList{animation-duration:70s;animation-timing-function:linear}
