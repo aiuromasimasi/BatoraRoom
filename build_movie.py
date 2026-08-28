@@ -98,6 +98,12 @@ function buildPart2B(){ steps.length=0;
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC2}); }
   steps.push({t:'podium',r:1,base:PODIUM2});
 }
+// Part3: 50→1位（タメなし・1作5.68秒＝284秒）+ 200→1位 全表紙スクロール(15秒) = 計299秒
+const G_SEC3=5680, COVROLL3=15000;
+function buildPart3(){ steps.length=0;
+  for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC3}); }
+  steps.push({t:'covroll',r:1,base:COVROLL3});
+}
 
 const stage=document.getElementById('stage');
 let si=0, playing=true, mult=1, AUTO=false, LM=1, mode=2, TS=1, TM=2, timer=null, feedRAF=null, feedStart=null;
@@ -275,6 +281,9 @@ function render(s){
   if(s.t==='p1roll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,101,dd,'⚡ 200 → 101');
     stage.insertAdjacentHTML('beforeend',sparkleHTML(50)); se('fanfare');
     setProg(101); return; }
+  if(s.t==='covroll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,1,dd,'🏆 200 → 1 全結果');
+    stage.insertAdjacentHTML('beforeend',sparkleHTML(1)); se('fanfare'); fireworks(4);
+    setProg(1); return; }
   if(s.t==='podium'){ const dd=dur(s); stage.innerHTML=resultHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(1));
     se('fanfare'); fireworks(4);
     setProg(1); return; }

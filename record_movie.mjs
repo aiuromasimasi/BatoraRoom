@@ -35,6 +35,7 @@ const MODES = {
   part1:      { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part1_200-101_60fps.mp4', label: '前半200→101位のみ+ロール/60fps', part1Only: true },
   part2a:     { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part2a_100-51_60fps.mp4',  label: '後半100→51位（タメなし・290秒）/60fps', part2Which: 'a' },
   part2b:     { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part2b_50-1_60fps.mp4',    label: '後半50→1位+RESULT（タメなし・298秒）/60fps', part2Which: 'b' },
+  part3:      { speed: 1,   fps: 60, everyNth: 1, out: 'movie_part3_50-1_full-cover_60fps.mp4', label: '50→1位+200→1位全表紙スクロール（タメなし・299秒）/60fps', part2Which: '3' },
 };
 
 async function record({ speed, fps, everyNth, out, label, part1Only, part2Which }) {
@@ -77,6 +78,7 @@ async function record({ speed, fps, everyNth, out, label, part1Only, part2Which 
     mult = s;
     if (p2w === 'a') buildPart2A();
     else if (p2w === 'b') buildPart2B();
+    else if (p2w === '3') buildPart3();
     else {
       buildSteps();
       if (p1) { P1ROLL = true; buildSteps();
