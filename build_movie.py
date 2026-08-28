@@ -99,7 +99,7 @@ function buildPart2B(){ steps.length=0;
   steps.push({t:'podium',r:1,base:PODIUM2});
 }
 // Part3: 冒頭タイトルカード(3秒) + 50→1位（タメなし） + 200→1位 全表紙スクロール(15秒) = 計299秒以内（録画時ドリフト分の安全マージンを確保）
-const G_SEC3=5630, COVROLL3=15000, TITLECARD3=3000;
+const G_SEC3=5630, COVROLL3=12000, TITLECARD3=3000;
 function buildPart3(){ steps.length=0;
   steps.push({t:'titlecard',r:0,base:TITLECARD3});
   for(let r=50;r>=1;r--){ if(byRank[r]) steps.push({t:'g',r,base:G_SEC3}); }
@@ -293,7 +293,7 @@ function render(s){
   if(s.t==='p1roll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,101,dd,'⚡ 200 → 101');
     stage.insertAdjacentHTML('beforeend',sparkleHTML(50)); se('fanfare');
     setProg(101); return; }
-  if(s.t==='covroll'){ const dd=dur(s); stage.innerHTML=rollHTML(200,1,dd,'🏆 200 → 1 全結果');
+  if(s.t==='covroll'){ const dd=dur(s); stage.innerHTML=rollHTML(50,1,dd,'🏆 50 → 1 全結果');
     stage.insertAdjacentHTML('beforeend',sparkleHTML(1)); se('fanfare'); fireworks(4);
     setProg(1); return; }
   if(s.t==='podium'){ const dd=dur(s); stage.innerHTML=resultHTML(dd); stage.insertAdjacentHTML('beforeend',sparkleHTML(1));
