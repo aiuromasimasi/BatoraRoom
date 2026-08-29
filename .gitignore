@@ -1,0 +1,6 @@
+game_clips/
+node_modules/
+movie_*.mp4
+.rec_*/
+package-lock.json
+game_trailers/
