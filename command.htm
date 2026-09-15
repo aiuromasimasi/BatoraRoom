@@ -47,7 +47,7 @@
     display:flex;gap:5px;justify-content:safe center;flex-wrap:nowrap;
     overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   nav::-webkit-scrollbar{display:none}
-  nav a{flex:0 1 auto;min-width:0;white-space:nowrap;text-decoration:none;font-weight:800;
+  nav a{flex:0 0 auto;min-width:0;white-space:nowrap;text-decoration:none;font-weight:800;
     font-size:clamp(11px,3.1vw,13px);color:var(--ink);background:var(--card);
     border:2px solid #fff;border-radius:999px;padding:6px clamp(8px,2.4vw,13px);
     box-shadow:0 6px 14px rgba(58,36,86,.16);transition:transform .14s}
@@ -113,6 +113,22 @@
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
     filter:drop-shadow(0 2px 0 rgba(0,0,0,.12));
   }
+  /* 管理者バッジ */
+  .adm-badge{
+    position:absolute;top:13px;right:13px;
+    font-size:11px;font-weight:800;color:#fff;
+    background:linear-gradient(135deg,var(--orange),var(--pink));
+    padding:3px 10px;border-radius:999px;
+    box-shadow:0 3px 8px rgba(255,138,61,.4);
+    white-space:nowrap;
+  }
+  /* 管理者セクションのタイトル */
+  .adm-cat h2{
+    background:linear-gradient(90deg,var(--yellow),var(--pink),var(--purple));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 2px 0 rgba(0,0,0,.12));
+  }
+  .chip.seat{background:#e8fff7;color:#0e9b7b}
 </style>
 </head>
 <body>
@@ -132,11 +148,12 @@
 
   <nav>
     <a href="#voice">🎙️ 声</a>
-    <a href="#fun">🎲 あそぶ</a>
+    <a href="#look">🎭 見た目</a>
     <a href="#info">💬 話題</a>
-    <a href="#help">❓ ヘルプ</a>
-    <a href="#play">🎮 みんな</a>
+    <a href="#play">🎮 あそぶ</a>
     <a href="#adv">⭐ 上級者</a>
+    <a href="#admin">🔑 管理者</a>
+    <a href="#help">❓ ヘルプ</a>
   </nav>
 
   <main>
@@ -147,33 +164,32 @@
 
         <article class="cmd" style="--c1:#ff8fc7;--c2:#9b5cff">
           <span class="name">/vc 声ID</span>
-          <p class="what">読み上げの声を、VOICEVOX の番号で変えるよ。</p>
-          <p class="detail">気に入った声の <span class="k">番号（ID）</span> を打つだけ。設定は<span class="k">あなたに紐づいて保存</span>され、次に入室しても続くよ。</p>
-          <div class="meta"><span class="chip rng">声ID = 0〜126 の整数</span></div>
+          <p class="what">アイラがあなたの発言を読むときの「声」を変えるよ。</p>
+          <p class="detail">VOICEVOX の話者番号を指定してね。<span class="k">/vc</span> だけ打つと、いま自分に割り当たっている声IDと速度が分かるよ。</p>
+          <div class="meta"><span class="chip rng">声ID = 0〜126</span></div>
           <div class="ex"><span class="lab">れい</span><code>/vc 20</code><button class="copy" data-c="/vc 20">コピー</button></div>
-          <p class="tip">🔎 どの番号がどの声か分からない時は <a href="voicevox.html">声の一覧・試聴ページ</a> で ▶ を押して選んでね！</p>
         </article>
 
         <article class="cmd" style="--c1:#9b5cff;--c2:#36c5ff">
           <span class="name">/vc 声ID 速度</span>
-          <p class="what">声と話す速さを、いっぺんに変えるよ。</p>
-          <p class="detail">スペースで区切って2つ書くだけ。<span class="k">速度</span>は数字が大きいほど早口になるよ。</p>
+          <p class="what">声と読む速さを、いっぺんに変えるよ。</p>
+          <p class="detail">数字を2つならべるだけ。<span class="k">1.0 がふつう</span>で、大きいほど早口になるよ。</p>
           <div class="meta"><span class="chip rng">声ID = 0〜126</span><span class="chip rng">速度 = 0.5〜2.0</span></div>
           <div class="ex"><span class="lab">れい</span><code>/vc 20 1.4</code><button class="copy" data-c="/vc 20 1.4">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#36c5ff;--c2:#3ff2c2">
           <span class="name">/vs 速度</span>
-          <p class="what">話す速さだけを変えるよ（声はそのまま）。</p>
-          <p class="detail">いまの声を変えずに、テンポだけ調整したい時に。<span class="k">1.0 がふつう</span>、ゆっくりは 0.8、早口は 1.5 くらい。</p>
+          <p class="what">声はそのままで、読む速さだけ変えるよ。</p>
+          <p class="detail">「もうちょっとゆっくり」「テンポよく」の調整に。<span class="k">0.5＝ゆっくり / 2.0＝かなり早口</span>。</p>
           <div class="meta"><span class="chip rng">速度 = 0.5〜2.0</span></div>
           <div class="ex"><span class="lab">れい</span><code>/vs 1.5</code><button class="copy" data-c="/vs 1.5">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#3ff2c2;--c2:#ffd23f">
           <span class="name">/vr</span>
-          <p class="what">声と速度を、最初の「おまかせ」に戻すよ。</p>
-          <p class="detail">名前から自動で決まる声にリセット。<span class="k">訪問回数や名前の読みかたは消えない</span>から安心してね。</p>
+          <p class="what">声の設定をリセットして、おまかせに戻すよ。</p>
+          <p class="detail">手動で決めた<span class="k">声ID・速度だけ</span>を解除。来場回数や読みかたの登録はそのまま残るから安心してね。</p>
           <div class="ex"><span class="lab">れい</span><code>/vr</code><button class="copy" data-c="/vr">コピー</button></div>
         </article>
 
@@ -185,97 +201,59 @@
         </article>
 
         <article class="cmd" style="--c1:#ff8a3d;--c2:#ff5ea8">
-          <span class="name">/v &nbsp;/&nbsp; /vchelp</span>
-          <p class="what">声まわりのヘルプ＆声一覧ページを呼び出すよ。</p>
-          <p class="detail"><span class="k">/v</span> … 声チェンジの使い方をチャットに表示。<br><span class="k">/vchelp</span> … 声の一覧・試聴ページの URL を投稿。</p>
+          <span class="name">/v</span>
+          <p class="what">声チェンジの使い方だけをまとめて出すよ。</p>
+          <p class="detail"><span class="k">/vc・/vs・/vr・/vq</span> の早見表（画像）をチャットに投稿。「番号いくつまでだっけ？」の時に。</p>
           <div class="ex"><span class="lab">れい</span><code>/v</code><button class="copy" data-c="/v">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ff5ea8;--c2:#9b5cff">
+          <span class="name">/omoide</span>
+          <p class="what">前にアイラと話した内容を思い出させてくれるよ 💭</p>
+          <p class="detail"><span class="k">前回・前々回</span>あなたが話していた話題から2件ずつ抜き出して投稿。出るのは<span class="k">自分の分だけ</span>なので、他の人の思い出は見えないよ。</p>
+          <div class="ex"><span class="lab">れい</span><code>/omoide</code><button class="copy" data-c="/omoide">コピー</button></div>
         </article>
 
       </div>
     </section>
 
-    <!-- ========== あそぶ ========== -->
-    <section id="fun">
-      <div class="cat"><span class="ic">🎲</span><h2>あそぶ</h2><span class="tag">ちょっと一息♪</span></div>
+    <!-- ========== 見た目をかえる ========== -->
+    <section id="look">
+      <div class="cat"><span class="ic">🎭</span><h2>見た目をかえる</h2><span class="tag">マイクに登壇中だけ</span></div>
       <div class="cards">
 
         <article class="cmd" style="--c1:#36c5ff;--c2:#9b5cff">
-          <span class="name">/2ch</span>
-          <p class="what">2ちゃん風の小さなアスキーアート（顔文字）をランダムに1個投稿。</p>
-          <p class="detail">打つたびに<span class="k">前と違うネタ</span>が出るよ。読み上げや記録はされない、見て楽しむ用♪</p>
-          <div class="ex"><span class="lab">れい</span><code>/2ch</code><button class="copy" data-c="/2ch">コピー</button></div>
+          <span class="name">/ch</span>
+          <p class="what">アイコン・フレームの「番号表」を出すよ 🔢</p>
+          <p class="detail">どの番号がどの絵柄かをまとめた<span class="k">一覧画像</span>をチャットに投稿。番号を確認してから <code class="inl">/ci</code>・<code class="inl">/cf</code> を打とう。<span class="k">見るだけなら誰でもOK</span>。</p>
+          <div class="ex"><span class="lab">れい</span><code>/ch</code><button class="copy" data-c="/ch">コピー</button></div>
         </article>
 
-        <article class="cmd" style="--c1:#3ff2c2;--c2:#36c5ff">
-          <span class="name">/zelda</span>
-          <p class="what">あの「謎解き正解！」の効果音を鳴らすよ 🔊</p>
-          <p class="detail">チャットには何も投稿せず、<span class="k">音だけ</span>鳴る。盛り上がった時のリアクションにどうぞ。読み上げの ON/OFF に関係なく鳴るよ。</p>
-          <div class="ex"><span class="lab">れい</span><code>/zelda</code><button class="copy" data-c="/zelda">コピー</button></div>
+        <article class="cmd" style="--c1:#9b5cff;--c2:#ff5ea8">
+          <span class="adv-badge">⭐ 上級者</span>
+          <span class="name">/ci 番号</span>
+          <p class="what">自分のアイコンを、番号表の絵柄に変えるよ 👤</p>
+          <p class="detail">番号は <code class="inl">/ch</code> の一覧の<span class="k">1番から</span>。フレームとは別々にかけられるので、<code class="inl">/cf</code> と重ねてもOK。</p>
+          <div class="meta"><span class="chip seat">🎤 マイクに登壇中だけ</span></div>
+          <div class="ex"><span class="lab">れい</span><code>/ci 3</code><button class="copy" data-c="/ci 3">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#ff5ea8;--c2:#ffd23f">
-          <span class="name">/omikuji &nbsp;(/o)</span>
-          <p class="what">今日の運勢をうらなうよ 🎴</p>
-          <p class="detail">大吉〜大凶と、ちょっとした<span class="k">アドバイス</span>つき。<span class="k">同じ日は何回引いても同じ結果</span>（引き直しナシ）。明日になればまた変わるよ。</p>
-          <div class="ex"><span class="lab">れい</span><code>/omikuji</code><button class="copy" data-c="/omikuji">コピー</button></div>
+          <span class="adv-badge">⭐ 上級者</span>
+          <span class="name">/cf 番号</span>
+          <p class="what">自分のまわりのフレームを変えるよ 🖼</p>
+          <p class="detail">番号表の<span class="k">1番から</span>選んでね。変えた見た目は<span class="k">部屋のみんなに見える</span>し、元に戻されても自動でかけ直すよ。</p>
+          <div class="meta"><span class="chip seat">🎤 マイクに登壇中だけ</span></div>
+          <div class="ex"><span class="lab">れい</span><code>/cf 5</code><button class="copy" data-c="/cf 5">コピー</button></div>
         </article>
 
-        <article class="cmd" style="--c1:#9b5cff;--c2:#36c5ff">
-          <span class="name">/gacha &nbsp;(/g)</span>
-          <p class="what">ガチャを回して「称号」をゲット！ 🎰</p>
-          <p class="detail">N→R→SR→<span class="k">SSR</span> のレアリティで称号が当たるよ。手に入れた称号は<span class="k">あなたに保存</span>。SSR が出たら効果音つき ✨</p>
-          <div class="ex"><span class="lab">れい</span><code>/gacha</code><button class="copy" data-c="/gacha">コピー</button></div>
-        </article>
-
-        <article class="cmd" style="--c1:#36c5ff;--c2:#3ff2c2">
-          <span class="name">/rank &nbsp;(/lv)</span>
-          <p class="what">あなたの「常連レベル」を表示するよ 🏅</p>
-          <p class="detail">来た回数でレベル＆称号がアップ。<span class="k">次のランクまであと何回か</span>、集めた称号の数も出るよ。</p>
-          <div class="ex"><span class="lab">れい</span><code>/rank</code><button class="copy" data-c="/rank">コピー</button></div>
-        </article>
-
-        <article class="cmd" style="--c1:#ffd23f;--c2:#ff8a3d">
-          <span class="name">/poll お題 | A | B</span>
-          <p class="what">みんなで多数決！チャットの番号で投票 📊</p>
-          <p class="detail">お題と選択肢を <span class="k">|</span> で区切って出すと投票スタート。みんなは<span class="k">番号を打つだけ</span>。<code class="inl">/poll end</code> で集計（棒グラフ＆優勝 🏆）。選択肢は2〜9個。</p>
-          <div class="ex"><span class="lab">れい</span><code>/poll 好きな色 | 赤 | 青 | 緑</code><button class="copy" data-c="/poll 好きな色 | 赤 | 青 | 緑">コピー</button></div>
-        </article>
-
-        <article class="cmd" style="--c1:#ff8a3d;--c2:#ff5ea8">
-          <span class="name">/kazuate &nbsp;(/kz)</span>
-          <p class="what">数当てゲーム！何の数字か当ててね 🔢</p>
-          <p class="detail">アイラが 1〜100（最大は変えられる）の数を1つ決めるよ。<span class="k">数字を打つ</span>と「もっと大きい/小さい」とヒント。<span class="k">最速で当てた人が勝ち</span>！</p>
-          <div class="meta"><span class="chip rng">最大 = 2〜1000（既定100）</span></div>
-          <div class="ex"><span class="lab">れい</span><code>/kazuate 50</code><button class="copy" data-c="/kazuate 50">コピー</button></div>
-        </article>
-
-        <article class="cmd" style="--c1:#ff5ea8;--c2:#9b5cff">
-          <span class="name">/react on / off</span>
-          <p class="what">合言葉に自動でリアクション！ ✨</p>
-          <p class="detail">ON にすると、<span class="k">888</span>→👏拍手、<span class="k">www</span>→草、<span class="k">kwsk</span>→ドラムロール…みたいに反応するよ。OFF で停止。</p>
-          <div class="ex"><span class="lab">れい</span><code>/react on</code><button class="copy" data-c="/react on">コピー</button></div>
-        </article>
-
-        <article class="cmd" style="--c1:#9b5cff;--c2:#3ff2c2">
-          <span class="name">/cd 分 [ラベル]</span>
-          <p class="what">カウントダウンをセット ⏳</p>
-          <p class="detail">「あと◯分！」を残り1分・0分でお知らせ（0分は効果音）。<span class="k">休憩や開始前</span>のタイマーに。止めるときは <code class="inl">/cd stop</code>。</p>
-          <div class="meta"><span class="chip rng">分 = 1〜120</span></div>
-          <div class="ex"><span class="lab">れい</span><code>/cd 5 休憩</code><button class="copy" data-c="/cd 5 休憩">コピー</button></div>
-        </article>
-
-        <article class="cmd" style="--c1:#3ff2c2;--c2:#36c5ff">
-          <span class="name">/brb &nbsp;/&nbsp; /back</span>
-          <p class="what">ちょっと離席するときの合図 🚪</p>
-          <p class="detail"><span class="k">/brb 10 トイレ</span> のように「分」と「理由」を添えると離席をお知らせ（分を入れると呼び戻しも）。戻ったら <span class="k">/back</span> で「おかえり」。</p>
-          <div class="ex"><span class="lab">れい</span><code>/brb 10 トイレ</code><button class="copy" data-c="/brb 10 トイレ">コピー</button></div>
-        </article>
-
-        <article class="cmd" style="--c1:#ffd23f;--c2:#9b5cff">
-          <span class="name">/asobi &nbsp;(/fun)</span>
-          <p class="what">あそべるコマンドの一覧をチャットに出すよ 🎲</p>
-          <p class="detail">「何があったっけ？」のときに。<span class="k">⭐つきは上級ユーザー専用</span>だよ。</p>
-          <div class="ex"><span class="lab">れい</span><code>/asobi</code><button class="copy" data-c="/asobi">コピー</button></div>
+        <article class="cmd" style="--c1:#ffd23f;--c2:#3ff2c2">
+          <span class="adv-badge">⭐ 上級者</span>
+          <span class="name">/reset</span>
+          <p class="what">変えた見た目を、ぜんぶ元にもどすよ ↩️</p>
+          <p class="detail"><code class="inl">/ci</code>・<code class="inl">/cf</code> でかけた<span class="k">アイコンとフレームの上書きを解除</span>。降りるときはこれでキレイに戻してね。</p>
+          <div class="meta"><span class="chip seat">🎤 マイクに登壇中だけ</span></div>
+          <div class="ex"><span class="lab">れい</span><code>/reset</code><button class="copy" data-c="/reset">コピー</button></div>
         </article>
 
       </div>
@@ -302,76 +280,105 @@
 
         <article class="cmd" style="--c1:#ffd23f;--c2:#3ff2c2">
           <span class="name">/wadai</span>
-          <p class="what">話題に困ったら、おすすめのお題をくれるよ。</p>
-          <p class="detail"><span class="k">【話題提案】</span>として「直接・間接・雑談」を各1件ずつ提案。沈黙しちゃった時の救世主♪</p>
+          <p class="what">直近1週間で盛り上がった話題ランキング 📊</p>
+          <p class="detail">その日その日に話していた<span class="k">「話題」そのもの</span>を数えたTOPを投稿（ワードの数え上げとは別物）。<code class="inl">1.ゼルダの伝説シリーズ(8回3人)</code> のように出るよ。</p>
           <div class="ex"><span class="lab">れい</span><code>/wadai</code><button class="copy" data-c="/wadai">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#3ff2c2;--c2:#36c5ff">
+          <span class="name">/wadai1 &nbsp;/&nbsp; /wadai2</span>
+          <p class="what">もっと長い期間のランキングも見られるよ 📈</p>
+          <p class="detail"><span class="k">/wadai1</span> … 直近1ヶ月 ／ <span class="k">/wadai2</span> … 直近半年。「最近ずっと何の話してた？」を振り返るのに便利。</p>
+          <div class="ex"><span class="lab">れい</span><code>/wadai1</code><button class="copy" data-c="/wadai1">コピー</button></div>
+          <p class="tip">💡 まだ集計されていないと「作れます」と案内が出るよ。その時は管理者さんにお願いしてね。</p>
+        </article>
+
+        <article class="cmd" style="--c1:#36c5ff;--c2:#ff8a3d">
+          <span class="name">/neta</span>
+          <p class="what">話題に困ったら、おすすめのお題をくれるよ 🎁</p>
+          <p class="detail"><span class="k">【話題提案】</span>として「直接・間接・雑談」を各1件ずつ提案。沈黙しちゃった時の救世主♪ <span class="k">前の /wadai がこれになったよ</span>。</p>
+          <div class="ex"><span class="lab">れい</span><code>/neta</code><button class="copy" data-c="/neta">コピー</button></div>
           <p class="tip">💡 出てこない時は、管理者さんに <code class="inl">/admin:wadai</code> でお題ストックを作ってもらってね。</p>
         </article>
 
       </div>
     </section>
 
-    <!-- ========== みんなで遊ぼう ========== -->
+    <!-- ========== みんなであそぶ ========== -->
     <section id="play">
-      <div class="cat"><span class="ic">🎮</span><h2>みんなで遊ぼう</h2><span class="tag">全員が使えるよ</span></div>
+      <div class="cat"><span class="ic">🎮</span><h2>みんなであそぶ</h2><span class="tag">全員が使えるよ</span></div>
       <div class="cards">
 
         <article class="cmd" style="--c1:#3ff2c2;--c2:#36c5ff">
           <span class="name">/asobi &nbsp;/&nbsp; /fun</span>
-          <p class="what">遊び・進行コマンドの一覧をチャットへ投稿するよ。</p>
-          <p class="detail">下に並んでいるコマンドをギュッとまとめた早見表を出す。<span class="k">⭐ 上級者専用</span>のコマンドはそこで確認できるよ。</p>
+          <p class="what">あそべるコマンドの一覧をチャットに出すよ 🎲</p>
+          <p class="detail">「何があったっけ？」のときに。早見表（画像）が出るよ。<span class="k">⭐つきは上級ユーザー専用</span>で、上級者には追加の一覧もいっしょに届くよ。</p>
           <div class="ex"><span class="lab">れい</span><code>/asobi</code><button class="copy" data-c="/asobi">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#36c5ff;--c2:#9b5cff">
+          <span class="name">/2ch</span>
+          <p class="what">2ちゃん風の小さなアスキーアート（顔文字）をランダムに1個投稿。</p>
+          <p class="detail">打つたびに<span class="k">前と違うネタ</span>が出るよ。読み上げや記録はされない、見て楽しむ用♪</p>
+          <div class="ex"><span class="lab">れい</span><code>/2ch</code><button class="copy" data-c="/2ch">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#3ff2c2;--c2:#36c5ff">
+          <span class="name">/zelda</span>
+          <p class="what">あの「謎解き正解！」の効果音を鳴らすよ 🔊</p>
+          <p class="detail">チャットには何も投稿せず、<span class="k">音だけ</span>鳴る（3種類からランダム）。盛り上がった時のリアクションにどうぞ。</p>
+          <div class="ex"><span class="lab">れい</span><code>/zelda</code><button class="copy" data-c="/zelda">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#ff8a3d;--c2:#ffd23f">
           <span class="name">/omikuji &nbsp;/&nbsp; /o</span>
-          <p class="what">今日の運勢を占うよ🔮</p>
-          <p class="detail">あなたの名前＋今日の日付でシードが固まるので、<span class="k">同じ日は何度引いても同じ結果</span>（引き直し不可）。一言アドバイスも付くよ。</p>
+          <p class="what">今日の運勢をうらなうよ 🔮</p>
+          <p class="detail">大吉〜大凶と、ちょっとした<span class="k">アドバイス</span>つき。<span class="k">同じ日は何度引いても同じ結果</span>（引き直しナシ）。明日になればまた変わるよ。</p>
           <div class="ex"><span class="lab">れい</span><code>/omikuji</code><button class="copy" data-c="/omikuji">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#9b5cff;--c2:#ff5ea8">
           <span class="name">/gacha &nbsp;/&nbsp; /g</span>
-          <p class="what">称号ガチャをひくよ🎰</p>
-          <p class="detail">N(50%) / R(35%) / SR(12%) / SSR(3%) のレアリティで称号を獲得。<span class="k">SSR は効果音つき</span>🔊 称号はあなたに永続保存されるよ。</p>
+          <p class="what">ガチャを回して「称号」をゲット！ 🎰</p>
+          <p class="detail">N→R→SR→<span class="k">SSR</span> のレアリティで称号が当たるよ。手に入れた称号は<span class="k">あなたに保存</span>。SSR が出たら効果音つき ✨</p>
           <div class="ex"><span class="lab">れい</span><code>/gacha</code><button class="copy" data-c="/gacha">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#36c5ff;--c2:#3ff2c2">
           <span class="name">/rank &nbsp;/&nbsp; /lv</span>
-          <p class="what">来場回数でレベルと称号を表示するよ📊</p>
-          <p class="detail">来た回数が多いほどランクが上がる。<span class="k">次ランクまであと何回か</span>も分かるよ。獲得済み称号（直近3つ）も一緒に表示。</p>
+          <p class="what">あなたの「常連レベル」を表示するよ 🏅</p>
+          <p class="detail">来た回数でレベル＆称号がアップ。<span class="k">次のランクまであと何回か</span>、集めた称号も一緒に出るよ。</p>
           <div class="ex"><span class="lab">れい</span><code>/rank</code><button class="copy" data-c="/rank">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#ff5ea8;--c2:#ff8a3d">
           <span class="name">/poll お題 | A | B …</span>
-          <p class="what">チャットで多数決をとるよ🗳️</p>
-          <p class="detail">選択肢を <span class="k">| や / や 、</span> で区切って2〜9個まで設定できる。投票は<span class="k">チャットに数字を打つだけ</span>。集計は <code class="inl">/poll end</code> で。</p>
+          <p class="what">みんなで多数決！チャットの番号で投票 🗳️</p>
+          <p class="detail">選択肢を <span class="k">| や / や 、</span> で区切って2〜9個まで。投票は<span class="k">番号を打つだけ</span>（1人1票・最後に打った番号が有効）。</p>
           <div class="meta"><span class="chip rng">選択肢 = 2〜9個</span></div>
           <div class="ex"><span class="lab">れい</span><code>/poll 好きな色 | 赤 | 青 | 緑</code><button class="copy" data-c="/poll 好きな色 | 赤 | 青 | 緑">コピー</button></div>
-          <p class="tip">💡 終わるときは <code class="inl">/poll end</code>（「結果」「集計」「終了」でもOK）</p>
+          <p class="tip">💡 集計は <code class="inl">/poll end</code>（「結果」「集計」「終了」でもOK）。棒グラフと🏆で発表するよ。</p>
         </article>
 
         <article class="cmd" style="--c1:#3ff2c2;--c2:#9b5cff">
           <span class="name">/kazuate [最大] &nbsp;/&nbsp; /kz</span>
-          <p class="what">数当てゲームを始めるよ🎯</p>
-          <p class="detail">Botが1〜最大の数を選び、みんなのチャットの数字に<span class="k">⬆️大きい / ⬇️小さい</span>でヒント。最速で当てた人が勝者＋効果音🔊</p>
-          <div class="meta"><span class="chip rng">最大 = 2〜1000（省略で100）</span></div>
+          <p class="what">数当てゲームを始めるよ 🎯</p>
+          <p class="detail">アイラが 1〜最大 の数を1つ決めるよ。<span class="k">数字を打つ</span>と「⬆️大きい / ⬇️小さい」でヒント。最速で当てた人が勝者＋効果音🔊</p>
+          <div class="meta"><span class="chip rng">最大 = 1〜2の64乗</span></div>
           <div class="ex"><span class="lab">れい</span><code>/kazuate 50</code><button class="copy" data-c="/kazuate 50">コピー</button></div>
-          <p class="tip">💡 やめるときは <code class="inl">/kazuate end</code></p>
+          <p class="tip">💡 最大を省くと天文学的な数になっちゃうので、<code class="inl">/kazuate 50</code> のように数字を付けてね。やめるときは <code class="inl">/kazuate end</code>。</p>
         </article>
 
         <article class="cmd" style="--c1:#36c5ff;--c2:#9b5cff">
           <span class="name">/react on | off</span>
-          <p class="what">ワード自動反応のON/OFFを切りかえるよ🎉</p>
-          <p class="detail">ONにすると「888」→拍手・「www」→草・「kwsk」→ドラムロール など、<span class="k">キーワードに自動でリアクション</span>（4秒クールダウン）。引数なしでトグル。</p>
+          <p class="what">合言葉に自動でリアクション！ 🎉</p>
+          <p class="detail">ONにすると <span class="k">888</span>→👏拍手、<span class="k">www</span>→草、<span class="k">kwsk</span>→ドラムロール…と反応（4秒クールダウン）。引数なしでトグル。</p>
           <div class="ex"><span class="lab">れい</span><code>/react on</code><button class="copy" data-c="/react on">コピー</button></div>
         </article>
 
         <article class="cmd" style="--c1:#ff8a3d;--c2:#ff5ea8">
           <span class="name">/cd &lt;分&gt; [ラベル]</span>
-          <p class="what">カウントダウンを始めるよ⏱️</p>
+          <p class="what">カウントダウンを始めるよ ⏱️</p>
           <p class="detail">残り<span class="k">1分と0分</span>でチャットに告知（0分は効果音🔊）。ラベルを付けると「休憩まで…」のように表示。<code class="inl">/cd stop</code> で中断。同時に1本のみ。</p>
           <div class="meta"><span class="chip rng">分 = 1〜120</span></div>
           <div class="ex"><span class="lab">れい</span><code>/cd 5 休憩</code><button class="copy" data-c="/cd 5 休憩">コピー</button></div>
@@ -379,15 +386,21 @@
 
         <article class="cmd" style="--c1:#ffd23f;--c2:#3ff2c2">
           <span class="name">/brb [分] [理由] &nbsp;/&nbsp; /back</span>
-          <p class="what">離席を告知して、戻ったら報告するよ🚶</p>
-          <p class="detail"><span class="k">/brb</span> で離席を宣言。分を指定するとその時間にBotが呼び戻してくれる。戻ったら <span class="k">/back</span> で「おかえり」と離席時間を表示。</p>
+          <p class="what">離席を告知して、戻ったら報告するよ 🚶</p>
+          <p class="detail"><span class="k">/brb</span> で離席を宣言。分を指定するとその時間にアイラが呼び戻してくれる。戻ったら <span class="k">/back</span> で「おかえり」と離席時間を表示。</p>
           <div class="meta"><span class="chip rng">分 = 1〜240（任意）</span></div>
           <div class="ex"><span class="lab">れい</span><code>/brb 10 トイレ</code><button class="copy" data-c="/brb 10 トイレ">コピー</button></div>
         </article>
 
+        <article class="cmd" style="--c1:#ff5ea8;--c2:#36c5ff">
+          <span class="name">？ &nbsp;/&nbsp; /kotae &nbsp;(/k)</span>
+          <p class="what">推理ゲームには、誰でも参加できるよ 🔎</p>
+          <p class="detail">上級者が <code class="inl">/suiri</code> を始めたら、<span class="k">「？」を付けて質問</span>（<code class="inl">/s</code> でもOK）、わかったら <span class="k">/kotae 名前</span> で回答。始めるのは上級者だけど<span class="k">遊ぶのは全員</span>♪</p>
+          <div class="ex"><span class="lab">れい</span><code>/kotae ドラえもん</code><button class="copy" data-c="/kotae ドラえもん">コピー</button></div>
+        </article>
+
       </div>
     </section>
-
     <!-- ========== 上級者コマンド ========== -->
     <section id="adv">
       <div class="cat adv-cat"><span class="ic">⭐</span><h2>上級者コマンド</h2><span class="tag">⭐ 権限が必要だよ</span></div>
@@ -524,6 +537,120 @@
           <div class="ex"><span class="lab">れい</span><code>/word</code><button class="copy" data-c="/word">コピー</button></div>
         </article>
 
+        <article class="cmd" style="--c1:#ff5ea8;--c2:#9b5cff">
+          <span class="adv-badge">⭐ 上級者</span>
+          <span class="name">/suiri [ジャンル] [難易度] &nbsp;(/sui)</span>
+          <p class="what">みんなで推理（キャラ当て）を始めるよ🔎</p>
+          <p class="detail">アイラが有名キャラを1人思い浮かべる → みんなは<span class="k">「？」を付けて質問</span>（<code class="inl">/s</code> でも可・はい/いいえで答えるよ・<span class="k">20問まで</span>）、わかったら <span class="k">/kotae 名前</span>（<code class="inl">/k</code>）で回答。<span class="k">質問と回答は全員できる</span>のがポイント。</p>
+          <div class="meta"><span class="chip">ジャンル = アニメ / ゲーム / 芸能人 / 歴史</span><span class="chip rng">難易度 = 易・普・難</span></div>
+          <div class="ex"><span class="lab">れい</span><code>/suiri ゲーム 難</code><button class="copy" data-c="/suiri ゲーム 難">コピー</button></div>
+          <p class="tip">💡 ヒントは <code class="inl">/suiri hint</code>、降参して答えを見るときは <code class="inl">/suiri end</code>。ジャンル・難易度は省略でおまかせ。</p>
+        </article>
+
+        <article class="cmd" style="--c1:#9b5cff;--c2:#3ff2c2">
+          <span class="adv-badge">⭐ 上級者</span>
+          <span class="name">/music [テーマ]</span>
+          <p class="what">その場で1曲つくって流すよ🎵</p>
+          <p class="detail">テーマを書くとその内容で、<span class="k">省略すると今の会話から</span>歌詞・ジャンル・ボーカルを決めて作曲。できたタイトルと歌詞もチャットに出るよ。<span class="k">1曲あたり数分〜10分</span>かかるので、作っている間は次のリクエストを受け付けないよ。</p>
+          <div class="ex"><span class="lab">れい</span><code>/music 夏の終わりのドライブ</code><button class="copy" data-c="/music 夏の終わりのドライブ">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#3ff2c2;--c2:#ffd23f">
+          <span class="adv-badge">⭐ 上級者</span>
+          <span class="name">/image &lt;内容&gt;</span>
+          <p class="what">お題どおりの絵をAIに描いてもらうよ🎨</p>
+          <p class="detail">書きたい内容は<span class="k">日本語でOK</span>（中で英語のタグに翻訳してから生成）。できあがったらアイラが<span class="k">自動でチャットに投稿</span>するよ。1枚30秒〜数分、同時に1枚まで。</p>
+          <div class="ex"><span class="lab">れい</span><code>/image 夕焼けの富士山と桜</code><button class="copy" data-c="/image 夕焼けの富士山と桜">コピー</button></div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ========== 管理者コマンド ========== -->
+    <section id="admin">
+      <div class="cat adm-cat"><span class="ic">🔑</span><h2>管理者コマンド</h2><span class="tag">🔑 管理者だけが実行できるよ</span></div>
+      <div class="cards">
+
+        <article class="cmd" style="--c1:#36c5ff;--c2:#9b5cff">
+          <span class="name">/admin:h &nbsp;/&nbsp; /admin:test</span>
+          <p class="what">管理者コマンドの一覧と、自分の権限をチェック 🔎</p>
+          <p class="detail"><span class="k">/admin:h</span>（<code class="inl">/admin</code> だけでも同じ）… 管理者コマンドの説明を投稿。<span class="k">/admin:test</span> … 自分に管理者権限があるかを返すよ。<span class="k">この2つは誰でも打てる</span>。</p>
+          <div class="ex"><span class="lab">れい</span><code>/admin:test</code><button class="copy" data-c="/admin:test">コピー</button></div>
+          <p class="tip">💡 権限のはんてい は、なりすまし防止のため<b>発言の中身ではなくAgoraの署名</b>で行っているよ。</p>
+        </article>
+
+        <article class="cmd" style="--c1:#9b5cff;--c2:#ff5ea8">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/admin:sum</span>
+          <p class="what">たまった要約を「要約の要約」にまとめるよ 🗂</p>
+          <p class="detail">自動で作られた要約ログをひとまとめに整理して、完了をチャットに投稿。長い配信のふり返りに。</p>
+          <div class="ex"><span class="lab">れい</span><code>/admin:sum</code><button class="copy" data-c="/admin:sum">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ff5ea8;--c2:#ffd23f">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/admin:log2</span>
+          <p class="what">直前の話題を、くわしく3件紹介するよ 📝</p>
+          <p class="detail"><code class="inl">/log</code> よりも詳しい内容を3件。何を話していたかをしっかり思い出したい時に。</p>
+          <div class="ex"><span class="lab">れい</span><code>/admin:log2</code><button class="copy" data-c="/admin:log2">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ffd23f;--c2:#3ff2c2">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/admin:wadai</span>
+          <p class="what"><code class="inl">/neta</code> で使うお題ストックを作るよ 🧺</p>
+          <p class="detail">直近7日の要約から「直接・間接・雑談」のお題をたくさん生成して保存。<span class="k">/neta が「ストックがありません」と言ったらこれ</span>。</p>
+          <div class="ex"><span class="lab">れい</span><code>/admin:wadai</code><button class="copy" data-c="/admin:wadai">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#3ff2c2;--c2:#36c5ff">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/admin:アイラ &lt;文章&gt;</span>
+          <p class="what">アイラ（AI）に自由に質問できるよ 🧠</p>
+          <p class="detail">コマンドのあとに書いた文章をそのままAIに聞いて、<span class="k">🧠…</span> の形で回答を投稿。<code class="inl">/admin:aira</code> でも同じ。</p>
+          <div class="ex"><span class="lab">れい</span><code>/admin:アイラ 明日の天気を一言で</code><button class="copy" data-c="/admin:アイラ 明日の天気を一言で">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#36c5ff;--c2:#ff8a3d">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/meigen</span>
+          <p class="what">今日の会話から「名言」を拾い上げるよ 💬</p>
+          <p class="detail">直近の会話をAIが読んで、いちばん光っていた一言を引用して投稿。</p>
+          <div class="ex"><span class="lab">れい</span><code>/meigen</code><button class="copy" data-c="/meigen">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ff8a3d;--c2:#ff5ea8">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/ai &lt;質問&gt;</span>
+          <p class="what">質問にAIが下書きで答えるよ 🤖</p>
+          <p class="detail">その場で調べたいこと・考えたいことを投げると、短い回答を投稿。</p>
+          <div class="ex"><span class="lab">れい</span><code>/ai 今日は何の日？</code><button class="copy" data-c="/ai 今日は何の日？">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#ff5ea8;--c2:#9b5cff">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/matome</span>
+          <p class="what">ここまでの会話をAIが要約するよ 📚</p>
+          <p class="detail">途中から入ってきた人に「今どんな話？」を共有したい時に便利。</p>
+          <div class="ex"><span class="lab">れい</span><code>/matome</code><button class="copy" data-c="/matome">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#9b5cff;--c2:#36c5ff">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/title</span>
+          <p class="what">配信タイトル・サムネの案を出すよ ✏️</p>
+          <p class="detail">今の会話の流れからタイトル案をAIが生成。部屋名に迷った時に。</p>
+          <div class="ex"><span class="lab">れい</span><code>/title</code><button class="copy" data-c="/title">コピー</button></div>
+        </article>
+
+        <article class="cmd" style="--c1:#36c5ff;--c2:#3ff2c2">
+          <span class="adm-badge">🔑 管理者</span>
+          <span class="name">/tsukkomi</span>
+          <p class="what">直前の発言にアイラがツッコむよ 😆</p>
+          <p class="detail">場をやわらげたい時のひと言をAIが生成して投稿。</p>
+          <div class="ex"><span class="lab">れい</span><code>/tsukkomi</code><button class="copy" data-c="/tsukkomi">コピー</button></div>
+        </article>
+
       </div>
     </section>
 
@@ -539,13 +666,20 @@
           <div class="ex"><span class="lab">れい</span><code>/h</code><button class="copy" data-c="/h">コピー</button></div>
         </article>
 
+        <article class="cmd" style="--c1:#36c5ff;--c2:#3ff2c2">
+          <span class="name">くわしいヘルプ</span>
+          <p class="what">知りたいジャンルごとの早見表も出せるよ 📖</p>
+          <p class="detail"><span class="k">/v</span> … 声チェンジ ／ <span class="k">/asobi</span> … 遊び・進行 ／ <span class="k">/ch</span> … アイコン・フレームの番号表 ／ <span class="k">/admin:h</span> … 管理者コマンド。</p>
+          <div class="ex"><span class="lab">れい</span><code>/asobi</code><button class="copy" data-c="/asobi">コピー</button></div>
+        </article>
+
       </div>
     </section>
   </main>
 
   <div class="toast" id="toast"></div>
   <footer>
-    打ちかたは <code class="inl">/コマンド</code> をチャットに送るだけ ✦ 大文字小文字・全角の <code class="inl">／</code> でもOK<br>
+    打ちかたは <code class="inl">/コマンド</code> をチャットに送るだけ ✦ 大文字・小文字はどちらでもOK（先頭は<b>半角の / </b>でね）<br>
     声の一覧・試聴は <a href="voicevox.html">🎙️ VOICEVOX 話者ID 図鑑</a> へ ✦ たのしんでね！ 💖
   </footer>
 
