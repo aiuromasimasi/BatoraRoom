@@ -49,6 +49,8 @@
   dialog::backdrop{background:rgba(30,16,50,.72)}
   .viewer{background:#fff;border:3px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:8px 8px 0 var(--pink)}
   .viewer img{width:100%;max-height:76vh;object-fit:contain;display:block;background:#fff;border-bottom:2px solid var(--ink)}
+  .viewer img.tall{max-height:none;width:min(100%,560px);margin:0 auto;border-left:2px solid var(--ink);border-right:2px solid var(--ink)}   /* 縦4コマは幅を優先し、ダイアログ内をスクロールして読む */
+  .viewer .imgwrap{background:#f4eef6;border-bottom:2px solid var(--ink)}
   .viewer .body{padding:14px 18px 18px}
   .viewer h2{margin:0;font-family:"Mochiy Pop One",sans-serif;font-size:1.25rem}
   .viewer .date{color:var(--muted);font-size:.8rem;margin-bottom:4px}
@@ -75,7 +77,7 @@
 
 <dialog id="dlg" aria-label="4コマ漫画の拡大表示">
   <div class="viewer">
-    <img id="vImg" alt="">
+    <div class="imgwrap"><img id="vImg" alt=""></div>
     <div class="body">
       <div class="date" id="vDate"></div>
       <h2 id="vTitle"></h2>
@@ -118,7 +120,9 @@ function render(){
 }
 function open(i){
   const c=comics[i]; if(!c) return; cur=i;
-  document.getElementById("vImg").src=c.file;
+  const im=document.getElementById("vImg"); im.classList.remove("tall");
+  im.onload=()=>{ im.classList.toggle("tall", im.naturalHeight>im.naturalWidth*1.5); };
+  im.src=c.file;
   document.getElementById("vImg").alt=`4コマ漫画『${c.title||"無題"}』`;
   document.getElementById("vDate").textContent=fmtDate(c.ts);
   document.getElementById("vTitle").textContent=c.title||"無題";
