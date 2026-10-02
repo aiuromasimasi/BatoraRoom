@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アイラの4コマ劇場 ✦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --pink:#ff5ea8; --purple:#9b5cff; --ink:#2a1a4a; --muted:#7a6f8f;
+    --bg:#fff8fb; --card:#ffffff; --border:#f1e3f0; --cream:#fff6d5;
+  }
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden;max-width:100%}
+  body{
+    margin:0; color:var(--ink); background:var(--bg);
+    font-family:"M PLUS Rounded 1c","Hiragino Sans","Yu Gothic",sans-serif;
+    background-image:radial-gradient(#ffd6ea 1.2px, transparent 1.2px);
+    background-size:22px 22px;
+  }
+  header{
+    position:relative; padding:34px 20px 30px; text-align:center; color:#fff;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    box-shadow:0 6px 0 rgba(42,26,74,.12);
+  }
+  header h1{margin:0;font-family:"Mochiy Pop One",sans-serif;font-size:clamp(1.6rem,5vw,2.4rem);letter-spacing:.04em;text-shadow:0 3px 0 rgba(42,26,74,.25)}
+  header p{margin:10px 0 0;font-size:.95rem;opacity:.95}
+  .count{display:inline-block;margin-top:12px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.6);border-radius:999px;padding:3px 14px;font-size:.8rem;font-weight:700}
+  main{max-width:1080px;margin:0 auto;padding:22px 16px 40px}
+  .day{margin:26px 0 10px;font-weight:800;color:var(--purple);display:flex;align-items:center;gap:10px}
+  .day::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,#e6d6ff,transparent)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .card{
+    background:var(--card); border:2px solid var(--ink); border-radius:14px; overflow:hidden; cursor:pointer;
+    box-shadow:4px 4px 0 var(--ink); transition:transform .12s, box-shadow .12s; text-align:left; padding:0; font:inherit; color:inherit;
+  }
+  .card:hover,.card:focus-visible{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--pink);outline:none}
+  .card img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:top;display:block;border-bottom:2px solid var(--ink);background:#fff}
+  .card .meta{padding:10px 12px 12px}
+  .card .t{font-weight:800;font-size:1rem;line-height:1.35}
+  .card .s{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:.7rem;background:var(--cream);border:1.5px solid var(--ink);border-radius:999px;padding:1px 9px;font-weight:700}
+  .chip.p{background:#ffe3f1}
+  #empty{text-align:center;color:var(--muted);padding:70px 20px}
+  /* 拡大表示 */
+  dialog{border:none;padding:0;background:transparent;max-width:min(96vw,980px);width:100%}
+  dialog::backdrop{background:rgba(30,16,50,.72)}
+  .viewer{background:#fff;border:3px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:8px 8px 0 var(--pink)}
+  .viewer img{width:100%;max-height:76vh;object-fit:contain;display:block;background:#fff;border-bottom:2px solid var(--ink)}
+  .viewer .body{padding:14px 18px 18px}
+  .viewer h2{margin:0;font-family:"Mochiy Pop One",sans-serif;font-size:1.25rem}
+  .viewer .date{color:var(--muted);font-size:.8rem;margin-bottom:4px}
+  .ochi{margin-top:10px;background:var(--cream);border:2px dashed var(--ink);border-radius:10px;padding:8px 12px;font-size:.9rem}
+  details.script{margin-top:10px}
+  details.script summary{cursor:pointer;font-weight:700;color:var(--purple)}
+  .panel{margin-top:8px;font-size:.88rem;line-height:1.7}
+  .panel b{color:var(--pink)}
+  .nav{display:flex;justify-content:space-between;gap:8px;padding:0 18px 16px}
+  .btn{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-weight:800;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+  .btn:hover{background:#ffe3f1}
+  .btn[disabled]{opacity:.35;cursor:default}
+  .backlink{display:inline-block;margin:10px 0 30px;color:var(--purple);font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎨 アイラの4コマ劇場</h1>
+  <p>音声ルームのおしゃべりから、アイラが描いた4コマ漫画。ぜんぶ落ちつき ✨</p>
+  <span class="count" id="count">読み込み中…</span>
+</header>
+<main id="main"><div id="empty">読み込み中…</div></main>
+<div style="text-align:center"><a class="backlink" href="index.html">← トップへ戻る</a></div>
+
+<dialog id="dlg" aria-label="4コマ漫画の拡大表示">
+  <div class="viewer">
+    <img id="vImg" alt="">
+    <div class="body">
+      <div class="date" id="vDate"></div>
+      <h2 id="vTitle"></h2>
+      <div class="s" id="vChips" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div class="ochi" id="vOchi"></div>
+      <details class="script"><summary>セリフを文字で読む</summary><div id="vScript"></div></details>
+    </div>
+    <div class="nav">
+      <button class="btn" id="vPrev">← 新しい</button>
+      <button class="btn" id="vClose">とじる</button>
+      <button class="btn" id="vNext">古い →</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+let comics=[], cur=-1;
+const esc=s=>(s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmtDate(ts){
+  if(!ts) return "";
+  const d=new Date(ts), p=x=>String(x).padStart(2,"0");
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}（${"日月火水木金土"[d.getDay()]}）`;
+}
+function render(){
+  const main=document.getElementById("main");
+  document.getElementById("count").textContent=`${comics.length}本`;
+  if(!comics.length){ main.innerHTML='<div id="empty">まだ4コマがありません</div>'; return; }
+  let html="", last=null;
+  comics.forEach((c,i)=>{
+    const day=fmtDate(c.ts);
+    if(day!==last){ if(last!==null) html+="</div>"; html+=`<div class="day">${esc(day||"日付なし")}</div><div class="grid">`; last=day; }
+    html+=`<button class="card" data-i="${i}" aria-label="${esc(c.title||"無題")}を拡大">
+      <img loading="lazy" src="${esc(c.file)}" alt="4コマ漫画『${esc(c.title||"無題")}』">
+      <div class="meta"><div class="t">${esc(c.title||"無題")}</div>
+        <div class="s">${c.style?`<span class="chip">${esc(c.style)}</span>`:""}${c.punch?`<span class="chip p">${esc(c.punch)}</span>`:""}</div></div>
+    </button>`;
+  });
+  main.innerHTML=html+"</div>";
+  main.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>open(+el.dataset.i)));
+}
+function open(i){
+  const c=comics[i]; if(!c) return; cur=i;
+  document.getElementById("vImg").src=c.file;
+  document.getElementById("vImg").alt=`4コマ漫画『${c.title||"無題"}』`;
+  document.getElementById("vDate").textContent=fmtDate(c.ts);
+  document.getElementById("vTitle").textContent=c.title||"無題";
+  document.getElementById("vChips").innerHTML=(c.style?`<span class="chip">${esc(c.style)}</span>`:"")+(c.punch?`<span class="chip p">落ち: ${esc(c.punch)}</span>`:"");
+  const o=document.getElementById("vOchi"); o.style.display=c.ochi?"":"none"; o.textContent=c.ochi?`💡 ${c.ochi}`:"";
+  document.getElementById("vScript").innerHTML=(c.panels||[]).map((p,k)=>`<div class="panel"><b>${k+1}. ${esc(p.title||"")}</b><br>${(p.lines||[]).map(l=>`${esc(l.who)}「${esc(l.text)}」`).join("<br>")}</div>`).join("")||"（なし）";
+  document.getElementById("vPrev").disabled=i<=0;
+  document.getElementById("vNext").disabled=i>=comics.length-1;
+  const d=document.getElementById("dlg"); if(!d.open) d.showModal();
+  d.scrollTop=0; document.getElementById("vClose").focus({preventScroll:true});   // ボタンへのフォーカスで下までスクロールされないように
+}
+document.getElementById("vClose").onclick=()=>document.getElementById("dlg").close();
+document.getElementById("vPrev").onclick=()=>open(cur-1);
+document.getElementById("vNext").onclick=()=>open(cur+1);
+document.getElementById("dlg").addEventListener("click",e=>{ if(e.target.id==="dlg") e.target.close(); });
+document.addEventListener("keydown",e=>{ if(!document.getElementById("dlg").open) return; if(e.key==="ArrowLeft") open(cur-1); if(e.key==="ArrowRight") open(cur+1); });
+fetch("4koma/comics.json?_="+Date.now())
+  .then(r=>{ if(r.status===404) return []; if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+  .then(d=>{ comics=Array.isArray(d)?d:[]; render(); })
+  .catch(e=>{ document.getElementById("main").innerHTML=`<div id="empty">読み込みに失敗しました: ${esc(e.message)}</div>`; document.getElementById("count").textContent=""; });
+</script>
+</body>
+</html>
