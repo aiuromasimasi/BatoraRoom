@@ -64,6 +64,10 @@
   .btn:hover{background:#ffe3f1}
   .btn[disabled]{opacity:.35;cursor:default}
   .backlink{display:inline-block;margin:10px 0 30px;color:var(--purple);font-weight:700;text-decoration:none}
+  .share{margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .share .btn{font-size:.85rem;padding:5px 12px}
+  .share .msg{font-size:.8rem;color:var(--purple);font-weight:700}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:999px;font-size:.85rem;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -84,6 +88,7 @@
       <div class="s" id="vChips" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px"></div>
       <div class="ochi" id="vOchi"></div>
       <details class="script"><summary>セリフを文字で読む</summary><div id="vScript"></div></details>
+      <div class="share"><button class="btn" id="vCopy" type="button">🔗 この漫画のURLをコピー</button><span class="msg" id="vCopyMsg"></span></div>
     </div>
     <div class="nav">
       <button class="btn" id="vPrev">← 新しい</button>
@@ -133,15 +138,46 @@ function open(i){
   document.getElementById("vNext").disabled=i>=comics.length-1;
   const d=document.getElementById("dlg"); if(!d.open) d.showModal();
   d.scrollTop=0; document.getElementById("vClose").focus({preventScroll:true});   // ボタンへのフォーカスで下までスクロールされないように
+  // 開いている漫画をURLに反映（?id=…）。そのURLを送れば、相手もこの漫画が開いた状態で見られる
+  setUrlId(c.id);
+  document.title=`${c.title||"無題"} ✦ アイラの4コマ劇場`;
+  document.getElementById("vCopyMsg").textContent="";
 }
-document.getElementById("vClose").onclick=()=>document.getElementById("dlg").close();
+const BASE_TITLE=document.title;
+function setUrlId(id){
+  try{
+    const u=new URL(location.href);
+    if(id) u.searchParams.set("id", id); else u.searchParams.delete("id");
+    history.replaceState(null, "", u.pathname+(u.searchParams.toString()?"?"+u.searchParams.toString():"")+u.hash);
+  }catch(e){}
+}
+function toast(t){ const el=document.createElement("div"); el.className="toast"; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(), 3500); }
+function closeDlg(){ const d=document.getElementById("dlg"); if(d.open) d.close(); setUrlId(null); document.title=BASE_TITLE; }   // 閉じたら一覧のURLに戻す
+document.getElementById("vClose").onclick=closeDlg;
 document.getElementById("vPrev").onclick=()=>open(cur-1);
 document.getElementById("vNext").onclick=()=>open(cur+1);
-document.getElementById("dlg").addEventListener("click",e=>{ if(e.target.id==="dlg") e.target.close(); });
+document.getElementById("dlg").addEventListener("click",e=>{ if(e.target.id==="dlg") closeDlg(); });
+document.getElementById("dlg").addEventListener("close",()=>{ setUrlId(null); document.title=BASE_TITLE; });   // Escキーで閉じたとき用
+document.getElementById("vCopy").onclick=async ()=>{
+  const c=comics[cur]; if(!c) return;
+  const u=new URL(location.href); u.searchParams.set("id", c.id); u.hash="";
+  const url=u.toString(), msg=document.getElementById("vCopyMsg");
+  try{ await navigator.clipboard.writeText(url); msg.textContent="コピーしました！"; }
+  catch(e){ window.prompt("このURLをコピーしてね", url); }
+};
 document.addEventListener("keydown",e=>{ if(!document.getElementById("dlg").open) return; if(e.key==="ArrowLeft") open(cur-1); if(e.key==="ArrowRight") open(cur+1); });
 fetch("4koma/comics.json?_="+Date.now())
   .then(r=>{ if(r.status===404) return []; if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
-  .then(d=>{ comics=Array.isArray(d)?d:[]; render(); })
+  .then(d=>{
+    comics=Array.isArray(d)?d:[]; render();
+    // ?id=… で開かれたら、その漫画を拡大表示する（一覧の該当カードも見える位置へ）
+    const want=new URLSearchParams(location.search).get("id");
+    if(want){
+      const i=comics.findIndex(c=>c.id===want);
+      if(i>=0){ const card=document.querySelector(`.card[data-i="${i}"]`); if(card) card.scrollIntoView({block:"center"}); open(i); }
+      else { setUrlId(null); toast("指定された漫画が見つかりませんでした（取り下げられた可能性があります）"); }
+    }
+  })
   .catch(e=>{ document.getElementById("main").innerHTML=`<div id="empty">読み込みに失敗しました: ${esc(e.message)}</div>`; document.getElementById("count").textContent=""; });
 </script>
 </body>
