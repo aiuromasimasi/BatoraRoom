@@ -12,7 +12,8 @@
 """
 import json, re
 
-RANKED = 100  # 上位この数までがランキング。それ以降はランク外プール
+RANKED = 100   # TOP100（後半パート）
+RANK2 = 200    # 101〜このまでが前半パート。それ以降は圏外（動画に登場しない）
 lines = open("game_ranking_draft.md", encoding="utf-8").read().split("\n")
 title2cid = {}; cid = 0
 for l in lines:
@@ -40,22 +41,32 @@ JS = '''const GAMES = __GAMES__;
 const INIT = __INIT__;
 const SIG = "__SIG__";
 const RANKED = __RANKED__;
+const RANK2 = __RANK2__;
 const OKEY='game_edit_grid_v2';
 const $=id=>document.getElementById(id);
 let dragEl=null;
 function curOrder(){return [...document.querySelectorAll('#grid .cell')].map(r=>+r.dataset.id);}
 function placeDivider(){
-  const grid=$('grid'); const old=$('divider'); if(old) old.remove();
+  const grid=$('grid');
+  document.querySelectorAll('.divider').forEach(d=>d.remove());
   const cells=[...grid.querySelectorAll('.cell')];
   if(cells.length>RANKED && cells[RANKED]){
-    const d=document.createElement('div'); d.id='divider'; d.className='divider';
-    d.innerHTML='▼ ここから下は <b>ランク外（'+(RANKED+1)+'位〜）</b>　／　上へドラッグで TOP'+RANKED+' 入り';
+    const d=document.createElement('div'); d.className='divider';
+    d.innerHTML='▼ ここから下は <b>前半パート（'+(RANKED+1)+'〜'+RANK2+'位・動画の高速紹介）</b>　／　上へドラッグで TOP'+RANKED+' 入り';
     grid.insertBefore(d, cells[RANKED]);
   }
+  if(cells.length>RANK2 && cells[RANK2]){
+    const d2=document.createElement('div'); d2.className='divider out';
+    d2.innerHTML='▼ ここから下は <b>圏外（'+(RANK2+1)+'位〜・動画に登場しない）</b>';
+    grid.insertBefore(d2, cells[RANK2]);
+  }
 }
-function renumber(){document.querySelectorAll('#grid .cell').forEach((c,i)=>{c.querySelector('.rk').textContent=(i+1);c.classList.toggle('reserve',i>=RANKED);});placeDivider();}
-function output(){const ids=curOrder();const top=ids.slice(0,RANKED),res=ids.slice(RANKED);
-  $('out').value='新順位CID: '+top.join(',')+(res.length?'\\nランク外CID: '+res.join(','):'');
+function renumber(){document.querySelectorAll('#grid .cell').forEach((c,i)=>{c.querySelector('.rk').textContent=(i+1);c.classList.toggle('mid',i>=RANKED&&i<RANK2);c.classList.toggle('reserve',i>=RANK2);});placeDivider();}
+function output(){const ids=curOrder();
+  const top=ids.slice(0,RANKED), mid=ids.slice(RANKED,RANK2), out=ids.slice(RANK2);
+  $('out').value='TOP100 CID: '+top.join(',')
+    +(mid.length?'\\n前半101-200 CID: '+mid.join(','):'')
+    +(out.length?'\\n圏外CID: '+out.join(','):'');
   localStorage.setItem(OKEY,JSON.stringify({sig:SIG,order:ids}));}
 function cellHTML(g){const t=g.title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   return `<div class="cell" draggable="true" data-id="${g.id}" title="${t}">`
@@ -95,6 +106,7 @@ if(document.readyState!=='loading') init(); else document.addEventListener('DOMC
 JS = (JS.replace("__GAMES__", json.dumps(games, ensure_ascii=False))
         .replace("__INIT__", json.dumps(INIT))
         .replace("__RANKED__", str(RANKED))
+        .replace("__RANK2__", str(RANK2))
         .replace("__SIG__", SIG))
 open("rank_edit.js", "w", encoding="utf-8").write(JS)
 
@@ -128,13 +140,17 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
    background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-weight:800;font-size:11px;font-family:Arial;
    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.3)}
  /* ランク外ゾーンのタイル */
- .cell.reserve{filter:grayscale(.5) brightness(.96);opacity:.92}
+ .cell.mid{opacity:.96}
+ .cell.mid .rk{background:linear-gradient(135deg,#7fb2ff,#9b8cf0);color:#12234a}
+ .cell.reserve{filter:grayscale(.85) brightness(.9);opacity:.8}
  .cell.reserve .rk{background:linear-gradient(135deg,#9aa3b2,#c4b0d6);color:#34304a}
  .cell.reserve .ph{background:linear-gradient(150deg,#8f8aa6,#a98aa0)}
  /* TOP100 / ランク外 の区切り線 */
  .divider{flex:0 0 100%;width:100%;text-align:center;color:#6a4d8a;font-weight:800;font-size:13px;
    padding:12px 6px 4px;margin:6px 0 2px;border-top:3px dashed #b79be0}
  .divider b{color:#d6346a}
+ .divider.out{color:#8a8a99}
+ .divider.out b{color:#666}
  .bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);border-top:2px solid #eadcff;
    padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 -6px 18px rgba(58,36,86,.1);z-index:10}
  textarea{flex:1;min-width:240px;height:54px;border:2px solid #eadcff;border-radius:10px;padding:8px;font:inherit;font-size:13px}
@@ -159,4 +175,4 @@ HTML = '''<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
 <script src="rank_edit.js"></script>
 </body></html>'''
 open("rank_edit.html", "w", encoding="utf-8").write(HTML)
-print(f"rank_edit.html + rank_edit.js を生成（グリッド版・固定ID・TOP{RANKED}＋ランク外={TOTAL-RANKED}・計{len(games)}作）")
+print(f"rank_edit.html + rank_edit.js を生成（TOP{RANKED}＋前半{RANK2-RANKED}＋圏外{TOTAL-RANK2}＝計{len(games)}作・200位対応）")
