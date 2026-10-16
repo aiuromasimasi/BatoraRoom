@@ -1,0 +1,13 @@
+{
+  "name": "batora-movie-recorder",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "record": "node record_movie.mjs",
+    "record:fast": "node record_movie.mjs fast",
+    "record:60": "node record_movie.mjs standard60"
+  },
+  "dependencies": {
+    "puppeteer": "^24.43.1"
+  }
+}
